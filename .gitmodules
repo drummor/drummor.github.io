@@ -1,3 +1,8 @@
 [submodule "example"]
     path = example
     url = https://github.com/example/example.git
+
+
+[submodule "ZenMind"]
+    path = themes/ZenMind
+    url = https://github.com/drummor/hexo-theme-ZenMind
