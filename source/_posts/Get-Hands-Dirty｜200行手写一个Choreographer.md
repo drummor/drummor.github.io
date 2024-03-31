@@ -1,5 +1,5 @@
 ---
-title: Get Hands Dirty｜<200行手写一个Choreographer.md
+title: Get Hands Dirty｜<200行手写一个Choreographer
 date: 2024-01-26 11:03:37
 tags:
 ---
