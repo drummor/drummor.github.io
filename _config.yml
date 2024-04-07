@@ -126,3 +126,5 @@ deploy:
   # repo: 'https://github.com/drummor/drummor.github.io.git'
   # branch: 'main'
 
+
+google_analytics: 'G-3MJGTXEBJT'
