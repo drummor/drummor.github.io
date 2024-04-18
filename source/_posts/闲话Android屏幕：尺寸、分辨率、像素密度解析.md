@@ -1,7 +1,8 @@
 ---
 title: 闲话Android屏幕：尺寸、分辨率、像素密度解析
-date: 2023-01-21 01:01:24
-tags:
+date: 2023-12-17 01:01:24
+tags: basic
+category: basic
 ---
 ## 1 前言
 

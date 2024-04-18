@@ -2,6 +2,7 @@
 title: Android那两个你碰不到但是很重要的类之ViewRootImpl
 date: 2024-01-25 19:32:36
 tags: 
+category: 源码
 ---
 
 ## 前言
