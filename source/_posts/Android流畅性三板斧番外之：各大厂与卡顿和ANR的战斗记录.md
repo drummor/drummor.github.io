@@ -2,6 +2,7 @@
 title: 流畅性三板斧番外之：各大厂与卡顿和ANR的战斗记录
 date: 2024-01-25 21:40:18
 tags: APM
+category: APM
 ---
 
 ## 前言

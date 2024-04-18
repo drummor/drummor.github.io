@@ -1,7 +1,8 @@
 ---
 title: 可能是比较深入的探索Android内存优化
 date: 2024-01-26 15:24:10
-tags:
+tags: APM
+category: APM
 ---
 
 ## 前言

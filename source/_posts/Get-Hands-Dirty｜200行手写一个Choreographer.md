@@ -2,6 +2,7 @@
 title: Get Hands Dirty｜<200行手写一个Choreographer
 date: 2024-01-26 11:03:37
 tags:
+category: basic
 ---
 
 如果你嫌弃啰嗦可以直接看代码：<https://github.com/drummor/GetHandsDirty>

@@ -1,7 +1,8 @@
 ---
 title: 横向对比Jetpack、RxJava、Glide框架中对组件生命周期Lifecycle感知原理
 date: 2019-07-14 15:29:59
-tags:
+tags: basic
+category: basic
 ---
 # 前言
 在App开发中出于减少内存泄露,合理释放资源，减少内存占用等目的，我们经常要在组件的生命周期回调函数中执行相应的代码比如像这样:

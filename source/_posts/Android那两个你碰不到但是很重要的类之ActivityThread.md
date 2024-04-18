@@ -2,6 +2,7 @@
 title: Android那两个你碰不到但是很重要的类之ActivityThread
 date: 2023-05-06 19:17:02
 tags:
+category: basic
 ---
 
 ## **前言**

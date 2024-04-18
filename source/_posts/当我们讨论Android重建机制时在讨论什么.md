@@ -1,7 +1,7 @@
 ---
 title: 当我们讨论Android重建机制时在讨论什么
 date: 2023-01-25 22:18:36
-tags:
+tags: basic
 ---
 
 

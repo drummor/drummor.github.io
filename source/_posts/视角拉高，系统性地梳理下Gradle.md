@@ -2,6 +2,7 @@
 title: 视角拉高，系统性地梳理下Gradle
 date: 2024-01-26 11:14:01
 tags:
+category: 基建
 ---
 
 ## 1 Gradle的一些概念
