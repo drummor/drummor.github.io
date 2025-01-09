@@ -3,7 +3,7 @@ title: thoughts.md
 date: 2024-01-24 12:28:42
 ---
 
-<blockquote style="background: #fafafa;padding: 1em 1.5em 1em 1.5em;border-left: 0.0em solid #323232;">
+<blockquote>
  
  衷心祝愿每位朋友在满足了基本温饱的基础上，可以不再被东亚所谓的成功秩序规训，把所谓的成功当作人生唯一的目标，在单一的无聊游戏中白白消耗了自己。
  你是医生，但不是只能做医生，而是都能够去追求属于自己的自由而全面的发展，能够换尿布，策划战争、杀猪、开船、设计房子、写十四行诗、结算账户、砌墙、接脱臼的骨头，安慰濒死的人，服从命令，发布命令，携手合作，做独立行动，写数学方程分析新问题成份，电脑编程，做出可口的饭，善于打架。最后勇敢地死去……
@@ -12,7 +12,7 @@ date: 2024-01-24 12:28:42
 
 </blockquote>
 
-<blockquote style="background: #fafafa;padding: 1em 1.5em 1em 1.5em;border-left: 0.0em solid #D81E06;">
+<blockquote>
 
 这或许就是为什么特蕾莎会说这样一段话:
 你如果行善事,人们会说你必定是出于自私的隐蔽动机。不管怎样,还是要做善事。
@@ -27,7 +27,7 @@ date: 2024-01-24 12:28:42
 
 </blockquote>
 
-<blockquote style="background: #fafafa;padding: 1em 1.5em 1em 1.5em;border-left: 0.0em solid #323232;">
+<blockquote>
  
 某种意义上讲：人类创造的 AI 就是一个给自己创造了一个全知全能的上帝
 
