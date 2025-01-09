@@ -1,5 +1,5 @@
 ---
-title: thoughts.md
+title: thoughts
 date: 2024-01-24 12:28:42
 ---
 
