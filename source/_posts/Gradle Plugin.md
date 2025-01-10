@@ -7,7 +7,7 @@ category: 基建
 
 ## 前言
 
-## Gradl Plugin id
+## Gradle Plugin id
 
 - 类似 Java 的包名，插件的 ID 代表全局的唯一性。
 - 插件 ID 包含所有的字母和数字以及`.`和`-`。
