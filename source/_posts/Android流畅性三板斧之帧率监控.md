@@ -13,11 +13,11 @@ Android 流畅性监控的三板斧，这里所指是【帧率的监控】，【
 
 【过分的卡顿】也不一定产生 ANR，卡顿但未触发 ANR 产生的条件就不会产生 ANR。关于 ANR 的详细内容我们放在三板斧系列文章的第三篇。
 
-[**Android 流畅性三板斧之帧率监控**](https://juejin.cn/post/7217801491188809789)（<https://juejin.cn/post/7217801491188809789>）
+[**Android 流畅性三板斧之帧率监控**](https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8B%E5%B8%A7%E7%8E%87%E7%9B%91%E6%8E%A7/)
 
-[**Android 流畅性三板斧之卡顿监控**](https://juejin.cn/post/7218772329034301477)（<https://juejin.cn/post/7218772329034301477>）
+[**Android 流畅性三板斧之卡顿监控**](https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8B%E5%8D%A1%E9%A1%BF%E7%9B%91%E6%8E%A7/)
 
-[**Android 流畅性三板斧之 ANR 监控**](https://juejin.cn/post/7220043684292558907) (https://juejin.cn/post/7220043684292558907)
+[**Android 流畅性三板斧之 ANR 监控与解决**](https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8BANR%E7%9B%91%E6%8E%A7%E4%B8%8E%E8%A7%A3%E5%86%B3/)
 
 该篇我们从应用开发者的角度，探索在应用层监控帧率的四种方式。
 
