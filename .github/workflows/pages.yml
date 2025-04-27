@@ -43,6 +43,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      action: read
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -53,3 +54,4 @@ jobs:
         uses: actions/deploy-pages@v2
         with:
           artifact_name: github-pages
+          token: ${{ secrets.GITHUB_TOKEN }} # 显式传递令牌
