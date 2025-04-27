@@ -32,3 +32,15 @@ date: 2024-01-24 12:28:42
 某种意义上讲：人类创造的 AI 就是一个给自己创造了一个全知全能的上帝。
 
 </blockquote>
+
+<blockquote>
+ 
+“And the winner is : la vie, and the winner is : l'amour”
+
+</blockquote>
+
+<blockquote>
+ 
+唯有门前镜湖水，春风不改旧波。
+
+</blockquote>
