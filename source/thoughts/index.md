@@ -1,6 +1,6 @@
 ---
 title: thoughts
-date: 2024-01-24 12:28:42
+date: 2025-06-13 14:28:42
 ---
 
 <blockquote>
