@@ -1,7 +1,11 @@
 ---
 title: thoughts
-date: 2025-06-13 14:28:42
+date: 2025-06-18 14:28:42
 ---
+
+<blockquote>
+历史上影响最深的工业革命其实是文艺复兴。
+</blockquote>
 
 <blockquote>
 看似矛盾
