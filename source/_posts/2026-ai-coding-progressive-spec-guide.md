@@ -9,9 +9,9 @@ tags:
   - Agent
 categories:
   - # AI资讯
+audio: /audio/2026-ai-coding-progressive-spec-guide/audio.m4a
 ---
 
-[📥 下载播客音频 (7.2 MB, M4A格式)](/audio/2026-ai-coding-progressive-spec-guide/audio.m4a)
 
 > 
 

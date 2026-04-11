@@ -86,7 +86,56 @@ push to develop → GitHub Actions 触发
   → drummor.github.io 更新
 ```
 
-## 常见问题
+## 添加播客音频
+
+### 文件结构
+
+```
+source/audio/你的文章slug/audio.m4a
+source/_posts/你的文章slug.md
+```
+
+### 操作步骤
+
+**1. 准备音频文件**
+
+将 `.m4a` 格式的音频文件放到对应文章 slug 目录下：
+
+```bash
+source/audio/你的文章slug/audio.m4a
+```
+
+**2. 修改文章 frontmatter**
+
+在 markdown 文件顶部 frontmatter 中添加 `audio` 字段：
+
+```yaml
+---
+title: 你的文章标题
+date: 2026-04-11
+tags:
+  - AI
+categories:
+  - # AI资讯
+audio: /audio/你的文章slug/audio.m4a
+---
+```
+
+### 注意事项
+
+- **格式**：仅支持 `.m4a`（AAC 编码）
+- **文件名**：统一用 `audio.m4a`
+- **目录名**：建议与文章 slug 同名，便于管理
+- **前端展示**：音频播放器自动出现在文章标题和正文之间
+- **部署后生效**：本地 `hexo generate` 后即可预览
+
+### 常见问题
+
+**Q: 音频播放器显示"您的浏览器不支持音频播放"**
+→ 确认 `preload="metadata"` 已加到 `themes/ZenMind/layout/post.ejs` 的 `<audio>` 标签中。
+
+**Q: 音频控件宽度为 0**
+→ 确保 `.post-audio` 有 CSS `flex: 0 0 100%`（已在主题中配置）。
 
 **Q: 网页打不开或显示 404**
 → 检查 GitHub Actions 是否失败，确认 develop 分支在 Settings → Environments → github-pages 的允许列表中。
