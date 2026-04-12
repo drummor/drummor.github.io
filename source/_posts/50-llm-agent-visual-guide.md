@@ -25,7 +25,7 @@ Manus的核心产品是一款能自主执行研究、编码等复杂任务的AI�
 
 AI Agent通过多模态感知理解环境和任务，利用其推理能力制定一个动态的行动计划，在执行过程中，它能根据环境的反馈实时调整策略，直至最终完成任务。这种自主性和适应性，使得Agent能够胜任远比传统AI更复杂的任务。
 
-![智能体设计模式](/images/articles/50-llm-agent-visual-guide/img-1775994859125.jpg)
+![智能体设计模式](/images/articles/50-llm-agent-visual-guide/img-0000.png)
 
 > 图片来源：Antonio Gulli《智能体设计模式》
 
@@ -53,7 +53,7 @@ Agent 可以观察环境（例如：通过文本），并通过使用工具（�
 
 利用这种推理行为，Agent 将规划出必要的行动步骤，例如：
 
-![Agent行动步骤](/images/articles/50-llm-agent-visual-guide/img-1775994859310.png)
+![Agent行动步骤](/images/articles/50-llm-agent-visual-guide/img-0001.png)
 
 这种规划行为，使 Agent 能够理解情况、规划下一步，并采取行动。
 
@@ -65,13 +65,13 @@ Agent 可以观察环境（例如：通过文本），并通过使用工具（�
 
 和LLM交互时，LLM通常不具有任何记忆功能。例如：
 
-![LLM无记忆](/images/articles/50-llm-agent-visual-guide/img-1775994859401.png)
+![LLM无记忆](/images/articles/50-llm-agent-visual-guide/img-0002.png)
 
 我们通常将此称为**短期记忆**，也称为工作记忆。
 
 另外，Agent一般还需要跟踪可能数十个至数百个步骤，而不仅仅是最近的行动，这被称为**长期记忆**：
 
-![长期记忆](/images/articles/50-llm-agent-visual-guide/img-1775994859515.png)
+![长期记忆](/images/articles/50-llm-agent-visual-guide/img-0003.png)
 
 短期记忆和长期记忆的对比：
 
@@ -83,7 +83,7 @@ Agent 可以观察环境（例如：通过文本），并通过使用工具（�
 
 大型上下文窗口，可用于将完整的对话历史作为输入 prompt 的一部分进行跟踪。
 
-![上下文窗口](/images/articles/50-llm-agent-visual-guide/img-1775994859569.png)
+![上下文窗口](/images/articles/50-llm-agent-visual-guide/img-0004.png)
 
 只要对话历史适合 LLM 的上下文窗口，这种方法就能有效模拟记忆。
 
@@ -91,7 +91,7 @@ Agent 可以观察环境（例如：通过文本），并通过使用工具（�
 
 对于上下文窗口较小的模型，或者当对话历史较大时，我们可以使用另一个LLM来总结迄今为止发生的对话。
 
-![对话总结](/images/articles/50-llm-agent-visual-guide/img-1775994859822.png)
+![对话总结](/images/articles/50-llm-agent-visual-guide/img-0005.png)
 
 通过持续总结对话，我们可以保持较小的对话规模。这将减少 token 数量，同时只跟踪最重要的信息。
 
@@ -101,7 +101,7 @@ LLM Agent 的长期记忆包括需要长期保留的 Agent 过去的行动空间
 
 实现长期记忆的常见技术，是将所有先前的交互、行动和对话存储在外部向量数据库中。
 
-![向量数据库存储](/images/articles/50-llm-agent-visual-guide/img-1775994859881.png)
+![向量数据库存储](/images/articles/50-llm-agent-visual-guide/img-0006.png)
 
 要构建这样的数据库，首先将对话嵌入到能够捕捉其含义的数值表示中。
 
@@ -117,7 +117,7 @@ LLM Agent 的长期记忆包括需要长期保留的 Agent 过去的行动空间
 
 Agent示例：Context（上下文）。在LLM Agent中，工作记忆可以理解为模型在一次对话或推理过程中，需要临时"装载"的上下文信息，用于实时生成回复或执行操作。
 
-![工作记忆](/images/articles/50-llm-agent-visual-guide/img-1775994859936.png)
+![工作记忆](/images/articles/50-llm-agent-visual-guide/img-0007.png)
 
 **Procedural Memory（程序性记忆）**
 
@@ -125,7 +125,7 @@ Agent示例：Context（上下文）。在LLM Agent中，工作记忆可以理�
 
 Agent示例：System Prompt（系统提示）。对于LLM Agent而言，"程序性记忆"可以视作模型在执行任务时所依据的固定指令或规则。它规定了模型在面对某些输入时，需要如何去执行、遵循哪些步骤或约束。
 
-![程序性记忆](/images/articles/50-llm-agent-visual-guide/img-1775994859994.png)
+![程序性记忆](/images/articles/50-llm-agent-visual-guide/img-0008.png)
 
 **Semantic Memory（语义记忆）**
 
@@ -133,7 +133,7 @@ Agent示例：System Prompt（系统提示）。对于LLM Agent而言，"程序�
 
 Agent示例：User Information（用户信息）。对于LLM Agent来说，语义记忆中可以包括用户的偏好、历史对话中的关键信息、外部知识库中的事实等。这些事实类信息是与特定事件无关的通用知识。
 
-![语义记忆](/images/articles/50-llm-agent-visual-guide/img-1775994860050.png)
+![语义记忆](/images/articles/50-llm-agent-visual-guide/img-0009.png)
 
 **Episodic Memory（情景记忆）**
 
@@ -141,7 +141,7 @@ Agent示例：User Information（用户信息）。对于LLM Agent来说，语�
 
 Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应Agent在与用户或环境交互中所做出的具体操作或决策的历史记录，帮助Agent回溯和利用过去的经历来影响当前或未来的决策。
 
-![情景记忆](/images/articles/50-llm-agent-visual-guide/img-1775994860109.png)
+![情景记忆](/images/articles/50-llm-agent-visual-guide/img-0010.png)
 
 这种区分有助于构建Agent框架。语义记忆（关于世界的事实）可能存储在与工作记忆（当前和最近情况）不同的数据库中。
 
@@ -154,13 +154,13 @@ Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应
 - **获取数据**，以检索最新信息;
 - **采取行动**，如设定会议或订购食物。
 
-![工具类型](/images/articles/50-llm-agent-visual-guide/img-1775994860226.png)
+![工具类型](/images/articles/50-llm-agent-visual-guide/img-0011.png)
 
 ### 1. 工具的使用方法
 
 要实际使用工具，LLM 必须生成符合给定工具 API 的文本。我们通常期望生成可以格式化为 JSON 的字符串，以便它能够轻松地输到代码解释器中。
 
-![JSON格式化](/images/articles/50-llm-agent-visual-guide/img-1775994860298.png)
+![JSON格式化](/images/articles/50-llm-agent-visual-guide/img-0012.png)
 
 你还可以生成 LLM 能直接使用的自定义函数，比如基本的乘法函数。这通常被称为**函数调用- function calling**。
 
@@ -170,7 +170,7 @@ Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应
 
 或者 LLM 可以自主选择使用哪种工具以及何时使用。
 
-![工具选择](/images/articles/50-llm-agent-visual-guide/img-1775994860364.png)
+![工具选择](/images/articles/50-llm-agent-visual-guide/img-0013.png)
 
 LLM 调用序列的中间步骤，会被反馈回 LLM 以继续处理。
 
@@ -196,7 +196,7 @@ MCP为天气应用和 GitHub 等服务标准化了 API 访问。
 - **MCP Client（客户端）** — 维护与 MCP 服务器的 1:1 连接;
 - **MCP Server（服务器）** — 向 LLMs 提供上下文、工具和功能;
 
-![MCP架构](/images/articles/50-llm-agent-visual-guide/img-1775994860534.png)
+![MCP架构](/images/articles/50-llm-agent-visual-guide/img-0014.png)
 
 例如，假设你希望某个 LLM 应用程序总结你的代码仓库中最新的5个提交，MCP Host（与 MCP Client一起）会首先调用 MCP Server 询问哪些工具可用。
 
@@ -216,7 +216,7 @@ LLM Agents 中的规划涉及将给定任务分解为可执行的步骤。
 
 这种规划使模型能够迭代地反思过去的行为，并在必要时更新当前计划。
 
-![规划能力](/images/articles/50-llm-agent-visual-guide/img-1775994860593.png)
+![规划能力](/images/articles/50-llm-agent-visual-guide/img-0015.png)
 
 要在LLM Agent中实现计划能力，让我们首先看看这种技术的基础，即：**推理能力**。
 
@@ -232,7 +232,7 @@ LLM Agents 中的规划涉及将给定任务分解为可执行的步骤。
 
 这种提供思考过程示例的方法被称为**思维链**（Chain-of-Thought），它能够实现更复杂的推理行为。
 
-![思维链](/images/articles/50-llm-agent-visual-guide/img-1775994860655.png)
+![思维链](/images/articles/50-llm-agent-visual-guide/img-0016.png)
 
 思维链也可以在没有任何示例（零样本提示，zero-shot prompting）的情况下实现，只需简单地说明"让我们一步步思考"。
 
@@ -254,7 +254,7 @@ ReAct通过精心设计的提示工程来实现这一点。ReAct提示描述了�
 
 提示本身相当直接：
 
-![ReAct提示](/images/articles/50-llm-agent-visual-guide/img-1775994860765.png)
+![ReAct提示](/images/articles/50-llm-agent-visual-guide/img-0017.png)
 
 LLM使用这个提示（可作为系统提示使用）来引导其行为，在思考、行动和观察的循环中工作。
 
@@ -272,7 +272,7 @@ LLM使用这个提示（可作为系统提示使用）来引导其行为，在�
 - **评估者（Evaluator）** — 对执行者产生的输出进行评分。
 - **自我反思（Self-reflection）** — 反思执行者采取的行动和评估者生成的评分。
 
-![Reflexion架构](/images/articles/50-llm-agent-visual-guide/img-1775994860826.png)
+![Reflexion架构](/images/articles/50-llm-agent-visual-guide/img-0018.png)
 
 添加了内存模块来跟踪行动（短期）和自我反思（长期），帮助 Agent 从错误中学习并识别改进的行动。
 
@@ -292,7 +292,7 @@ LLM使用这个提示（可作为系统提示使用）来引导其行为，在�
 
 每个 Agent 可能配备不同类型的工具，并可能拥有不同的记忆系统。
 
-![多智能体系统](/images/articles/50-llm-agent-visual-guide/img-1775994860883.png)
+![多智能体系统](/images/articles/50-llm-agent-visual-guide/img-0019.png)
 
 实际上，已有数十种多智能体架构，它们的核心通常包括以下两个组件：
 
@@ -307,7 +307,7 @@ LLM使用这个提示（可作为系统提示使用）来引导其行为，在�
 
 随后，AI 用户与 AI 助理相互协作，通过交互来解决问题。
 
-![CAMEL协作](/images/articles/50-llm-agent-visual-guide/img-1775994860953.png)
+![CAMEL协作](/images/articles/50-llm-agent-visual-guide/img-0020.png)
 
 这种角色扮演的方法实现了智能体之间的协作交流。
 
@@ -315,7 +315,7 @@ AutoGen 和 MetaGPT 的通信方法虽然有所不同，但本质上都是基于
 
 过去一年，这些框架呈现出爆发式的增长。
 
-![多智能体框架对比](/images/articles/50-llm-agent-visual-guide/img-1775994861017.png)
+![多智能体框架对比](/images/articles/50-llm-agent-visual-guide/img-0021.png)
 
 ---
 
