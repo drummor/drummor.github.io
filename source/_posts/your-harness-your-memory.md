@@ -23,6 +23,8 @@ original_url: https://x.com/hwchase17/status/2042978500567609738
 
 Agent Harness 的例子包括：Claude Code、Deep Agents、Pi（驱动 OpenClaw）、OpenCode、Codex、Letta Code 等等。
 
+![Agent Harnesses进化历程](/images/your-harness-your-memory/01-harness-evolution.png)
+
 > 💡 **Agent Harnesses 不会消失。**
 
 有一种观点认为，模型会逐渐吸收越来越多的脚手架功能。**这是错误的。** 实际情况是：2023 年需要的大量脚手架现在已经不需要了，但取而代之的是其他类型的脚手架。Agent，本质上就是 LLM 与工具及其他数据源的交互。围绕 LLM 的系统始终存在，用以协调这类交互。需要证据？Claude Code 源码泄露时，有 **51.2 万行代码**。那些代码就是 harness。连世界上最好的模型的开发者，都在大力投入 harness。
@@ -49,6 +51,8 @@ Harness 的一个重大职责是管理上下文交互。正如 Sarah 所说：
 > - 记忆元数据是如何呈现给 Agent 的？
 > - 当前工作目录是如何表示的？暴露了多少文件系统信息？
 
+![Harness与记忆的绑定关系](/images/your-harness-your-memory/02-memory-tied-to-harness.jpg)
+
 目前，记忆作为一个概念仍处于萌芽期。坦率地说，我们看到长期记忆往往不是 MVP 的一部分。首先你得让一个 Agent 正常运作，然后才考虑个性化。这意味着我们（作为整个行业）仍在摸索记忆。目前，记忆领域还没有知名或通用的抽象方案。如果未来记忆变得更成熟，我们找到了最佳实践，那么独立的记忆系统可能会开始变得合理。但那是以后的事。现在，正如 Sarah 所说：**"归根结底，harness 如何管理上下文和状态，是 Agent 记忆的基石。"**
 
 ## 如果你不拥有你的 Harness，你就不拥有你的记忆
@@ -62,6 +66,8 @@ Harness 与记忆紧密绑定。
 **轻度糟糕：** 如果你使用有状态的 API（如 OpenAI 的 Responses API，或 Anthropic 的服务端压缩），你的状态存储在他们的服务器上。如果你想切换模型并恢复之前的线程——那是做不到的。
 
 **糟糕：** 如果你使用封闭的 harness（如 Claude Agent SDK，它底层使用 Claude Code，而 Claude Code 不是开源的），这个 harness 与记忆的交互方式对你来说是未知的。也许它在客户端创建了一些产物（artifact）——但这些产物的结构是什么？其他 harness 应该如何使用它们？这些都是未知的，因此无法从一个 harness 转移到另一个。
+
+![封闭Harness与API封装的问题](/images/your-harness-your-memory/03-closed-harness-api.jpg)
 
 > 💡 **但最糟糕的是——当整个 harness，包括长期记忆，都被封装在 API 背后。**
 
@@ -84,6 +90,8 @@ Harness 与记忆紧密绑定。
 > 💡 **没有记忆，你的 Agent 很容易被任何能访问相同工具的人复制。**
 
 有了记忆，你就积累起专有的数据集——用户交互和偏好的数据集。这个专有数据集让你能提供差异化且日益智能的体验。
+
+![记忆的锁定效应](/images/your-harness-your-memory/04-memory-lockin.jpg)
 
 迄今为止，切换模型提供商相对容易。它们的 API 相似，甚至相同。当然，你得稍微改改提示词，但也不算难。
 
@@ -108,6 +116,8 @@ Harness 与记忆紧密绑定。
 - ✅ 使用 `agents.md` 和 skills 等开放标准
 - ✅ 支持 MongoDB、Postgres、Redis 等插件来存储记忆
 - ✅ 可部署：通过 LangSmith Deployment（可自托管、可部署在任何云上、可使用自己的数据库作为记忆存储）；或部署在任何标准 Web 托管框架背后
+
+![Deep Agents架构](/images/your-harness-your-memory/05-deep-agents.jpg)
 
 > **要拥有自己的记忆，你需要在使用一个开放的 Harness**
 > **今天就试试 Deep Agents 吧。**
