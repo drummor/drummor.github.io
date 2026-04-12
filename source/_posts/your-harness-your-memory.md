@@ -2,6 +2,7 @@
 title: 你的 Harness，你的记忆
 date: '2026-04-12'
 author: Harrison Chase
+audio: /audio/your-harness-your-memory/audio.m4a
 categories:
   - Agent
   - Harness
