@@ -7,7 +7,7 @@ tags:
   - AI
   - Agent
   - LLM
-category: AI资讯
+category: Agent
 description: 50张图解Agent核心概念：记忆、工具、规划三大组件，多智能体协同，以及设计模式全解析。
 ---
 
