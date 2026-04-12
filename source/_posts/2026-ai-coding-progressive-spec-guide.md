@@ -8,7 +8,7 @@ tags:
   - 工程实践
   - Agent
 categories:
-  - # AI资讯
+  - Agent
 audio: /audio/2026-ai-coding-progressive-spec-guide/audio.m4a
 ---
 

@@ -3,11 +3,13 @@ title: 认知重建之后，步入Agentic Engineering的工程革命
 date: '2026-04-12'
 author: rickyshou
 categories:
+  - Agent
   - AI工程
 tags:
   - AI Coding
   - Agent
   - 工程实践
+audio: /audio/2026-cognitive-rebuild-agentic-engineering/audio.m4a
 original_url: https://mp.weixin.qq.com/s/ri_lxDGayM-e5A0oAW59Fw
 ---
 
