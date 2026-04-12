@@ -1,5 +1,5 @@
 ---
-title: 2026 年 AI 编码的&#34;渐进式 Spec&#34;实战指南
+title: 2026 年 AI 编码的"渐进式 Spec"实战指南
 date: '2026-04-02'
 tags:
   - AI Coding
@@ -15,27 +15,19 @@ audio: /audio/2026-ai-coding-progressive-spec-guide/audio.m4a
 
 > 
 
-**导读精华**
-
-- 
-
-**模型是地基，方法论是上层建筑** — 模型不行，上面盖再好也白搭。T0 模型三轮搞定的事，T2 可能 15 轮还对不了。选对模型比优化 workflow 重要得多。
-
-- 
-
-**Agent 的能力天花板由工具决定** — 给它读代码的工具它能改代码，不给它网络工具它就上不了网。安全靠框架约束，不靠 AI 自觉。
-
-- 
-
-**知识底座才是真正的护城河** — prompt 和方法论会趋同，领域 Know-How 和踩坑记录才是别人抄不走的核心竞争力。这次分享的内容来自作者在实际项目中落地 AI 编码的一些实践和思考。希望能给正在尝试或想要尝试 AI 编码的同学一些参考。
+> **导读精华**
+>
+> - **模型是地基，方法论是上层建筑** — 模型不行，上面盖再好也白搭。T0 模型三轮搞定的事，T2 可能 15 轮还对不了。选对模型比优化 workflow 重要得多。
+> - **Agent 的能力天花板由工具决定** — 给它读代码的工具它能改代码，不给它网络工具它就上不了网。安全靠框架约束，不靠 AI 自觉。
+> - **知识底座才是真正的护城河** — prompt 和方法论会趋同，领域 Know-How 和踩坑记录才是别人抄不走的核心竞争力。
+>
+> 这次分享的内容来自作者在实际项目中落地 AI 编码的一些实践和思考。希望能给正在尝试或想要尝试 AI 编码的同学一些参考。
 
 ## 一 背景
-[](#一-背景) 一、背景
 
 聊 AI 编码之前，先对齐三个基础认知。
 
 ### 11 如何理解大模型 它能做什么 不能做什么
-[](#11-如何理解大模型-它能做什么-不能做什么) 1.1 如何理解大模型 — 它能做什么、不能做什么
 
 当前顶级模型可以**独立完成中等复杂度的编码任务**——理解需求、读代码、写实现、修编译错误，但仍需人审查结果。它们没有持久记忆、没有自主意图，只处理你给它的上下文。
 
@@ -48,7 +40,6 @@ Arena 的 **Multi-Turn** 维度衡量多轮交互稳定性（对应 Agent 场景
 核心结论：模型是地基，方法论是上层建筑。地基不行，上面盖得再好也白搭。
 
 ### 12 如何理解 agent 从一问一答到自主行动
-[](#12-如何理解-agent-从一问一答到自主行动) 1.2 如何理解 Agent — 从一问一答到自主行动
 
 知道了模型能力之后，下一个问题是：**怎么让它自主行动？**
 
@@ -64,7 +55,6 @@ Arena 的 **Multi-Turn** 维度衡量多轮交互稳定性（对应 Agent 场景
 → Agent 调用【终端】工具，运行编译检查 （验证）
 → 编译报错，Agent 读取错误信息，自动修复 （自愈）
 → 编译通过，Agent 回复你&quot;已完成&quot; （结束）
-`
 
 这个循环就是 Agent 的全部—— &quot;智能&quot;来自模型，&quot;能力&quot;来自工具，&quot;自主性&quot;来自循环 。
 
@@ -73,7 +63,6 @@ Arena 的 **Multi-Turn** 维度衡量多轮交互稳定性（对应 Agent 场景
 我们后面提到的 Cursor、Claude Code、opencode——本质上都是这个循环的不同包装，区别只在于给了哪些工具、跑在哪里、用的什么模型。
 
 ### 13 回归本质 软件复杂度视角
-[](#13-回归本质-软件复杂度视角) 1.3 回归本质 — 软件复杂度视角
 
 有了能自主行动的 Agent，最后一个问题是：**用什么标准评判一个 AI 编码方案的好坏？**
 
@@ -90,10 +79,8 @@ Arena 的 **Multi-Turn** 维度衡量多轮交互稳定性（对应 Agent 场景
 - 核心结论：所有方法论的设计都要回归这个起点——高效应对本质复杂度，压缩偶然复杂度。
 
 ## 二 渐进式编码框架
-[](#二-渐进式编码框架) 二、渐进式编码框架
 
 ### 21 spec coding 是什么
-[](#21-spec-coding-是什么) 2.1 Spec Coding 是什么
 
 一句话**：在让 AI 写代码之前，先用结构化文档（Spec）把&quot;要做什么、怎么做、有什么约束&quot;说清楚，然后 AI 围绕这份文档编码。
 
@@ -112,12 +99,10 @@ Arena 的 **Multi-Turn** 维度衡量多轮交互稳定性（对应 Agent 场景
 把需求、约束、代码现状写进 Spec 作为高质量输入 → 输入增加但便宜 → AI 不用反复试错 → 输出大幅减少 → 对话轮次从 20 轮降到 3-5 轮 → **总成本反而更低，效果反而更好**。
 
 ### 22 为什么要自己做一套
-[](#22-为什么要自己做一套) 2.2 为什么要自己做一套
 
 Spec Coding 的理念很简单，但不同团队的落地方式差别很大。我们调研了多个主流实现后，吸收各方核心理念做了一套自己的框架。
 
 ### 23 核心设计渐进式复杂度
-[](#23-核心设计渐进式复杂度) 2.3 核心设计：渐进式复杂度
 
 这是框架的核心卖点，也是和其他方案最大的区别。
 
@@ -134,19 +119,20 @@ Spec Coding 的理念很简单，但不同团队的落地方式差别很大。�
 - 这本质上是在**压缩偶然复杂度**：只有本质复杂度够高时，才引入对应重量的流程
 
 ### 24 自我迭代一切皆可迭代
-[](#24-自我迭代一切皆可迭代) 2.4 自我迭代：一切皆可迭代
 
 这个框架本身就是一个**活的系统**——prompt、模板、rules 都是代码库中的普通文件，随 Git 版本演进：
 
 **知识飞轮**（不仅是领域知识，prompt 和模板自身也在飞轮中）：
 
+```
 需求实践 → 踩坑 → 沉淀 knowledge / 更新 prompt / 修改模板 → AI 更准 → 更好的实践
 ↑                                                                      |
 └────────────────────────────────────────────────────────────────┘
-`
+```
 
-### 25 框架全貌目录结构
-[](#25-框架全貌目录结构) 2.5 框架全貌：目录结构
+### 2.5 框架全貌：目录结构
+
+```
 code_copilot/
 ├── rules/ # Project Rules（始终生效）
 │   ├── project-context.md # 工程结构、分层、核心依赖
@@ -168,7 +154,7 @@ code_copilot/
 │   └── <change-name>/ # 每个需求一个目录
 │
 └── archives/ # 已完成变更的归档
-`
+```
 
 Agent 提示词的核心设计要点：
 
@@ -189,7 +175,6 @@ Agent 提示词的核心设计要点：
 - **知识沉淀**：有价值的发现 → 主动建议沉淀到 knowledge/
 
 ### 26 工作流propose apply review archive
-[](#26-工作流propose-apply-review-archive) 2.6 工作流：Propose → Apply → Review → Archive
 
 **Propose（提案）— 人主导，AI 辅助**
 
@@ -248,13 +233,12 @@ Agent 提示词的核心设计要点：
 **铁律**：禁止在未确认根因前直接改代码。
 
 ## 三 工具选型与编排
-[](#三-工具选型与编排) 三、工具选型与编排
 
 ### 31 编排层 执行层的两层架构
-[](#31-编排层-执行层的两层架构) 3.1 编排层 + 执行层的两层架构
 
 在实践中，我发现单一工具很难同时满足&quot;强模型做决策&quot;和&quot;安全模型写代码&quot;两个需求。最终演化出了编排层 + 执行层的两层 AI 架构：
 
+```
 人（开发者）
  │
 ├─ 对话界面 ── 日常交互
@@ -268,26 +252,18 @@ Agent 提示词的核心设计要点：
 │ 职责: 读写代码、执行命令、运行测试
 │
 └─ 终端 ── 可随时直接接管编码工具
-`
+```
 
 **为什么要分两层？** 不仅仅是安全考虑，更是**关注点分离**：
 
-层
-擅长
-模型选择
-
-编排层
-理解模糊需求、生成结构化 spec、跨仓库业务分析、审查决策
-强模型（Claude Opus、Gemini Pro 等）
-
-执行层
-读写代码、执行 shell 命令、快速迭代修改
-编码优化模型（Sonnet、Kimi 等）
+| 层 | 擅长 | 模型选择 |
+|---|------|---------|
+| 编排层 | 理解模糊需求、生成结构化 spec、跨仓库业务分析、审查决策 | 强模型（Claude Opus、Gemini Pro 等） |
+| 执行层 | 读写代码、执行 shell 命令、快速迭代修改 | 编码优化模型（Sonnet、Kimi 等） |
 
 把两者混在一起，要么模型太贵（全程用顶级模型写代码），要么质量不够（全程用便宜模型做决策）。分层后各取所长，成本和质量都更优。
 
 ### 32 工具选型思路
-[](#32-工具选型思路) 3.2 工具选型思路
 
 选择编码工具时，有一个关键经验：**透明度不是奢侈品，是基础需求**。
 
@@ -297,25 +273,12 @@ Agent 提示词的核心设计要点：
 
 目前满足透明度要求的主流开源工具：
 
-工具
-定位
-特点
-
-Claude Code
-终端 AI 编码 Agent
-Anthropic 官方，模型绑定 Claude
-
-opencode
-终端 AI 编码 Agent（开源）
-模型自由选择，社区驱动
-
-Cursor / Windsurf
-IDE 内交互式 AI 搭档
-GUI 友好，上手快
-
-Cline / Aider
-终端/IDE 插件
-轻量级，可定制
+| 工具 | 定位 | 特点 |
+|------|------|------|
+| Claude Code | 终端 AI 编码 Agent | Anthropic 官方，模型绑定 Claude |
+| opencode | 终端 AI 编码 Agent（开源） | 模型自由选择，社区驱动 |
+| Cursor / Windsurf | IDE 内交互式 AI 搭档 | GUI 友好，上手快 |
+| Cline / Aider | 终端/IDE 插件 | 轻量级，可定制 |
 
 **选择建议**：
 
@@ -328,7 +291,6 @@ Cline / Aider
 - **核心原则**：工具是手段，方法论是不变的——上面的框架（rules/ + knowledge/ + changes/）可以适配任何编码工具
 
 ### 33 git 规范
-[](#33-git-规范) 3.3 Git 规范
 
 无论用什么工具，Git 规范是必须的：
 
@@ -343,12 +305,10 @@ Cline / Aider
 - **Message 格式**：`[<变更名>] <中文简述>`
 
 ## 四 实战案例
-[](#四-实战案例) 四、实战案例
 
 以一个典型的**跨模块业务迁移**项目为例（将系统 A 的过滤处理逻辑平行迁移到系统 B），走一遍完整的 /propose → /apply → /review 流程。
 
 ### 41 需求 spec把需求文档喂给 ai
-[](#41-需求-spec把需求文档喂给-ai) 4.1 需求 → Spec：把需求文档喂给 AI
 
 将需求文档作为输入，执行 `/propose`，AI 先 Research 代码现状，然后逐个提问收敛不确定性：
 
@@ -369,7 +329,6 @@ tasks 拆分思路：
 一个设计决策想确认：我把三个处理器放在同一个 FilterModule 的
 bizProcess 里按类型分发，而不是拆成三个独立 Module。理由是
 &quot;一个模块一个处理器&quot;的设计，过滤本身就是一个模块。你觉得这样 OK 还是要拆？
-`
 
 **关键点**：
 
@@ -380,7 +339,6 @@ bizProcess 里按类型分发，而不是拆成三个独立 Module。理由是
 - 待澄清项全部解决前不进入编码
 
 ### 42 spec tasks拆分原子任务
-[](#42-spec-tasks拆分原子任务) 4.2 Spec → Tasks：拆分原子任务
 
 Spec 确认后，AI 自动拆分为原子级 Tasks。执行一段时间后，AI 汇报进度并列出待完善项：
 
@@ -406,10 +364,8 @@ Spec 确认后，AI 自动拆分为原子级 Tasks。执行一段时间后，AI 
 • 继续补全 TODO 实现？
 • 先进行 /review filter-migration 审查？
 • 还是其他操作？
-`
 
-### 43 tasks apply逐步执行
-[](#43-tasks-apply逐步执行) 4.3 Tasks → Apply：逐步执行
+### 4.3 tasks apply逐步执行
 
 进入 `/apply` 阶段，AI 按 Tasks 逐个执行。每完成一批文件，展示完成状态和核心实现结构：
 
@@ -426,6 +382,8 @@ Spec 确认后，AI 自动拆分为原子级 Tasks。执行一段时间后，AI 
 | NEW | service/filter/RefundFilterService.java | ✅ 退款过滤服务（含完全退款判断）|
 
 🔧 核心功能实现
+
+```
 FilterModule.bizProcess()
 ├── ENABLE_DONE（创单）
 │   ├── LimitFilterService.processEnableDone() # 限购过滤写入
@@ -437,10 +395,9 @@ FilterModule.bizProcess()
     └── RefundFilterService.processClose() # 逆向添加（后）
         ├── 完全退款判断: actualPaidFee == refundFee
         └── 新客判断: identityId == 1L
-`
+```
 
 ### 44 迭代与 reverse sync
-[](#44-迭代与-reverse-sync) 4.4 迭代与 Reverse Sync
 
 执行过程中用户发现 Spec 遗漏或实现偏差时，AI 先确认事实再更新文档：
 
@@ -462,21 +419,17 @@ actualPaidFee/refundFee 同理已维护在 TradeMainOrder 中
 ∞ 验证 TradeMainOrder 修改
 收到了！我发现几个问题需要澄清：
 （AI 基于实际代码继续追问...）
-`
 
 **Reverse Sync 是最容易被忽略但最重要的环节**：保持文档和代码的一致性，才能让整个框架持续有效。
 
 ## 五 一些观点与思考
-[](#五-一些观点与思考) 五、一些观点与思考
 
 ### 51 人到底该干什么
-[](#51-人到底该干什么) 5.1 人到底该干什么？
 
 用 AI 编码之后，人的角色从「全干」变成了「管和验」：
 
 传统编程：人 = 设计者 + 实施者 + 验收者
 AI 编程：人 = 设计者 + 验收者，AI = 实施者
-`
 
 具体来说，人做三件事：**管控**（控制 AI 看什么）、**指挥**（选方案、审计划、批准执行）、**评价**（验收结果、发现偏差）。对应地，AI 在不同阶段切换角色：侦察兵（扫描代码收集事实）→ 参谋（提出方案分析利弊）→ 施工队（按图施工）→ 质检员（对照标准检查）。
 
@@ -494,81 +447,44 @@ AI 编程：人 = 设计者 + 验收者，AI = 实施者
 
 这是最普遍的问题。正确的自由度曲线应该是：
 
-阶段
-自由度
-为什么
-
-调研
-中
-让 AI 自由探索，但必须给证据
-
-方案设计
-高
-唯一鼓励 AI 充分想象的阶段
-
-规划
-低
-精确到文件路径和函数签名
-
-执行
-零
-严格按计划施工，有问题必须停下来问
-
-验收
-中
-自由检查，但结论要有依据
+| 阶段 | 自由度 | 为什么 |
+|------|--------|-------|
+| 调研 | 中 | 让 AI 自由探索，但必须给证据 |
+| 方案设计 | 高 | 唯一鼓励 AI 充分想象的阶段 |
+| 规划 | 低 | 精确到文件路径和函数签名 |
+| 执行 | 零 | 严格按计划施工，有问题必须停下来问 |
+| 验收 | 中 | 自由检查，但结论要有依据 |
 
 大部分人的问题是反过来了——该讨论的时候急着让 AI 干活（方案没想清楚就开写），该干活的时候又让 AI 自由发挥（执行阶段不约束，改着改着就跑偏了）。
 
 ### 52 spec 不是银弹但也不是废弹
-[](#52-spec-不是银弹但也不是废弹) 5.2 Spec 不是银弹，但也不是废弹
 
 有一种批评认为 Spec Coding 建立在三个错误假设上——AI 能理解规范、规范能完整描述系统、规范比代码更易维护。
 
 这些批判有道理，但忽略了一个关键前提：**它批判的是「规范→代码」的全自动线性映射，不是人在回路中的 Spec 辅助模式。**
 
-被批判的模式
-我们实际做的
-
-写好 Spec，AI 自动生成全部代码
-Spec 只描述变更范围，AI 在人审核下逐步执行
-
-规范是「唯一真理来源」
-规范是沟通工具，代码才是真理
-
-期望 AI 理解整个系统
-用 knowledge/ 喂精确上下文，限制 AI 的理解范围
-
-适用于所有复杂度
-渐进式——简单需求根本不写 Spec
+| 被批判的模式 | 我们实际做的 |
+|------------|-------------|
+| 写好 Spec，AI 自动生成全部代码 | Spec 只描述变更范围，AI 在人审核下逐步执行 |
+| 规范是「唯一真理来源」 | 规范是沟通工具，代码才是真理 |
+| 期望 AI 理解整个系统 | 用 knowledge/ 喂精确上下文，限制 AI 的理解范围 |
+| 适用于所有复杂度 | 渐进式——简单需求根本不写 Spec |
 
 问题不在于 Spec Coding 本身，而在于**用法和预期**。当成自动化流水线的输入，它确实不是银弹；当成人和 AI 之间的沟通协议，它就是一个靠谱的效率工具。
 
 ### 53 知识底座才是真正的护城河
-[](#53-知识底座才是真正的护城河) 5.3 知识底座才是真正的护城河
 
 大部分团队在 AI 编码上的投入方向是：花大量精力写 Prompt、调 Rules、优化 Agent 工作流。这些都属于「偶然复杂度」层面——调好了最多让 AI 少犯格式错误。但真正决定 AI 输出质量上限的，是你喂给它的**领域知识的质量**。
 
 **知识覆盖缺口**：
 
-知识类型
-Spec 能覆盖
-实际重要性
-
-编码规范
-★★★★
-★★★
-
-存量代码
-★★★
-★★★★
-
-领域知识
-★
-★★★★★
+| 知识类型 | Spec 能覆盖 | 实际重要性 |
+|---------|------------|---------|
+| 编码规范 | ★★★★ | ★★★ |
+| 存量代码 | ★★★ | ★★★★ |
+| 领域知识 | ★ | ★★★★★ |
 
 ### 54 几个容易被忽略的代价
-[](#54-几个容易被忽略的代价) 5.4 几个容易被忽略的代价
 
 **心流中断**
 
@@ -589,34 +505,32 @@ Context 很贵，但贵的不只是 Token 费用。更大的隐性成本是上�
 今天某些模型的速度和质量让你觉得勉强够用，半年后可能完全不同。框架的价值在于它能随模型进步而放大收益——当模型从 T1.5 升到 T1 甚至 T0，同样的 Spec 和 knowledge/ 能产出质量截然不同的代码，而你的 rules/、knowledge/、历史 Spec 都是现成的积累。
 
 ## 附录code_copilot 框架完整内容
-[](#附录code_copilot-框架完整内容) 附录：code_copilot 框架完整内容
 
 以下为 code_copilot 框架当前的完整文件内容，可直接复制到项目中使用。项目特定内容（应用名、包名、中间件等）需根据实际情况填充。
 
-目录结构
+```
 code_copilot/
-├── README.md                           # 框架说明
-├── agents/                             # Agent 配置与提示词
-│   ├── copilot-prompt.md               # 主 Agent 完整提示词（核心）
-│   ├── spec-reviewer.md                # Spec 合规审查 Agent
-│   └── code-quality-reviewer.md        # 代码质量审查 Agent
-├── rules/                              # 项目约束（始终生效）
-│   ├── project-context.md              # 工程结构与依赖（/init 填充）
-│   ├── coding-style.md                 # 编码规范
-│   ├── security.md                     # 安全红线
-│   └── domain-rules.md                 # 业务领域约束
-├── knowledge/                          # 领域知识（按需加载）
-│   └── index.md                        # 知识索引
-└── changes/                            # 变更管理
-    └── templates/                      # 模板目录
-        ├── spec.md                     # Spec 模板
-        ├── tasks.md                    # Tasks 模板
-        ├── test-spec.md                # 单测 Spec 模板
-        └── log.md                      # Log 模板
-`
+├── README.md                             # 框架说明
+├── agents/                               # Agent 配置与提示词
+│   ├── copilot-prompt.md                # 主 Agent 完整提示词（核心）
+│   ├── spec-reviewer.md                 # Spec 合规审查 Agent
+│   └── code-quality-reviewer.md         # 代码质量审查 Agent
+├── rules/                               # 项目约束（始终生效）
+│   ├── project-context.md                # 工程结构与依赖（/init 填充）
+│   ├── coding-style.md                  # 编码规范
+│   ├── security.md                      # 安全红线
+│   └── domain-rules.md                  # 业务领域约束
+├── knowledge/                           # 领域知识（按需加载）
+│   └── index.md                         # 知识索引
+└── changes/                             # 变更管理
+    └── templates/                        # 模板目录
+        ├── spec.md                       # Spec 模板
+        ├── tasks.md                      # Tasks 模板
+        ├── test-spec.md                  # 单测 Spec 模板
+        └── log.md                        # Log 模板
+```
 
 ### a1 agentscopilot promptmd 主 agent 提示词
-[](#a1-agentscopilot-promptmd-主-agent-提示词) A.1 agents/copilot-prompt.md — 主 Agent 提示词
 你是 code-copilot，一个面向已有 Java 后端项目的 AI 编码协作助手。
 你的工作基于 rules/（项目约束）、knowledge/（领域知识）、changes/（变更管理）三个目录。
 # 核心法则
@@ -684,7 +598,6 @@ Red/Green TDD：测试必须先 Red 再 Green。
 `
 
 ### a2 agentsspec reviewermd spec 合规审查
-[](#a2-agentsspec-reviewermd-spec-合规审查) A.2 agents/spec-reviewer.md — Spec 合规审查
 # Spec Compliance Reviewer
 专职验证代码实现是否符合 spec 规格。只读不写，独立于实现者的上下文。
 核心理念：**不信报告，只信代码** — reviewer 必须读实际代码独立验证。
@@ -705,7 +618,6 @@ Red/Green TDD：测试必须先 Red 再 Green。
 `
 
 ### a3 agentscode quality reviewermd 代码质量审查
-[](#a3-agentscode-quality-reviewermd-代码质量审查) A.3 agents/code-quality-reviewer.md — 代码质量审查
 # Code Quality Reviewer
 专职审查代码质量、安全性和可维护性。
 前置条件：必须在 spec-reviewer 审查通过后才启动。
@@ -718,7 +630,6 @@ Red/Green TDD：测试必须先 Red 再 Green。
 `
 
 ### a4 rulesproject contextmd 工程上下文
-[](#a4-rulesproject-contextmd-工程上下文) A.4 rules/project-context.md — 工程上下文
 ---
 alwaysApply: true
 ---
@@ -746,7 +657,6 @@ DAO (dao/)              ← 纯数据访问
 `
 
 ### a5 rulescoding stylemd 编码规范
-[](#a5-rulescoding-stylemd-编码规范) A.5 rules/coding-style.md — 编码规范
 ---
 alwaysApply: true
 ---
@@ -774,7 +684,6 @@ alwaysApply: true
 `
 
 ### a6 rulessecuritymd 安全红线
-[](#a6-rulessecuritymd-安全红线) A.6 rules/security.md — 安全红线
 ---
 alwaysApply: true
 ---
@@ -790,7 +699,6 @@ alwaysApply: true
 `
 
 ### a7 rulesdomain rulesmd 业务领域约束
-[](#a7-rulesdomain-rulesmd-业务领域约束) A.7 rules/domain-rules.md — 业务领域约束
 ---
 alwaysApply: false
 description: &quot;当涉及业务领域特定逻辑时应用本规则&quot;
@@ -806,7 +714,6 @@ description: &quot;当涉及业务领域特定逻辑时应用本规则&quot;
 `
 
 ### a8 knowledgeindexmd 知识索引
-[](#a8-knowledgeindexmd-知识索引) A.8 knowledge/index.md — 知识索引
 # 知识索引
 > 领域知识的轻量索引。每条用一句话说清核心逻辑。
 > 格式：- **触发关键词**: 一句话核心逻辑 → `包名.类名.方法名`（可选）
@@ -819,7 +726,6 @@ description: &quot;当涉及业务领域特定逻辑时应用本规则&quot;
 `
 
 ### a9 changestemplatesspecmd spec 模板
-[](#a9-changestemplatesspecmd-spec-模板) A.9 changes/templates/spec.md — Spec 模板
 # 需求名称
 > status: propose | apply | review | done
 > created: YYYY-MM-DD
@@ -856,8 +762,7 @@ description: &quot;当涉及业务领域特定逻辑时应用本规则&quot;
 - **确认人**：
 `
 
-### a10 changestemplatestasksmd tasks 模板
-[](#a10-changestemplatestasksmd-tasks-模板) A.10 changes/templates/tasks.md — Tasks 模板
+### a10 changes/templates/tasks.md — Tasks 模板
 # 任务拆分 — 需求名称
 > 拆分顺序：数据模型 → 接口协议 → 底层实现 → 上层编排 → 入口层
 > 每个任务 = 可独立提交的原子变更（3-5 个文件）
@@ -890,8 +795,7 @@ Spec-Plan 偏差记录:
 遗留问题:
 `
 
-### a11 changestemplatestest specmd
-[](#a11-changestemplatestest-specmd) A.11 changes/templates/test-spec.md
+### a11 changes/templates/test-spec.md — 单测 Spec 模板
 单测 Spec 模板
 ```markdown
 # 单测 Spec — 需求名称
@@ -923,8 +827,7 @@ Spec-Plan 偏差记录:
 - [ ] Step 4: 运行完整测试套件，确认覆盖率
 `
 
-### a12 changestemplateslogmd log 模板
-[](#a12-changestemplateslogmd-log-模板) A.12 changes/templates/log.md — Log 模板
+### a12 changes/templates/log.md — Log 模板
 
 > 记录决策、踩坑和知识发现。知识飞轮的输入。
 
@@ -951,10 +854,8 @@ Spec-Plan 偏差记录:
 `
 
 ## 代码质量备忘
-[](#代码质量备忘) 代码质量备忘
 
 ## 参考
-[](#参考) 参考
 
 - [Superpowers — agentic skills 框架](https://github.com/obra/superpowers)（HARD-GATE、两阶段 review、systematic-debugging）
 
