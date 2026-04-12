@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>横向对比Jetpack、RxJava、Glide框架中对组件生命周期Lifecycle感知原理 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言 在App开发中出于减少内存泄露,合理释放资源，减少内存占用等目的，我们经常要在组件的生命周期回调函数中执行相应的代码比如像这样: class xxActivity extend Activity{     public void onStart(){         xxx.init()     }     public void onStop(){         xxx.stop();">
+<meta property="og:type" content="article">
+<meta property="og:title" content="横向对比Jetpack、RxJava、Glide框架中对组件生命周期Lifecycle感知原理">
+<meta property="og:url" content="https://drummor.github.io/2019/07/14/%E6%A8%AA%E5%90%91%E5%AF%B9%E6%AF%94Jetpack%E3%80%81RxJava%E3%80%81Glide%E6%A1%86%E6%9E%B6%E4%B8%AD%E5%AF%B9%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9FLifecycle%E6%84%9F%E7%9F%A5%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言 在App开发中出于减少内存泄露,合理释放资源，减少内存占用等目的，我们经常要在组件的生命周期回调函数中执行相应的代码比如像这样: class xxActivity extend Activity{     public void onStart(){         xxx.init()     }     public void onStop(){         xxx.stop();">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/android_lifecycle_1706254319128.png">
+<meta property="og:image" content="https://drummor.github.io/images/android_lifecycle_1706254319475.png">
+<meta property="article:published_time" content="2019-07-14T07:29:59.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.223Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="basic">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/android_lifecycle_1706254319128.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2019/07/14/横向对比Jetpack、RxJava、Glide框架中对组件生命周期Lifecycle感知原理/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                横向对比Jetpack、RxJava、Glide框架中对组件生命周期Lifecycle感知原理
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2019.07.14</span>
+                
+                    <a class="post-category-link" href="/categories/basic/">basic</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h1 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h1>
+<p>在App开发中出于减少内存泄露,合理释放资源，减少内存占用等目的，我们经常要在组件的生命周期回调函数中执行相应的代码比如像这样:</p>
+<pre class="highlight"><code class="">class xxActivity extend Activity{
+    public void onStart(){
+        xxx.init()
+    }
+    public void onStop(){
+        xxx.stop();
+    }
+    public void onDestoryt(){
+       xxx.clean();
+    }
+}
+</code></pre>
+<p>能解决问题但不够优雅，耦合度太高，我们看看我们经常使用的那些优秀的框架是怎样来处理这个问题的。</p>
+<h1 id="1-glide中的lifecycle"><a class="markdownIt-Anchor" href="#1-glide中的lifecycle"></a> 1、Glide中的Lifecycle</h1>
+<p>使用Glide.with()一系列的重载方法，最终通过组织的图片请求就能感知组件生命周期并做出响应处理。他是怎么做到的呢？</p>
+<h2 id="11-requestmanagerretriever相关代码"><a class="markdownIt-Anchor" href="#11-requestmanagerretriever相关代码"></a> 1.1、RequestManagerRetriever相关代码</h2>
+<pre class="highlight"><code class=""> public static RequestManager with(@NonNull Activity activity) {
+    return getRetriever(activity).get(activity);
+  }
+</code></pre>
+<ul>
+<li>Glide.with(xxx)转交都转交给了RequsetManagerRetriever的一系列get()重载方法；最终返回一个RequestManager对象</li>
+<li>在RequestManagerRetriever中获取到RequestManager是通过一系列的get（）重载方法，get（）方法的参数可以是Fragment、SupportFragment、Activity、SupportActivity、View或者Context。最终的目的都是尽可能通过这些组件中获取出<strong>FragmentManager</strong>。以参数为Activity为例代码如下：</li>
+</ul>
+<pre class="highlight"><code class="">public RequestManager get(@NonNull Activity activity) {
+    if (Util.isOnBackgroundThread()) {
+      return get(activity.getApplicationContext());
+    } else {
+      assertNotDestroyed(activity);
+      //在Activity中获取到FragmentManager
+      android.app.FragmentManager fm = activity.getFragmentManager();
+      return fragmentGet(activity, fm, /*parentHint=*/ null, isActivityVisible(activity));
+    }
+  }
+</code></pre>
+<h2 id="12-获取到requestmanager"><a class="markdownIt-Anchor" href="#12-获取到requestmanager"></a> 1.2、获取到RequestManager</h2>
+<p>通过这些方法获取或者创建Fragment</p>
+<pre class="highlight"><code class="">  @NonNull
+  private RequestManager supportFragmentGet(
+      @NonNull Context context,
+      @NonNull FragmentManager fm,
+      @Nullable Fragment parentHint,
+      boolean isParentVisible) {
+    SupportRequestManagerFragment current =
+        getSupportRequestManagerFragment(fm, parentHint, isParentVisible);
+    RequestManager requestManager = current.getRequestManager();
+    if (requestManager == null) {
+      // TODO(b/27524013): Factor out this Glide.get() call.
+      Glide glide = Glide.get(context);
+      requestManager =
+          factory.build(
+              glide, current.getGlideLifecycle(), current.getRequestManagerTreeNode(), context);
+      current.setRequestManager(requestManager);
+    }
+    return requestManager;
+  }
+</code></pre>
+<ul>
+<li>使用getSupportRequestManagerFragment（）方法获的SupportRequestManagerFragment。</li>
+<li>如果是第一次，创建RequestManager，并设置设置给SupportRequestManager。如果不是第一次，直接从SupportRequestManagerFragment中获取。</li>
+<li>返回RequestManager对象</li>
+</ul>
+<h2 id="13-supportrequestmanager的构建"><a class="markdownIt-Anchor" href="#13-supportrequestmanager的构建"></a> 1.3、 SupportRequestManager的构建</h2>
+<pre class="highlight"><code class="">...
+ final Map&lt;FragmentManager, SupportRequestManagerFragment&gt; pendingSupportRequestManagerFragments =
+      new HashMap&lt;&gt;();
+...
+  @NonNull
+  private SupportRequestManagerFragment getSupportRequestManagerFragment(
+      @NonNull final FragmentManager fm, @Nullable Fragment parentHint, boolean isParentVisible) {
+      //在Fragment中找ManagerFragment
+    SupportRequestManagerFragment current =
+        (SupportRequestManagerFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+        
+    if (current == null) {
+    //如果在没找到，就在存储的map中尝试获取
+      current = pendingSupportRequestManagerFragments.get(fm);
+      if (current == null) {
+      //没有就创建新的。
+        current = new SupportRequestManagerFragment();
+        current.setParentFragmentHint(parentHint);
+        if (isParentVisible) {
+          current.getGlideLifecycle().onStart();
+        }
+        pendingSupportRequestManagerFragments.put(fm, current);
+        //移除
+        handler.obtainMessage(ID_REMOVE_SUPPORT_FRAGMENT_MANAGER, fm).sendToTarget();
+      }
+    }
+    return current;
+  }
+</code></pre>
+<p>如注释中所言，</p>
+<ul>
+<li>如果FragmentManager中不存在tag为FRAGMENT_TAG然后返回</li>
+<li>简而言之，RequestManagerTreeNode用来获取绑定该RequestManagerFragment的Fragment的所有子Fragment所绑定的RequestManagerFragment所绑定的RequestManager</li>
+<li><strong>值得注意</strong>在FragmentManager中没有发现TAG为fragement_tag的时候会从pendingSupportRMF中获取如果没有就创建新的然后先将新创建的RMF放入pendingSupportRM中然后执行添加transaction紧接着通过handler又将RMF从pendingSupportRM中移除了，思考，为什么？<br />
+因为</li>
+</ul>
+<pre class="highlight"><code class="">fm.beginTransaction().add(current, FRAGMENT_TAG).commitAllowingStateLoss();
+</code></pre>
+<p>这个操作是异步的！什么概念就是试想：这样的情况</p>
+<pre class="highlight"><code class="">public test(){
+    Glide.with(activity).load(&quot;xxx1&quot;).into(target1);//1
+    Glide.with(activity).load(&quot;xxx1&quot;).into(target2);//2
+}
+</code></pre>
+<p>代码1和代码2被调用假设当前的activity还没有RequestManagerFragemnt，必然就会执行去创建的流程，代码1执行到了  pendingSupportRequestManagerFragments.put(fm, current);异步去添加，也就是使用handler将整个添加操作包装成了Message发送到了主线程的Looper中的messageQueue中而不是立即执行会等到Looper.looper（）中遍历到它然后交给他的handler去处理他。异步添加在RFM没有添加到Activity中的时候，然后代码2就执行了同样也Activity中没有RFM也会去创建，这样就会在同一Activity中有两个RequesManagerFragment就出事了，所以引入了pendingSupportRequestManagerFragments，保证不会有上述情况的发生。向Activity中添加RFM这个异步任务之后，向Handler发送移除从pendingSupportRequestManagerFragments移除，这样就保证，在添加成功之前，都能在pendingSupportRequestManagerFraments中获取到RFM。</p>
+<h2 id="14-supportrequestmanagerfragment"><a class="markdownIt-Anchor" href="#14-supportrequestmanagerfragment"></a> 1.4、SupportRequestManagerFragment</h2>
+<pre class="highlight"><code class="">public class SupportRequestManagerFragment extends Fragment {
+
+  private final ActivityFragmentLifecycle lifecycle;
+  private final RequestManagerTreeNode requestManagerTreeNode = ...
+  @Nullable private SupportRequestManagerFragment rootRequestManagerFragment;
+  @Nullable private RequestManager requestManager;
+    ...
+  public SupportRequestManagerFragment() {
+    this(new ActivityFragmentLifecycle());
+  }
+  ActivityFragmentLifecycle getGlideLifecycle() {
+    return lifecycle;
+  }
+  ...
+  private void addChildRequestManagerFragment(SupportRequestManagerFragment child) {
+    childRequestManagerFragments.add(child);
+  }
+
+  private void removeChildRequestManagerFragment(SupportRequestManagerFragment child) {
+    childRequestManagerFragments.remove(child);
+  }
+    ...
+    ...
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+      registerFragmentWithRoot(getActivity());
+  }
+
+  @Override
+  public void onDetach() {
+    super.onDetach();
+    unregisterFragmentWithRoot();
+  }
+  ...
+</code></pre>
+<ul>
+<li>RequestManagerFragment在构造函数中默认创建一个ActivityFragmentLifecycle类型的成员变量。</li>
+<li>在attach中registerFragmentWithRoot(),在onDetach()中unregisterFragmentWithRoot();</li>
+<li>在RequestManagerFragment的对象中onStart（），onStop，中调用Lifecycle的响应函数</li>
+<li>在RequestManager当中会向ActivityFragmentLifecycle注册监听对象，于是RequestManager就会对组件生命周期做出相应的反应。</li>
+<li>另外当该Fragment作为一个子Fragment被添加到Fragment当中感知Fragment时，涉及到子Fragment管理可参考</li>
+</ul>
+<h2 id="15-requestmanager对activityfragment生命周期感知"><a class="markdownIt-Anchor" href="#15-requestmanager对activityfragment生命周期感知"></a> 1.5、RequestManager对Activity/Fragment生命周期感知</h2>
+<pre class="highlight"><code class="">public class RequestManager implements LifecycleListener
+  protected final Glide glide;
+  protected final Context context;
+  final Lifecycle lifecycle;
+  private final RequestTracker requestTracker;
+  ...
+  RequestManager(...) {
+	...
+	//RequestManager将自身注册到Lifecycle中也就是RequestManagerFragment中的Lifecycle
+    lifecycle.addListener(this);
+    lifecycle.addListener(connectivityMonitor);
+	  }
+  public synchronized boolean isPaused() {
+    return requestTracker.isPaused();
+  }
+  public synchronized void pauseRequests() {
+    requestTracker.pauseRequests();
+  }
+  public synchronized void pauseAllRequests() {
+    requestTracker.pauseAllRequests();
+  }
+  public synchronized void resumeRequests() {
+    requestTracker.resumeRequests();
+  }
+  //相应的生命周期函数中使用处理土拍你请求
+  @Override
+  public synchronized void onStart() {
+    resumeRequests();
+    targetTracker.onStart();
+  }
+  @Override
+  public synchronized void onStop() {
+    pauseRequests();
+    targetTracker.onStop();
+  }
+  //在onDestoty中取消解除绑定释放请求中的设计的资源
+  @Override
+  public synchronized void onDestroy() {
+    targetTracker.onDestroy();
+    targetTracker.clear();
+    requestTracker.clearRequests();
+    lifecycle.removeListener(this);
+	...
+    glide.unregisterRequestManager(this);
+  }
+}
+</code></pre>
+<ul>
+<li>RequestManager实现了LifecycleListener,且创建的时候传入了Lifecycle参数赋值给成员变量。</li>
+<li>被该RequestManager管理的请求都存放在RequestTracker对象这个成员变量属性中。</li>
+<li>RequestManager通过Lifecycle感知组件生命周期变化，在相应的生命周期状态下实现的LifecyleListener对应的回调函数会被执行，然后通过RequestTracker管理自己所关联的Request对象们。</li>
+</ul>
+<h2 id="glide中lifecycle小结"><a class="markdownIt-Anchor" href="#glide中lifecycle小结"></a> Glide中Lifecycle小结</h2>
+<p><img src="/images/android_lifecycle_1706254319128.png" alt="" /><br />
+为一个Request拥有所在组件的感知能力需要以下步骤：<br />
+1.从给定的组件（Fragment/FragmentActivity/Activity…）获取出FragmentManager。</p>
+<p>2.创建一个不带界面的Fragment（SupportRequestManagerFragment/RequestManagerFragment),这个不带界面的Frament有个Lifecycle成员变量，在Fragment创建的时候被初始化，用于监听此Fragment的生命周期。</p>
+<p>3.将不带界面的Frament添加进给定组件。</p>
+<p>4.创建RequestManager，RequestManager实现了LifecycleListener，创建的时候会传入无界面fragment中成员Lifecyle，RequestManager会把自己注册到Lifecycle中，这样RequestManager就拥有了感知组件生命周期的能力。</p>
+<h1 id="2-rxlifecycle"><a class="markdownIt-Anchor" href="#2-rxlifecycle"></a> 2、RxLifecycle</h1>
+<p>对RxLifecycle原理分析主要是依据trello的RxLifecycle，github传送门<a target="_blank" rel="noopener" href="https://github.com/trello/RxLifecycle">点这里</a></p>
+<h2 id="21-简单使用"><a class="markdownIt-Anchor" href="#21-简单使用"></a> 2.1、简单使用</h2>
+<p>在Activity中使用为例，主要是使用以下两个方法：</p>
+<pre class="highlight"><code class="">bindUntilEvent(@NonNull ActivityEvent event)
+
+bindToLifecycle()
+</code></pre>
+<p>使用的姿势是这样的：当Activity 回调onDestory生命周期函数的时候，就会解除订阅。</p>
+<pre class="highlight"><code class=""> Observable.interval(1, TimeUnit.SECONDS)
+                .compose(bindUntilEvent(ActivityEvent.DESTROY))
+                .subscribe();
+</code></pre>
+<h2 id="22-rxactivity构成"><a class="markdownIt-Anchor" href="#22-rxactivity构成"></a> 2.2、RxActivity构成</h2>
+<p>追根溯源看看<br />
+要先理解Rxjava2中compose()操作符的含义<br />
+compose操作符是在不破坏rxjava流式基础上把当前的Observable转换为另一个Observable，传入的是一个Transformer对象使用。更为详细的关于这个操作符的介绍<a target="_blank" rel="noopener" href="https://blog.csdn.net/u013378580/article/details/51607677">点这</a></p>
+<pre class="highlight"><code class="">public abstract class RxActivity extends Activity implements LifecycleProvider&lt;ActivityEvent&gt; {
+
+    private final BehaviorSubject&lt;ActivityEvent&gt; lifecycleSubject = BehaviorSubject.create();
+    @CheckResult
+    public final &lt;T&gt; LifecycleTransformer&lt;T&gt; bindUntilEvent(@NonNull ActivityEvent event) {
+        return RxLifecycle.bindUntilEvent(lifecycleSubject, event);
+    }
+
+    public final &lt;T&gt; LifecycleTransformer&lt;T&gt; bindToLifecycle() {
+        return RxLifecycleAndroid.bindActivity(lifecycleSubject);
+    }
+
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        lifecycleSubject.onNext(ActivityEvent.CREATE);
+    }
+    ....
+    ....
+    protected void onDestroy() {
+        lifecycleSubject.onNext(ActivityEvent.DESTROY);
+        super.onDestroy();
+    }
+}
+</code></pre>
+<ul>
+<li>Activity中有个一个BehaviorSubject的成员变量：lifecycleSubject。BehaviorSubject会发送离订阅最近的上一个值，当没有最近值的的时候会发送默认值。</li>
+<li>bindUntilEvent(ActivityEvent avt)最终会返回一个Transformer作为compose()方法的参数。</li>
+<li>bindUtliEvent方法是RxActivity实现了LifecycleProvider接口的方法，他的实现转交到了RxLifecycle.bindUntilEvent()</li>
+</ul>
+<h2 id="23-lifecycletransformer构建"><a class="markdownIt-Anchor" href="#23-lifecycletransformer构建"></a> 2.3  LifecycleTransformer构建</h2>
+<p>关于Transformer构建在RxlifeCycle类中主要是以下三个方法：</p>
+<pre class="highlight"><code class="">    @CheckReturnValue
+    public static &lt;T, R&gt; LifecycleTransformer&lt;T&gt; bindUntilEvent(@Nonnull final Observable&lt;R&gt; lifecycle,@Nonnull final R event) {
+        ...判空
+        return bind(takeUntilEvent(lifecycle, event));
+    }
+</code></pre>
+<p>使用filter()操作符，获取一个过滤出传入的指定事件，其他事件不向下游分发的Observer，也就是只发送指定事件的Observable。</p>
+<pre class="highlight"><code class="">private static &lt;R&gt; Observable&lt;R&gt; takeUntilEvent(final Observable&lt;R&gt; lifecycle, final R event) {
+        return lifecycle.filter(new Predicate&lt;R&gt;() {
+            @Override
+            public boolean test(R lifecycleEvent) throws Exception {
+                return lifecycleEvent.equals(event);
+            }
+        });
+</code></pre>
+<p>将上一步得到的Observable其实是一个BehaviorSubject，当做构造参数传入LifecycleTransformer</p>
+<pre class="highlight"><code class="">public static &lt;T, R&gt; LifecycleTransformer&lt;T&gt; bind(@Nonnull final Observable&lt;R&gt; lifecycle) {
+        return new LifecycleTransformer&lt;&gt;(lifecycle);
+    }
+</code></pre>
+<h2 id="24-lifecycletransformer原理"><a class="markdownIt-Anchor" href="#24-lifecycletransformer原理"></a> 2.4 LifecycleTransformer原理</h2>
+<p>看看LifecyclerTranformer里卖的啥药</p>
+<pre class="highlight"><code class="">public final class LifecycleTransformer&lt;T&gt; implements ObservableTransformer&lt;T, T&gt;,
+                                                      FlowableTransformer&lt;T, T&gt;,
+                                                      SingleTransformer&lt;T, T&gt;,
+                                                      MaybeTransformer&lt;T, T&gt;,
+    ...
+   @Override
+    public ObservableSource&lt;T&gt; apply(Observable&lt;T&gt; upstream) {
+        return upstream.takeUntil(observable);
+    }
+    ...                                       
+                                                          
+}
+</code></pre>
+<p>真相大白，对upstream也就是我们使用时，xxx.compose()时的那个Observerable进行了takeUtil（）操作。<br />
+takeUtil的语义是</p>
+<hr />
+<p>Returns an Observable that emits the items emitted by the source Observable until a second ObservableSource emits an item.<br />
+返回一个发送事件的观察源，直到第二个被观察者发送数据。</p>
+<p><strong>综上</strong><br />
+当给被观察序列compose了Transformer对象后，会在相应的生命周期函数中终止。</p>
+<h2 id="25-小结"><a class="markdownIt-Anchor" href="#25-小结"></a> 2.5 小结</h2>
+<ul>
+<li>Activity中有个BehaviorSubject 在Activity的生命周期回调函数中发送向其发送相应的事件。</li>
+<li>主要原理就是通过LifecycleProvider的bindUtilEvent方法构建LifecycleTransformr;</li>
+<li>LifecycleTransformer里面的apply操作就是将Observable进行TakeUtil操作。这个操作的效果就是中断上游Observerable的发送Observer取消。比如调用了bindUtilEvent（DESTORY_EVENT）也就是当原始的Observer接收到Event事件的时候就会取消解除Observer监听。</li>
+</ul>
+<h1 id="3-jetpack-lifecycle"><a class="markdownIt-Anchor" href="#3-jetpack-lifecycle"></a> 3、Jetpack Lifecycle</h1>
+<h2 id="31-supportactivity中对lifecycle支持"><a class="markdownIt-Anchor" href="#31-supportactivity中对lifecycle支持"></a> 3.1、SupportActivity中对Lifecycle支持</h2>
+<p>SupportActivity类实现了LifecycleOwner结构</p>
+<ul>
+<li>Activity onCreate方法中调用了ReportFragment的injectIfNeedIn()方法</li>
+</ul>
+<pre class="highlight"><code class="">public class SupportActivity extends Activity implements LifecycleOwner {
+    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ReportFragment.injectIfNeededIn(this);
+    }
+  public Lifecycle getLifecycle() {
+        return this.mLifecycleRegistry;
+    }
+</code></pre>
+<ul>
+<li>SupportActivity实现了LifecleOwner接口，这个接口只有一个方法geLifecycle();</li>
+<li>SupportActivity对这个接口的实现就是返回他的成员变量，LifecycleRegistry类型的成员变量。</li>
+</ul>
+<h2 id="32-reportfragment生命周期变更"><a class="markdownIt-Anchor" href="#32-reportfragment生命周期变更"></a> 3.2、ReportFragment生命周期变更</h2>
+<p>具有感知所在组件的能力在相应的生命周期回调函数里向LifecycleRegistry分发事件。</p>
+<pre class="highlight"><code class=""># ReportFragment
+  public static void injectIfNeededIn(Activity activity) {
+        android.app.FragmentManager manager = activity.getFragmentManager();
+        if (manager.findFragmentByTag(REPORT_FRAGMENT_TAG) == null) {
+            manager.beginTransaction().add(new ReportFragment(), REPORT_FRAGMENT_TAG).commit();
+            //立即执行拒绝异步
+            manager.executePendingTransactions();
+        }
+    }
+    
+    private void dispatch(Lifecycle.Event event) {
+        Activity activity = getActivity();
+        if (activity instanceof LifecycleRegistryOwner) {
+            ((LifecycleRegistryOwner) activity).getLifecycle().handleLifecycleEvent(event);
+            return;
+        }
+        /**2**/
+        if (activity instanceof LifecycleOwner) {
+            Lifecycle lifecycle = ((LifecycleOwner) activity).getLifecycle();
+            if (lifecycle instanceof LifecycleRegistry) {
+                ((LifecycleRegistry) lifecycle).handleLifecycleEvent(event);
+            }
+        }
+    }
+</code></pre>
+<p>注释2处</p>
+<ul>
+<li>如果Activity实现了LifecyclerOwener,LifecycleOwner接口中方法就是返回一个Lifecycle。</li>
+<li>Lifecycle的实现类LifecycleRegistry，LifecycleRegistry负责管理和分发生命周期状态。</li>
+<li>manager.executePendingTransactions();表示立即执行，transaction是异步的。FragmentManager的Transaction是异步执行了，如果想要立即执行就使用commitNow他表示当前的commit直接执行；executePendingTransactions()会将所有pending在队列中还有你新提交的transactions都执行了。</li>
+</ul>
+<h2 id="33-处理生命周期事件lifecycleregistry"><a class="markdownIt-Anchor" href="#33-处理生命周期事件lifecycleregistry"></a> 3.3、处理生命周期事件LifecycleRegistry</h2>
+<p>先来一张官方的图</p>
+<p><img src="/images/android_lifecycle_1706254319475.png" alt="image" /></p>
+<p>Jetpack对组件生命周期的管理有两个核心的概念事件（Event）和状态（State）。<br />
+他们直接的关系是<strong>事件驱动状态的转换</strong>。</p>
+<p>一共有五种状态，五种状态之间是怎样通过事件驱动的方式实现转换的呢，如上图所示，</p>
+<ul>
+<li><strong>INITIALIZED</strong>：这是一种初始状态。。</li>
+<li><strong>DESTROYED</strong>  ：死亡状态，ON_DESTORY事件驱动进入这种状态。</li>
+<li><strong>CREATED</strong>    ：创建状态，ON_CREATE事件和STOP事件驱动进入这种状态，ON_STOP事件驱动离开这种状态。</li>
+<li><strong>STARTED</strong> :   开始状态，On_START事件和ON_PAUSE事件驱动进出该种状态，ON_RESUME和ON_STOP驱动离开该种状态。</li>
+<li><strong>RESUME</strong>:ON_RESUME事件驱动进入该种状态，ON_PAUSE事件驱动离开这种状态。</li>
+</ul>
+<p>图看百遍其意自现，其实当我们得知某种事件之后就能准确的得知出他将进入的状态体现就是在LifecycleRegistry的getStateAfter()方法中，就不用文字描述了很代码很能说明问题。</p>
+<pre class="highlight"><code class="">    static State getStateAfter(Event event) {
+        switch (event) {
+            case ON_CREATE:
+            case ON_STOP:
+                return CREATED;
+            case ON_START:
+            case ON_PAUSE:
+                return STARTED;
+            case ON_RESUME:
+                return RESUMED;
+            case ON_DESTROY:
+                return DESTROYED;
+            case ON_ANY:
+                break;
+        }
+        throw new IllegalArgumentException(&quot;Unexpected event value &quot; + event);
+    }
+
+</code></pre>
+<p>LifecycleRegistry实现了Lifecyle抽象类，是生命周期监听者和分发生命周期事件的实际管理和分发者。其中的方法</p>
+<ul>
+<li>public  void addObserver(LifecycleObserver observer)继承自父类Lifecycle，添加生命周期监听。</li>
+<li>public  void removeObserver( LifecycleObserver observer)继承自父类Lifecycle,移除某个生命周期监听。</li>
+<li>public void handleLifecycleEvent(Lifecycle.Event event)通知监听者最新的声明周期，并且存储。</li>
+</ul>
+<h3 id="331-通知更改-handlelifecycleevent"><a class="markdownIt-Anchor" href="#331-通知更改-handlelifecycleevent"></a> 3.3.1 通知更改 handleLifecycleEvent</h3>
+<pre class="highlight"><code class="">   public void handleLifecycleEvent(@NonNull Lifecycle.Event event) {
+        State next = getStateAfter(event);
+        moveToState(next);
+    }
+</code></pre>
+<p>根据事件能获取到组件进入的下一个状态，然后将通知监听改变状态 ：moveToState(next);MoveToState（）方中，修改LifecycleRegistry中mState状态，然后调用<br />
+sync()方法。</p>
+<pre class="highlight"><code class="">   private FastSafeIterableMap&lt;LifecycleObserver, ObserverWithState&gt; mObserverMap =
+            new FastSafeIterableMap&lt;&gt;();
+</code></pre>
+<p>LifecycleRegistry中有mObserverMap存储这生命周期观察者，FastSafeIterableMap是一个Map的数据结构,key为LifecycleObserver,value为ObserverWithState。</p>
+<pre class="highlight"><code class=""> static class ObserverWithState {
+     State mState;
+     GenericLifecycleObserver mLifecycleObserver;
+
+     ObserverWithState(LifecycleObserver observer, State initialState) {
+         mLifecycleObserver = Lifecycling.getCallback(observer);
+         mState = initialState;
+     }
+
+     void dispatchEvent(LifecycleOwner owner, Event event) {
+         State newState = getStateAfter(event);
+         mState = min(mState, newState);
+         mLifecycleObserver.onStateChanged(owner, event);
+         mState = newState;
+     }
+    }
+</code></pre>
+<h1 id="结"><a class="markdownIt-Anchor" href="#结"></a> 结</h1>
+<h3 id="glide-vs-rxjava-vs-jetpack"><a class="markdownIt-Anchor" href="#glide-vs-rxjava-vs-jetpack"></a> Glide vs RXJava vs Jetpack</h3>
+<ul>
+<li>Glide作为一个加载图片的框架，当我们使用Glide.with(View/Fragment/View)时获取出具有感知组件生命周期的RequestManager并在相应的生命周期中开始/暂停/结束请求，结束是释放相应资源。对组件生命周期的感知的核心原理向Request/Activity中放入一没有界面的RequestManagerFragment，再相应的生命周期回调函数里调用方法通知外界注册了监听函数的监听者。</li>
+<li>Jetpack中对生命周期的管理其核心思想和Glide类似，也是放入向组件中放入一个无界面的ReportFragment，这个ReportFragment就拥有和组件同步的生命周期，依此来向外界通知生命状态，监听者做相应的处理。两个也是有不同，比如Glide关心onStart(),onStop()和onDestory()三个生命周期监听并且在相应的生命周期回调函数中做了相应的处理，在onStart（）中重试暂停或者失败的请求，在onStop中取消正在进行的请求，在destory中释放资源等。而Jetpack对<br />
+onCreate、onStart、onResume、onPause、onStop和onDestroy都做了监听，这样对监听者提供更了更全面的状态通知。</li>
+<li>RxLifecycle中使用Compose和TakeUnitl操作符，告诉在指定的生命周期状态下终止操作，相对于Glide和Jetpack中对生命周期的管理显得单薄，而且如果要直接使用的话还要集成RxActivity或者RxFragment，当然也可以自己实现用BehaviorSubject自己实现，但总的来说侵入性强。takeutil操作符带来的问题就是当操作被终止后还是会发送onComplete或者onError事件，这对于在这两个方法中有业务处理的情况来说不是一个优雅的实现。于是看到了知乎团队基于无界面Fragment感知组件生命周期的思想，实现了一套RxLifecycle有兴趣的可以参考<a target="_blank" rel="noopener" href="https://github.com/zhihu/RxLifecycle">知乎RxLifecycle</a></li>
+</ul>
+<h3 id="留点念想"><a class="markdownIt-Anchor" href="#留点念想"></a> 留点念想</h3>
+<ul>
+<li>takeUntil()操作符是内部怎么做到中止操作的？</li>
+<li>Glide除了感知组件的生命周期是怎么感知网络变化并作出相应处理的？</li>
+<li>关于对Jetpack中对组件生命周期监听的具体应用在LiveData和ViewModule中都有体现，他们是怎么工作的？</li>
+<li>另外，Jetpack中LifecycleListener还能通过注解的方式回调执行怎么做到的？</li>
+<li>and so on</li>
+</ul>
+<p><strong>这些下回写</strong></p>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/basic/">#basic</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

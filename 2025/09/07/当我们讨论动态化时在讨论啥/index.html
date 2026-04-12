@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>当我们讨论动态化时在讨论啥 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="动态化方向上业界很早就提出并实践了很多成熟的方案。大概经历了以 Webview 为容器承载 H5 的 Hybird 方案。到以 RN 为代表的 RN、Weex、hippy 等前端技术栈映射原生 UI 实体的类 RN 方案。同时以 VirtualView(Tangram)、MTFexBox、 DX、GX 为代表的 NativeDSL 方案在轻交互重展示的卡片场景在也有很多应用。 近些年来 Jetpa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="当我们讨论动态化时在讨论啥">
+<meta property="og:url" content="https://drummor.github.io/2025/09/07/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AE%A8%E8%AE%BA%E5%8A%A8%E6%80%81%E5%8C%96%E6%97%B6%E5%9C%A8%E8%AE%A8%E8%AE%BA%E5%95%A5/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="动态化方向上业界很早就提出并实践了很多成熟的方案。大概经历了以 Webview 为容器承载 H5 的 Hybird 方案。到以 RN 为代表的 RN、Weex、hippy 等前端技术栈映射原生 UI 实体的类 RN 方案。同时以 VirtualView(Tangram)、MTFexBox、 DX、GX 为代表的 NativeDSL 方案在轻交互重展示的卡片场景在也有很多应用。 近些年来 Jetpa">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/img_20250907164052914.png">
+<meta property="og:image" content="https://drummor.github.io/images/img_20250907164218660.png">
+<meta property="og:image" content="https://drummor.github.io/images/img_20250907165242982.png">
+<meta property="og:image" content="https://drummor.github.io/images/img_20250907165330095.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905152117.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250903175541.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250903175600.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905152041.png">
+<meta property="og:image" content="https://drummor.github.io/images/img_20250907171732372.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905151953.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905151959.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905151543.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905151751.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250905151817.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250904140313.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250904115140.png">
+<meta property="og:image" content="https://drummor.github.io/images/Pasted%20image%2020250904115157.png">
+<meta property="article:published_time" content="2025-09-07T08:29:59.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.223Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="基建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/img_20250907164052914.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2025/09/07/当我们讨论动态化时在讨论啥/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                当我们讨论动态化时在讨论啥
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2025.09.07</span>
+                
+                    <a class="post-category-link" href="/categories/%E5%9F%BA%E5%BB%BA/">基建</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <p>动态化方向上业界很早就提出并实践了很多成熟的方案。大概经历了以 Webview 为容器承载 H5 的 Hybird 方案。到以 RN 为代表的 RN、Weex、hippy 等前端技术栈映射原生 UI 实体的类 RN 方案。同时以 VirtualView(Tangram)、MTFexBox、 DX、GX 为代表的 NativeDSL 方案在轻交互重展示的卡片场景在也有很多应用。<br />
+近些年来 Jetpack Compose 和 SwiftUI 更为现代的声明式 UI 在客户端技术上逐渐流行起来，也给跨端和动态化带来了新的可能。</p>
+<h2 id="1-类-rn-方案"><a class="markdownIt-Anchor" href="#1-类-rn-方案"></a> 1 类 RN 方案</h2>
+<p>执行 JS 脚本用以组织渲染的布局树。性能瓶颈在 JS 执行构建 dom 树 和 JS 通信上。<br />
+RN 、 Weex、Hppiy 、Hummer 是其中的典型代表。</p>
+<h3 id="11-reactnative"><a class="markdownIt-Anchor" href="#11-reactnative"></a> 1.1 ReactNative</h3>
+<ul>
+<li>
+<p><strong>基本原理</strong>：React- &gt; V-DOM -&gt; Native layout</p>
+</li>
+<li>
+<p><strong>线程模型</strong>：JSThread，UIThread，ShadowThread。</p>
+<ul>
+<li>JSThread：JavaScript 线程，负责 JS 和原生代码的交互线程，大部分的逻辑都在此执行。</li>
+<li>ShadowThread：构建 V-DOM，交付 UIThread 在原生平台上渲染。</li>
+<li>Native 交互: Android/Platform 的 UI thread；</li>
+</ul>
+</li>
+</ul>
+<p><strong>新旧对比架构</strong><br />
+RN 对整体架构做了一个大的升级，解决长期的以来的性能瓶颈。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left">旧</th>
+<th style="text-align:left">新</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Bridge 通信</td>
+<td style="text-align:left"><img src="/images/img_20250907164052914.png" width="300"></td>
+<td style="text-align:left"><img src="/images/img_20250907164218660.png" width="300"/></td>
+</tr>
+<tr>
+<td style="text-align:left">JS 引擎</td>
+<td style="text-align:left"><img src="/images/img_20250907165242982.png" width="300"><br>解析执行是在运行期</td>
+<td style="text-align:left"><img src="/images/img_20250907165330095.png" width="300" /><br>引擎支持二进制加载，解析编译放在了打包期</td>
+</tr>
+</tbody>
+</table>
+<p><strong>引擎直通</strong> 去 JSBridge，JSC -&gt; JSI。去掉异步调用，消息队列处理。序列化耗时。<br />
+<strong>Hermes 引擎</strong> 支持二进制加载；针对移动端内存回收。</p>
+<h3 id="12-hippy-30"><a class="markdownIt-Anchor" href="#12-hippy-30"></a> 1.2 hippy 3.0</h3>
+<p><img src="/images/Pasted%20image%2020250905152117.png" alt="" />hippy 已经把动态化跨端给范式化了，分为开发期、解析执行期、渲染期。</p>
+<ul>
+<li>
+<p><strong>驱动层</strong>：开发期语言使用 JS（React/Vue）以及其他扩展</p>
+</li>
+<li>
+<p><strong>DOM 层</strong>：Dom 管理和 Render 管理放在 C++ 双端共用。<br />
+<strong>渲染层</strong>：运行期承接渲染的环境支持。Native 原生、Flutter 和 H5。</p>
+</li>
+<li>
+<p><strong>官方文档</strong>：<a target="_blank" rel="noopener" href="https://doc.openhippy.com/#/architecture/introduction">https://doc.openhippy.com/#/architecture/introduction</a></p>
+</li>
+<li>
+<p><strong>开源地址</strong>：<a target="_blank" rel="noopener" href="https://github.com/Tencent/Hippy">https://github.com/Tencent/Hippy</a></p>
+</li>
+</ul>
+<h3 id="13-hummer"><a class="markdownIt-Anchor" href="#13-hummer"></a> 1.3 hummer</h3>
+<p><a target="_blank" rel="noopener" href="https://github.com/didi/hummer">https://github.com/didi/hummer</a><br />
+<img src="/images/Pasted%20image%2020250903175541.png" alt="" /></p>
+<ul>
+<li>编码期：写 js 代码、原生渲染。</li>
+<li>原生渲染: JSBridge -&gt; YogaLayout -&gt; NativeRender<br />
+JSEngine 执行 JS ，JSBridge 异步调用，利用 invoker，实现 View 树的构建、样式设置、事件设置</li>
+<li>业务逻辑与 UI 逻辑 JS 单线程执行的，不维护虚拟 Dom，YogaNode 放在 Native 侧。</li>
+<li>事件注册：js 注册 -&gt; objId(callabck) -&gt; native 注册 listener-&gt; 通过 objId 回调 js -&gt; js 真正的执行 callback</li>
+<li>线程模型：JSThread 、 UI Thread。</li>
+</ul>
+<blockquote>
+<p>&quot;从这个架构设计可以看出，我们抛弃了业界其他动态化跨端框架普遍使用的 DSL 层和 VDOM 层，因此原生 Hummer 不具备前端开发常用的响应式编程的能力…</p>
+</blockquote>
+<h3 id="14-lynx"><a class="markdownIt-Anchor" href="#14-lynx"></a> 1.4 lynx</h3>
+<h4 id="141-早期"><a class="markdownIt-Anchor" href="#141-早期"></a> 1.4.1 早期</h4>
+<p><img src="/images/Pasted%20image%2020250903175600.png" alt="" /></p>
+<ul>
+<li><strong>首屏直出</strong>：RN 或 Weex 类型的跨平台框架是在 JS 运行时中去创建、更新 DOM 节点，js 虚拟机承担了大部分的工作。而 Lynx 是将 DOM 节点构建全部放在 Native 层，JS 运行的是业务逻辑、不阻塞 UI 展示，整体轻 JS 逻辑设计</li>
+<li>字节的 lynx 早期有开源版本，后来转到内部维护升级，作为字节跨端的重要基建，广泛用在各个业务线。<br />
+<img src="/images/Pasted%20image%2020250905152041.png" alt="" /></li>
+<li>lynx 最重要的渲染点在于首屏直出。Lynx 是将 DOM 节点构建全部放在 Native （C++）层。JS 运行的是业务逻辑、不阻塞 UI 展示，整体轻 JS 逻辑设计；<br />
+<img src="/images/img_20250907171732372.png" alt="" /></li>
+<li>内部有做了大量优化升级，其中很重要的一项是自建渲染工具，扩展平台便捷以及做更为针对性的优化。</li>
+</ul>
+<h4 id="142-如今"><a class="markdownIt-Anchor" href="#142-如今"></a> 1.4.2 如今</h4>
+<p>2025 年 3 月，lynx 正式开源。<a target="_blank" rel="noopener" href="https://lynxjs.org">https://lynxjs.org</a></p>
+<ul>
+<li>lynx 高度遵循 W3C 标准、【一次编写，多端渲染】的跨平台框架。开发体验完全对标前端。</li>
+<li>lynx 从 JS 引擎 PrimJS（<a target="_blank" rel="noopener" href="https://github.com/lynx-family/primjs%EF%BC%89%EF%BC%8C%E5%88%B0%E6%B8%B2%E6%9F%93%E5%BC%95%E6%93%8E**starlight**%EF%BC%8C%E5%88%B0">https://github.com/lynx-family/primjs），到渲染引擎**starlight**，到</a></li>
+<li>开源了  <a target="_blank" rel="noopener" href="https://lynxjs.org/zh/react/index.html"><strong>ReactLynx</strong></a>（“Lynx 上的 React”），作为 Lynx 的首个前端框架， Lynx 上的组件化、声明式 UI 。</li>
+</ul>
+<h3 id="15-类-rn-小结"><a class="markdownIt-Anchor" href="#15-类-rn-小结"></a> 1.5 类 RN 小结</h3>
+<ul>
+<li>RN 以及类 RN 方案能很好的兼顾动态性和多端一致性，但是 【DOM 树的执行组装】 和【不同语言通信】是该类方案的主要瓶颈。</li>
+<li>各厂都着重在性能这个象限上做了很多建设，努力的方向最终也是趋同。
+<ul>
+<li><strong>dom 树构建</strong> 左移到研发期。由执行构建变为解析构建。</li>
+<li><strong>渲染优化</strong> dom diff；布局拍平优化下移到 c++； 线程模型优化，解析映射组装 dom 逻辑异步+并发；自渲染/自绘；</li>
+<li>J<strong>S 引擎性能</strong> JS 引擎支持 bytecode。</li>
+<li>替换 jsbridge 为 JS 引擎的原生扩展。各家叫法不一样有的叫引擎直通，有的 JSBinding 模式。其实都是把原本 JSBridge 的通信方式替换成预埋到 C++ 层直接弥合 JS 与原生通信。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-nativedsl"><a class="markdownIt-Anchor" href="#2-nativedsl"></a> 2 NativeDSL</h2>
+<p>渲染管线使用客户端原生渲染管线，通过协议映射原生控价元素，天然具备 首屏直出。</p>
+<h3 id="21-mtflexbox"><a class="markdownIt-Anchor" href="#21-mtflexbox"></a> 2.1 MTFlexBox</h3>
+<blockquote>
+<p>&quot;MTFlexbox 适用于重展示、轻交互的业务场景，与现有 HTML、React Native、Weex 等跨平台方案相比，MTFlexbox 具备着性能高、渲染速度快、兼容性高、原生功能支持度高等优势。但其缺点在于不支持复杂的交互逻辑，不适合复杂交互的业务场景</p>
+</blockquote>
+<p><strong>项目架构</strong><br />
+<img src="/images/Pasted%20image%2020250905151953.png" alt="" /><br />
+核心流程<br />
+<img src="/images/Pasted%20image%2020250905151959.png" alt="" /><br />
+优化思路<br />
+树拍平（Litho）、任务异步线程预热、缓存。<br />
+相关资料<br />
+<a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/09/19/litho-practice-in-dynamic-program-mtflexbox.html">https://tech.meituan.com/2019/09/19/litho-practice-in-dynamic-program-mtflexbox.html</a></p>
+<h3 id="22-dynamicx"><a class="markdownIt-Anchor" href="#22-dynamicx"></a> 2.2 DynamicX</h3>
+<p><strong>渲染流程</strong></p>
+<p><img src="/images/Pasted%20image%2020250905151543.png" alt="" /></p>
+<p><strong>协议二进制</strong> 在服务端编译期就将 XML 文件解析成二进制，将生成抽象语法树的过程前置到编译期执行，端上执行时，仅需要拿到二进制文件进行属性解析，对于静态值类型，在编译期就直接转换成了对应的数据类型，减少了端上的拆装箱开销；</p>
+<p><strong>事件链</strong> 实现逻辑动态性。原生提供注册一些原则能力，使用 JSON 对这些原子能力进行编排。</p>
+<h3 id="23-gaiax"><a class="markdownIt-Anchor" href="#23-gaiax"></a> 2.3 GaiaX</h3>
+<p><img src="/images/Pasted%20image%2020250905151751.png" alt="" /></p>
+<ul>
+<li><strong>协议完整</strong>: 描述 View 层级关系使用 layout 文件、描述 UI 样式使用 css 、对数据格式进行描述的 data，还有描述逻辑动态性的 js 脚本。</li>
+<li><strong>原生渲染</strong>：使用 Rust 实现的 Strech 库做双端磨平。（<a target="_blank" rel="noopener" href="https://github.com/vislyhq/stretch%EF%BC%89">https://github.com/vislyhq/stretch）</a></li>
+<li><strong>表达计算</strong>：C/C++ 实现双端共用。</li>
+<li><strong>工具链</strong>：有 Gaia Studio 作为 IDE。</li>
+<li><strong>逻辑动态</strong>：引入了 JS 脚本。</li>
+</ul>
+<h3 id="24-cube"><a class="markdownIt-Anchor" href="#24-cube"></a> 2.4 Cube</h3>
+<p><img src="/images/Pasted%20image%2020250905151817.png" alt="" /></p>
+<blockquote>
+<p>JSEngine 主要负责卡片 js 逻辑执行和卡片数据变化监听，从而支持开发者在卡片内部写一些业务逻辑能力实现卡片内容和样式的动态变化。</p>
+</blockquote>
+<blockquote>
+<p>因为卡片场景对性能要求较高，综合包大小和性能等方面考虑，我们选择了 quickjs 作为我们的 js 基础引擎库，同时实现了一个非常小的 js 响应式框架（JSFM），用来支持卡片内的逻辑代码能力。</p>
+</blockquote>
+<blockquote>
+<p>CardEngine 主要负责卡片数据的解析和绑定、卡片逻辑渲染、构建 DOM 指令、JSAPI 管理、JSBinding、Native 事件通信等。卡片 DOM 树的初始化构建过程，我们并没有把它放在 js 运行时，而是在卡片实例初始化链路中直接通过 C<ins>进行指令生成和树构建，一方面是为了保持 js 框架更小更快，另一方面 C</ins> 的运行效率更高。</p>
+</blockquote>
+<blockquote>
+<p>RenderEngine 后端渲染底座，负责卡片布局计算、样式解析、Layer 计算、自绘制组件、同层渲染、光栅化上屏等过程，以及手势、动效等交互效果。</p>
+</blockquote>
+<blockquote>
+<p>Platform 平台相关接口，包括原子 view 封装、Canvas API、三方组件扩展协议、动画 api 等。</p>
+</blockquote>
+<h3 id="25-nativedsl-小结"><a class="markdownIt-Anchor" href="#25-nativedsl-小结"></a> 2.5 NativeDSL 小结</h3>
+<ul>
+<li>NativeDSL 方案在卡片级，有动态化诉求的场景十分有效。渲染管线是平台渲染，本身具备“首屏支出特性”。</li>
+<li>UI 动态性通过 Layout Schema 保证，逻辑动态性需要借住更为强大的语言级别的描述。这本身会牺牲性能。</li>
+<li>DX 用事件链；GX 用 JS。MTFlexBox 的定位上觉得不适合用，本身不支持逻辑动态性。</li>
+<li>渲染管线(解析、测量、布局) 异步；自绘 (Text )补充；列表等容器针对性优化；</li>
+<li>对于页面级别的场景，往往伴随着比较复杂的交互，使用 NativeDSL 会有很大调整。</li>
+</ul>
+<h2 id="3-kmp"><a class="markdownIt-Anchor" href="#3-kmp"></a> 3 KMP</h2>
+<p>基于 KMP 和 Compose 跨端和动态化方向最近几年也有发展。</p>
+<h3 id="31-redwood"><a class="markdownIt-Anchor" href="#31-redwood"></a> 3.1 RedWood</h3>
+<p>RedWood 是 CashApp 开源的基于 KMP 和 CMP 技术的 SDK。 RedWood 可以使用 Kotlin 语言来构建响应式的跨平台 UI。</p>
+<h4 id="331-compose-为什么可以跨平台"><a class="markdownIt-Anchor" href="#331-compose-为什么可以跨平台"></a> 3.3.1 Compose 为什么可以跨平台</h4>
+<p>Jetpack Compose（<a target="_blank" rel="noopener" href="https://developer.android.com/compose%EF%BC%89%E6%98%AF%E9%80%82%E7%94%A8%E4%BA%8E">https://developer.android.com/compose）是适用于</a> Android 平台的现代声明式 UI 系统。摒弃了长期依赖 Android View 系统命令式 UI。</p>
+<p><img src="/images/Pasted%20image%2020250904140313.png" alt="" /></p>
+<ul>
+<li><strong>Compose Compiler</strong>：Kotlin 编译器插件，负责对 Composable 函数的静态检查以及代码生成等。</li>
+<li><strong>Compose Runtime</strong>：负责 Composable 函数的状态管理，以及执行后的渲染树生成和更新</li>
+<li><strong>Compose UI</strong>: 基于渲染树进行 UI 的布局、绘制等 UI 渲染工作</li>
+<li><strong>Compose Foundation</strong>: 提供用于布局的基础 Composable 组件，例如 <code>Column</code>，<code>Row</code> 等。</li>
+<li><strong>Compose Material</strong>：提供上层的面向 Material 设计风格的 Composable 组件。</li>
+</ul>
+<p>各层的职责明确，其中 Compose Compiler 和 Runtime 是支撑整个声明式 UI 运转的基石。</p>
+<p><img src="/images/Pasted%20image%2020250904115140.png" alt="" /></p>
+<p><strong>Compose Compiler</strong> 把 基于 @Composable 函数生成代码交付给 Compose Runtime 执行。Compose Runtime 执行生成的这些代码时会生成一个运行时的数据结构 Slot Table，该数据结构是一个线性的数据结构，该数据结构其实就是 <strong>UI 状态树</strong> ，状态驱动真正的 Compose UI 渲染树。</p>
+<p><img src="/images/Pasted%20image%2020250904115157.png" alt="Pasted image 20250904115157.png" /><br />
+得益于 Compose 的分层，<strong>Compose Compiler</strong> 编译器和 Compose Runtime 是平台无关的，只需要桥接【状态树转渲染树】这一层就可以实现 UI 的跨平台，同时能够享受到 Compose 声明式 UI、完善的开发套件以及智能重组机制。这部分的原理可以看这个（<a target="_blank" rel="noopener" href="https://juejin.cn/post/7176437908935540797%EF%BC%89">https://juejin.cn/post/7176437908935540797）</a></p>
+<h4 id="332-还能动态化"><a class="markdownIt-Anchor" href="#332-还能动态化"></a> 3.3.2 还能动态化</h4>
+<p>更进一步，KMP 可以把我们的 Compse 代码编译成 JS 代码，运行在 JS 引擎上，渲染系统采用平台 Native 的渲染系统，当我们 UI 需要变更时可以直接下发 JS 实现动态化。</p>
+<p>以上是 RedWoods 核心原理。更多细节可参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://code.cash.app/kotlin-multiplatform-summer">https://code.cash.app/kotlin-multiplatform-summer</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/cashapp/redwood">https://github.com/cashapp/redwood</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/cashapp/zipline">https://github.com/cashapp/zipline</a></li>
+</ul>
+<h3 id="32-kuikly"><a class="markdownIt-Anchor" href="#32-kuikly"></a> 3.2 Kuikly</h3>
+<p>腾讯今年（2025 年）开源了 Kuikly，同样也是基于 KMP 能够实现跨端和动态化。Kuikly 起步较早有一套自研的基于 Kotlin DSL。</p>
+<ul>
+<li>【原理】 <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/56vXqvTuigT4H3OB1eD96g?clicktime=1751516862&amp;enterid=1751516862&amp;scene=231&amp;subscene=7">https://mp.weixin.qq.com/s/56vXqvTuigT4H3OB1eD96g?clicktime=1751516862&amp;enterid=1751516862&amp;scene=231&amp;subscene=7</a></li>
+<li><a target="_blank" rel="noopener" href="https://kuikly.tds.qq.com/Introduction/arch.html">https://kuikly.tds.qq.com/Introduction/arch.html</a></li>
+</ul>
+<h3 id="33-kmp-小结"><a class="markdownIt-Anchor" href="#33-kmp-小结"></a> 3.3 KMP 小结</h3>
+<p>先说说好的方面，毫无疑问 CMP 和 KMP 是跨端动态化一个技术发力的方向，依托</p>
+<ul>
+<li>现代化的开发方式，声明式+响应式。</li>
+<li>成熟的 Kotlin 基建和工具链</li>
+<li>对客户端开发优化，使用 Kotlin 语言。</li>
+</ul>
+<p>可能有困难的方向</p>
+<ul>
+<li><strong>性能问题</strong> 该类方案对于 Android 平台来说，可以直接下发平台产物使用成熟的动态化技术（插件化）性能不是问题，但是到 iOS 平台还是要回到执行 JS 的老路，对其性能还是存疑的。</li>
+</ul>
+<h2 id="4-自渲染"><a class="markdownIt-Anchor" href="#4-自渲染"></a> 4 自渲染</h2>
+<p>绘制、手势事件、多机型多平台兼容适配、调试监控等一系列周边配套工具。</p>
+<ul>
+<li>
+<p><strong>Futter</strong> ：渲染 手势事件 多机型多平台兼容适配 调试监控等一系列周边配套工具 ，Framework 级别的。</p>
+</li>
+<li>
+<p>**北海：使用前端技术栈 + Flutter 渲染管线。<a target="_blank" rel="noopener" href="https://github.com/openkraken/kraken">https://github.com/openkraken/kraken</a></p>
+</li>
+<li>
+<p><strong>Cube/DX :</strong> 自渲染</p>
+</li>
+</ul>
+<h2 id="5-hybrid-方案"><a class="markdownIt-Anchor" href="#5-hybrid-方案"></a> 5 HyBrid 方案</h2>
+<ul>
+<li>**sonic：**webview 容器多进程预热；H5 资源复用；http 原生接管（动态缓存、增量更新、并行加载）…。<a target="_blank" rel="noopener" href="https://github.com/Tencent/VasSonic">https://github.com/Tencent/VasSonic</a></li>
+<li><strong>uni-app</strong>：webview 为容器，开发语言纯粹的前端技术栈。</li>
+</ul>
+<hr />
+<h2 id="6-总结"><a class="markdownIt-Anchor" href="#6-总结"></a> 6 总结</h2>
+<ul>
+<li>协议二进制；</li>
+<li>执行构建 -&gt; 指令构建 -&gt; 解析构建（ ssr )；</li>
+<li>DOM 树差量更新、剪枝、拍平；</li>
+<li>预载缓存、并发、线程模型优化；</li>
+<li>自绘补充；</li>
+</ul>
+<h2 id="7-小结"><a class="markdownIt-Anchor" href="#7-小结"></a> 7 小结</h2>
+<ul>
+<li>动态化跨端上手容易精深难。</li>
+<li>深入渲染性能优化、工具建设、体系化方法论，看过与写过体感区别很大。</li>
+<li>涉及技术栈多，JS/TS、Android/iOS、C/C++、JS Engine、Render Engine。</li>
+<li>业内成熟方案多，学习资料丰富。</li>
+</ul>
+<h2 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h2>
+<h3 id="dx"><a class="markdownIt-Anchor" href="#dx"></a> <strong>DX</strong></h3>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247497536&amp;idx=1&amp;sn=c5209fbb6cb3cc5625375cfed03d2d59&amp;chksm=cf58e8dcf82f61ca4e0c569f078ac8325c9fb9a3b95edd58d147dc3b4352af41f54f75512ef9&amp;scene=178&amp;cur_album_id=2654383118854111232#rd">基于优酷业务特色的跨平台技术 | GaiaX 开源解读</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247497862&amp;idx=1&amp;sn=81fc22541a48a3f433ce66cde6927035&amp;chksm=cf58e71af82f6e0c0c910f17e53c877baddb6a88ec53e4cce5e9db06c222c86ebc9794b16406&amp;scene=178&amp;cur_album_id=2654383118854111232#rd">跨端动态化模板引擎详解，看完你也能写一个 | GaiaX 开源解读</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247499011&amp;idx=1&amp;sn=a1866cba0d28754610268681d4bae688&amp;chksm=cf58e29ff82f6b896bab729fb219e1ad6f3b426b042c8aa157ab82794091481074dfc48bdddf&amp;scene=178&amp;cur_album_id=2654383118854111232#rd">给 Stretch（Rust 编写的 Flexbox 布局引擎）新增特性，我头都秃了… | GaiaX 开源解读</a><br />
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247499519&amp;idx=1&amp;sn=8e0d4bf23339ddddc63328f8e8886924&amp;chksm=cf58e163f82f687551f3dc36fe0a3ab3f8227807c8de69747b612376d1552e201f717a3d8a00&amp;scene=178&amp;cur_album_id=2654383118854111232#rd">作为逻辑动态化的基础，GaiaX 表达式是如何设计的? | GaiaX 开源解读</a></p>
+<h3 id="gx"><a class="markdownIt-Anchor" href="#gx"></a> <strong>GX</strong></h3>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247494876&amp;idx=1&amp;sn=8b5859899caff8c4c0790a7f324f64fd&amp;chksm=cf58f340f82f7a5622bb9f6714abed13312cf9366945748e33a6fca410ed7ce17922b613d483&amp;scene=178&amp;cur_album_id=2654388177654497281#rd">淘宝 Native 研发模式的演进与思考 | DX 研发模式</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247494877&amp;idx=1&amp;sn=67a300ec2f2f73280c632b5f88ebfc70&amp;chksm=cf58f341f82f7a5707b84c63fbad0789d5dd3af44238c1ac9e2d9d9c5891c655116b4a7f2c4e&amp;scene=178&amp;cur_album_id=2654388177654497281#rd">列表容器&amp;事件链如何助力业务快速迭代 | DX 研发模式</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247494878&amp;idx=1&amp;sn=5a27f946bf49a5532dc130a3c5db9a9b&amp;chksm=cf58f342f82f7a54743327bc6bccc27cbc9edcd9da93e61aa1fd8c2def1183e8b27e4d6cd6e5&amp;scene=178&amp;cur_album_id=2654388177654497281#rd">如何持续突破性能表现？DX 性能优化策略详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=Mzg4MjE5OTI4Mw==&amp;mid=2247494880&amp;idx=1&amp;sn=d83286b216447315af83946af4b3a673&amp;chksm=cf58f37cf82f7a6a992a729c47e2defb1989576bfd42dbd221bbd2a2138b068e41d6eeaef3a6&amp;scene=178&amp;cur_album_id=2654388177654497281#rd">从 0 到 1，IDE 如何提升端侧研发效率？| DX 研发模式</a></p>
+<h3 id="cube"><a class="markdownIt-Anchor" href="#cube"></a> <strong>Cube</strong></h3>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7009087638384689160">Cube 技术解读 1 | 支付宝新一代动态化技术架构与选型综述</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7028485852036595749">Cube 技术解读 2 | 详解「支付宝」全新的卡片技术栈</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7049239349795225608">Cube 技术解读 3 | Cube 小程序技术详解</a></p>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7090384131401449486">Cube 技术解读 4 | Cube 渲染设计的前世今生</a></p>
+<h3 id="mtflexbox"><a class="markdownIt-Anchor" href="#mtflexbox"></a> MTFlexbox</h3>
+<p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2019/09/19/litho-practice-in-dynamic-program-mtflexbox.html">Litho 在美团动态化方案 MTFlexbox 中的实践</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5NjQ5MTI5OA==&amp;mid=2651750430&amp;idx=2&amp;sn=89c8c1212f4b6a24694028ec3188aa09&amp;from=timeline">【基本功】Litho 的使用及原理剖析</a></p>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/%E5%9F%BA%E5%BB%BA/">#基建</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

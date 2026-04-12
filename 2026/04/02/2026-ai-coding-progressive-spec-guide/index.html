@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>2026 年 AI 编码的&#34;渐进式 Spec&#34;实战指南 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="导读精华  模型是地基，方法论是上层建筑 — 模型不行，上面盖再好也白搭。T0 模型三轮搞定的事，T2 可能 15 轮还对不了。选对模型比优化 workflow 重要得多。 Agent 的能力天花板由工具决定 — 给它读代码的工具它能改代码，不给它网络工具它就上不了网。安全靠框架约束，不靠 AI 自觉。 知识底座才是真正的护城河 — prompt 和方法论会趋同，领域 Know-How 和踩坑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2026 年 AI 编码的&quot;渐进式 Spec&quot;实战指南">
+<meta property="og:url" content="https://drummor.github.io/2026/04/02/2026-ai-coding-progressive-spec-guide/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="导读精华  模型是地基，方法论是上层建筑 — 模型不行，上面盖再好也白搭。T0 模型三轮搞定的事，T2 可能 15 轮还对不了。选对模型比优化 workflow 重要得多。 Agent 的能力天花板由工具决定 — 给它读代码的工具它能改代码，不给它网络工具它就上不了网。安全靠框架约束，不靠 AI 自觉。 知识底座才是真正的护城河 — prompt 和方法论会趋同，领域 Know-How 和踩坑">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-04-02T00:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-12T04:43:19.710Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="AI Coding">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Spec Coding">
+<meta property="article:tag" content="工程实践">
+<meta property="article:tag" content="渐进式">
+<meta name="twitter:card" content="summary">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2026/04/02/2026-ai-coding-progressive-spec-guide/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                2026 年 AI 编码的&#34;渐进式 Spec&#34;实战指南
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2026.04.02</span>
+                
+                    <a class="post-category-link" href="/categories/Agent/">Agent</a>
+                
+            </div>
+        </div>
+        
+        <div class="post-audio-player">
+            <audio controls src="/audio/2026-ai-coding-progressive-spec-guide/audio.m4a"></audio>
+        </div>
+        
+        
+        <div class="post-md">
+            <blockquote></blockquote>
+<blockquote>
+<p><strong>导读精华</strong></p>
+<ul>
+<li><strong>模型是地基，方法论是上层建筑</strong> — 模型不行，上面盖再好也白搭。T0 模型三轮搞定的事，T2 可能 15 轮还对不了。选对模型比优化 workflow 重要得多。</li>
+<li><strong>Agent 的能力天花板由工具决定</strong> — 给它读代码的工具它能改代码，不给它网络工具它就上不了网。安全靠框架约束，不靠 AI 自觉。</li>
+<li><strong>知识底座才是真正的护城河</strong> — prompt 和方法论会趋同，领域 Know-How 和踩坑记录才是别人抄不走的核心竞争力。</li>
+</ul>
+<p>这次分享的内容来自作者在实际项目中落地 AI 编码的一些实践和思考。希望能给正在尝试或想要尝试 AI 编码的同学一些参考。</p>
+</blockquote>
+<h2 id="一-背景"><a class="markdownIt-Anchor" href="#一-背景"></a> 一 背景</h2>
+<p>聊 AI 编码之前，先对齐三个基础认知。</p>
+<h3 id="11-如何理解大模型-它能做什么-不能做什么"><a class="markdownIt-Anchor" href="#11-如何理解大模型-它能做什么-不能做什么"></a> 11 如何理解大模型 它能做什么 不能做什么</h3>
+<p>当前顶级模型可以<strong>独立完成中等复杂度的编码任务</strong>——理解需求、读代码、写实现、修编译错误，但仍需人审查结果。它们没有持久记忆、没有自主意图，只处理你给它的上下文。</p>
+<p>不同模型之间的性能差异是断崖式的。Chatbot Arena 通过<strong>真人盲评</strong>计算 ELO 分数（截至 2026 年 3 月，536 万次投票、316 个模型）：</p>
+<p>Arena 的 <strong>Multi-Turn</strong> 维度衡量多轮交互稳定性（对应 Agent 场景）：Gemini 3.1 Pro 多轮第一，超过 Claude 4.6；Claude Sonnet 4.6 掉到第 10——<strong>单轮强不等于多轮稳</strong>。</p>
+<p>梯队差异体感：同样是&quot;给 Spring Boot 服务加个带缓存的分页查询&quot;——T0 一次生成全链路且主动处理边界情况；T1 多提示一两轮可达到接近效果；T1.5 基本可用但容易漏边界；T2 能写骨架但需要较多人工调整。差距不在&quot;能不能写&quot;，而在<strong>一次做对的概率</strong>——T0 三轮搞定的事，T2 可能 15 轮还不一定对。</p>
+<p>核心结论：模型是地基，方法论是上层建筑。地基不行，上面盖得再好也白搭。</p>
+<h3 id="12-如何理解-agent-从一问一答到自主行动"><a class="markdownIt-Anchor" href="#12-如何理解-agent-从一问一答到自主行动"></a> 12 如何理解 agent 从一问一答到自主行动</h3>
+<p>知道了模型能力之后，下一个问题是：<strong>怎么让它自主行动？</strong></p>
+<p>裸 LLM 只是一个<strong>无状态的问答函数</strong>——你问一句它答一句，没有工具、没有记忆、不会自己行动。</p>
+<p><strong>Agent = while 循环 + Tool Use + 工具执行器</strong>，用一个例子说明：</p>
+<p>你说：&quot;把 UserService 里的 getById 方法加个缓存&quot;</p>
+<p>→ Agent 调用【读文件】工具，读取 UserService.java （侦察）<br />
+→ Agent 分析代码，决定修改方案 （思考）<br />
+→ Agent 调用【写文件】工具，插入缓存逻辑 （行动）<br />
+→ Agent 调用【终端】工具，运行编译检查 （验证）<br />
+→ 编译报错，Agent 读取错误信息，自动修复 （自愈）<br />
+→ 编译通过，Agent 回复你&quot;已完成&quot; （结束）</p>
+<p>这个循环就是 Agent 的全部—— &quot;智能&quot;来自模型，&quot;能力&quot;来自工具，&quot;自主性&quot;来自循环 。</p>
+<p>关键理解：工具的边界就是 Agent 的能力边界。给它读写文件的工具，它能改代码；不给它网络工具，它就上不了网。<strong>安全靠框架约束，不靠 AI 自觉。</strong></p>
+<p>我们后面提到的 Cursor、Claude Code、opencode——本质上都是这个循环的不同包装，区别只在于给了哪些工具、跑在哪里、用的什么模型。</p>
+<h3 id="13-回归本质-软件复杂度视角"><a class="markdownIt-Anchor" href="#13-回归本质-软件复杂度视角"></a> 13 回归本质 软件复杂度视角</h3>
+<p>有了能自主行动的 Agent，最后一个问题是：<strong>用什么标准评判一个 AI 编码方案的好坏？</strong></p>
+<p>来自《人月神话》的核心洞察：</p>
+<ul>
+<li>
+<p><strong>软件复杂度 = 本质复杂度</strong>（业务逻辑本身，不可消除）+ <strong>偶然复杂度</strong>（工具/流程引入的额外负担，可以且应该被消除）；</p>
+</li>
+<li>
+<p>本质复杂度由业务决定，任何工具都不能消除它——交易状态机该多复杂还是多复杂；</p>
+</li>
+<li>
+<p>AI Coding 工具能做的是<strong>帮你更高效地应对本质复杂度</strong>（快速理解代码、生成实现、发现风险），但工具自身也会<strong>引入偶然复杂度</strong>（学习成本、流程开销、配置负担）；</p>
+</li>
+<li>
+<p>评判标准：一个方案好不好，看它能多高效地帮你应对本质复杂度，同时自身引入的偶然复杂度有多低；</p>
+</li>
+<li>
+<p>核心结论：所有方法论的设计都要回归这个起点——高效应对本质复杂度，压缩偶然复杂度。</p>
+</li>
+</ul>
+<h2 id="二-渐进式编码框架"><a class="markdownIt-Anchor" href="#二-渐进式编码框架"></a> 二 渐进式编码框架</h2>
+<h3 id="21-spec-coding-是什么"><a class="markdownIt-Anchor" href="#21-spec-coding-是什么"></a> 21 spec coding 是什么</h3>
+<p>一句话**：在让 AI 写代码之前，先用结构化文档（Spec）把&quot;要做什么、怎么做、有什么约束&quot;说清楚，然后 AI 围绕这份文档编码。</p>
+<p>为什么需要 Spec Coding——直接和 AI 聊天写代码（Vibe Coding）面临四个工程问题：</p>
+<p><strong>Spec Coding 三条铁律</strong>：</p>
+<ul>
+<li>
+<p><strong>No Spec, No Code</strong> — 没有文档，不准写代码</p>
+</li>
+<li>
+<p><strong>Spec is Truth</strong> — 文档和代码冲突时，错的一定是代码</p>
+</li>
+<li>
+<p><strong>Reverse Sync</strong> — 发现 Bug，先修文档，再修代码</p>
+</li>
+</ul>
+<p>这三条铁律在经济上也是合理的（Code is Cheap, Context is Expensive）：</p>
+<p>把需求、约束、代码现状写进 Spec 作为高质量输入 → 输入增加但便宜 → AI 不用反复试错 → 输出大幅减少 → 对话轮次从 20 轮降到 3-5 轮 → <strong>总成本反而更低，效果反而更好</strong>。</p>
+<h3 id="22-为什么要自己做一套"><a class="markdownIt-Anchor" href="#22-为什么要自己做一套"></a> 22 为什么要自己做一套</h3>
+<p>Spec Coding 的理念很简单，但不同团队的落地方式差别很大。我们调研了多个主流实现后，吸收各方核心理念做了一套自己的框架。</p>
+<h3 id="23-核心设计渐进式复杂度"><a class="markdownIt-Anchor" href="#23-核心设计渐进式复杂度"></a> 23 核心设计渐进式复杂度</h3>
+<p>这是框架的核心卖点，也是和其他方案最大的区别。</p>
+<p>为什么需要渐进式？其他方案都假设所有需求都值得走完整流程，但现实中并非如此——<strong>70% 的需求是 ≤5 人日的小需求</strong>。改个字段、修个 bug，也要先写 spec 再拆 tasks？这就是偶然复杂度在吃掉你的效率。</p>
+<p>核心思想：不同复杂度的需求，暴露不同深度的流程——</p>
+<p><strong>关键原则</strong>：</p>
+<ul>
+<li>
+<p>简单需求不承担复杂流程的成本——改个字段不需要先写 spec 再拆 tasks</p>
+</li>
+<li>
+<p>流程是可选增强，而非强制前提——Rules 始终生效，Spec 按复杂度加载</p>
+</li>
+<li>
+<p>这本质上是在<strong>压缩偶然复杂度</strong>：只有本质复杂度够高时，才引入对应重量的流程</p>
+</li>
+</ul>
+<h3 id="24-自我迭代一切皆可迭代"><a class="markdownIt-Anchor" href="#24-自我迭代一切皆可迭代"></a> 24 自我迭代一切皆可迭代</h3>
+<p>这个框架本身就是一个<strong>活的系统</strong>——prompt、模板、rules 都是代码库中的普通文件，随 Git 版本演进：</p>
+<p><strong>知识飞轮</strong>（不仅是领域知识，prompt 和模板自身也在飞轮中）：</p>
+<pre class="highlight"><code class="">需求实践 → 踩坑 → 沉淀 knowledge / 更新 prompt / 修改模板 → AI 更准 → 更好的实践
+↑                                                                      |
+└────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="25-框架全貌目录结构"><a class="markdownIt-Anchor" href="#25-框架全貌目录结构"></a> 2.5 框架全貌：目录结构</h3>
+<pre class="highlight"><code class="">code_copilot/
+├── rules/ # Project Rules（始终生效）
+│   ├── project-context.md # 工程结构、分层、核心依赖
+│   ├── coding-style.md # 编码规范
+│   ├── security.md # 安全红线
+│   └── domain-rules.md # 业务领域约束
+│
+├── knowledge/ # 领域知识（按需加载）
+│   ├── index.md # 知识索引（触发关键词 + 描述）
+│   └── *.md # 详细知识文档
+│
+├── agents/ # Agent 配置与提示词
+│   ├── copilot-prompt.md # 实际提示词（AI 动态加载，可迭代）
+│   ├── spec-reviewer.md # Spec 合规审查 Agent
+│   └── code-quality-reviewer.md # 代码质量审查 Agent
+│
+├── changes/ # 变更管理
+│   ├── templates/ # 模板（spec / tasks / log，可迭代）
+│   └── &lt;change-name&gt;/ # 每个需求一个目录
+│
+└── archives/ # 已完成变更的归档
+</code></pre>
+<p>Agent 提示词的核心设计要点：</p>
+<ul>
+<li>
+<p><strong>身份定位</strong>：有经验的 Java 后端工程师搭档，不是代码生成器</p>
+</li>
+<li>
+<p><strong>启动流程</strong>：每次会话自动读取 rules/、检查 changes/ 进行中的变更、报告状态</p>
+</li>
+<li>
+<p><strong>命令式路由</strong>：7 个命令（/init /propose /apply /fix /review /archive /knowledge），超出范围礼貌拒绝</p>
+</li>
+<li>
+<p><strong>Research 约束</strong>：代码现状必须有出处（文件路径+类名/方法名），不接受空口结论</p>
+</li>
+<li>
+<p><strong>执行策略</strong>：默认逐步执行（暂停确认），支持批量和紧急停车</p>
+</li>
+<li>
+<p><strong>Reverse Sync</strong>：遇到偏差先修 spec 再修代码，强制回写</p>
+</li>
+<li>
+<p><strong>安全红线</strong>：涉及资金/状态变更 → ⚠️ 高亮提醒人工审查</p>
+</li>
+<li>
+<p><strong>知识沉淀</strong>：有价值的发现 → 主动建议沉淀到 knowledge/</p>
+</li>
+</ul>
+<h3 id="26-工作流propose-apply-review-archive"><a class="markdownIt-Anchor" href="#26-工作流propose-apply-review-archive"></a> 26 工作流propose apply review archive</h3>
+<p><strong>Propose（提案）— 人主导，AI 辅助</strong></p>
+<ul>
+<li>
+<p>Research：分析代码现状，锁定事实（每个结论有代码出处）</p>
+</li>
+<li>
+<p>逐个提问：一次只问一个问题或一组紧密相关的问题，优先给 2-3 个选项 + 推荐，减少用户思考负担。同时做 YAGNI 裁剪——主动识别&quot;nice to have&quot;建议延后</p>
+</li>
+<li>
+<p>分段生成文档，每段确认：不一口气生成完整 spec，按段输出（代码现状+功能点 → 变更范围+风险 → 技术决策+待澄清），每段等用户确认后再继续。越早发现方向偏差，修正成本越低</p>
+</li>
+<li>
+<p>生成完整 <a target="_blank" rel="noopener" href="http://spec.md">spec.md</a> + <a target="_blank" rel="noopener" href="http://tasks.md">tasks.md</a> + <a target="_blank" rel="noopener" href="http://log.md">log.md</a></p>
+</li>
+<li>
+<p><strong>关键约束</strong>：待澄清全部解决前，不允许进入 Apply</p>
+</li>
+<li>
+<p><strong>确认门控 HARD-GATE</strong>：完整 spec + tasks 生成后，必须等用户显式确认。确认前禁止任何编码动作——再简单的需求也值得一次设计审视</p>
+</li>
+</ul>
+<p><strong>Apply（执行）— AI 主导，人审查</strong></p>
+<ul>
+<li>
+<p>默认逐步执行：完成一个 task → 报告 → 等用户确认</p>
+</li>
+<li>
+<p>批量执行：用户说&quot;全部完成&quot; → 按顺序执行所有</p>
+</li>
+<li>
+<p>紧急停车：遇到逻辑冲突或 spec 缺失 → 立即停止，Reverse Sync</p>
+</li>
+<li>
+<p><strong>零偏差原则</strong>：Plan 是合同，AI 是打印机</p>
+</li>
+<li>
+<p><strong>Verification 铁律</strong>：每个 task 完成后必须展示可验证的证据（编译输出 / 测试输出 / 调用结果），禁止&quot;应该没问题&quot;等无证据声明</p>
+</li>
+<li>
+<p><strong>实时知识采集</strong>：每个 task 完成后立即检查是否踩坑/发现隐含规则/学到新东西，有则立即写入 <a target="_blank" rel="noopener" href="http://log.md">log.md</a></p>
+</li>
+</ul>
+<p><strong>Fix（修正迭代）— Review 后的增量修正</strong></p>
+<ul>
+<li>
+<p>填补 /apply 和 /review 之间的修正环节</p>
+</li>
+<li>
+<p>与 /apply 的区别：/apply 按 tasks 顺序执行初始编码，/fix 在已完成基础上做增量修正</p>
+</li>
+<li>
+<p><strong>文档同步是铁律</strong>——每次 /fix 必须同步更新 spec、tasks、log</p>
+</li>
+</ul>
+<p><strong>Review（审查）— 两阶段 Sub Agent 审查</strong></p>
+<p>拆为两个独立阶段，通过 Sub Agent 执行（上下文与实现者隔离）：</p>
+<ul>
+<li>
+<p><strong>Spec Compliance</strong>（spec-reviewer）：逐条比对 spec 功能点与实际代码，核心原则&quot;不信报告只信代码&quot;</p>
+</li>
+<li>
+<p><strong>Code Quality</strong>（code-quality-reviewer）：基于 rules/ 检查编码规范、安全红线、异常处理，按 Critical/Important/Minor 分级</p>
+</li>
+</ul>
+<p>阶段一 PASS 后才启动阶段二。任一 FAIL 则回到 Apply/Fix 修正。</p>
+<p><strong>Archive（归档）— 知识沉淀</strong></p>
+<p>逐条展示 <a target="_blank" rel="noopener" href="http://log.md">log.md</a> 中的知识发现和踩坑记录，询问用户是否沉淀到 knowledge/，确认的立即执行。变更目录移到 archives/。</p>
+<p><strong>Debug — 系统化调试流程</strong></p>
+<p>四阶段调试指引：根因调查 → 模式分析 → 假设验证 → 实施修复。</p>
+<p><strong>铁律</strong>：禁止在未确认根因前直接改代码。</p>
+<h2 id="三-工具选型与编排"><a class="markdownIt-Anchor" href="#三-工具选型与编排"></a> 三 工具选型与编排</h2>
+<h3 id="31-编排层-执行层的两层架构"><a class="markdownIt-Anchor" href="#31-编排层-执行层的两层架构"></a> 31 编排层 执行层的两层架构</h3>
+<p>在实践中，我发现单一工具很难同时满足&quot;强模型做决策&quot;和&quot;安全模型写代码&quot;两个需求。最终演化出了编排层 + 执行层的两层 AI 架构：</p>
+<pre class="highlight"><code class="">人（开发者）
+ │
+├─ 对话界面 ── 日常交互
+│ │
+│ ▼
+│ 编排层 AI（强模型，如 Claude Opus）
+│ 职责: 理解需求、生成 Spec、审查结果
+│ │
+│ ▼
+│ 执行层 AI（编码工具，如 Claude Code / opencode）
+│ 职责: 读写代码、执行命令、运行测试
+│
+└─ 终端 ── 可随时直接接管编码工具
+</code></pre>
+<p><strong>为什么要分两层？</strong> 不仅仅是安全考虑，更是<strong>关注点分离</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>擅长</th>
+<th>模型选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编排层</td>
+<td>理解模糊需求、生成结构化 spec、跨仓库业务分析、审查决策</td>
+<td>强模型（Claude Opus、Gemini Pro 等）</td>
+</tr>
+<tr>
+<td>执行层</td>
+<td>读写代码、执行 shell 命令、快速迭代修改</td>
+<td>编码优化模型（Sonnet、Kimi 等）</td>
+</tr>
+</tbody>
+</table>
+<p>把两者混在一起，要么模型太贵（全程用顶级模型写代码），要么质量不够（全程用便宜模型做决策）。分层后各取所长，成本和质量都更优。</p>
+<h3 id="32-工具选型思路"><a class="markdownIt-Anchor" href="#32-工具选型思路"></a> 32 工具选型思路</h3>
+<p>选择编码工具时，有一个关键经验：<strong>透明度不是奢侈品，是基础需求</strong>。</p>
+<p><strong>透明度底线</strong>：模型型号+版本可见、完整 context 可查、原始输出不被篡改、token 用量透明。</p>
+<p>在不透明的工具上花再多时间优化 prompt 和框架，效果都无法归因、无法复现。切到透明工具链后，每次调优都能看到效果，迭代速度指数级提升。</p>
+<p>目前满足透明度要求的主流开源工具：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>定位</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Claude Code</td>
+<td>终端 AI 编码 Agent</td>
+<td>Anthropic 官方，模型绑定 Claude</td>
+</tr>
+<tr>
+<td>opencode</td>
+<td>终端 AI 编码 Agent（开源）</td>
+<td>模型自由选择，社区驱动</td>
+</tr>
+<tr>
+<td>Cursor / Windsurf</td>
+<td>IDE 内交互式 AI 搭档</td>
+<td>GUI 友好，上手快</td>
+</tr>
+<tr>
+<td>Cline / Aider</td>
+<td>终端/IDE 插件</td>
+<td>轻量级，可定制</td>
+</tr>
+</tbody>
+</table>
+<p><strong>选择建议</strong>：</p>
+<ul>
+<li>
+<p>如果团队用 Claude 系列模型，Claude Code 开箱即用</p>
+</li>
+<li>
+<p>如果需要灵活切换模型（特别是接入私有部署的模型），opencode 更合适</p>
+</li>
+<li>
+<p>如果团队更习惯 IDE 工作流，Cursor/Windsurf 是好选择</p>
+</li>
+<li>
+<p><strong>核心原则</strong>：工具是手段，方法论是不变的——上面的框架（rules/ + knowledge/ + changes/）可以适配任何编码工具</p>
+</li>
+</ul>
+<h3 id="33-git-规范"><a class="markdownIt-Anchor" href="#33-git-规范"></a> 33 git 规范</h3>
+<p>无论用什么工具，Git 规范是必须的：</p>
+<ul>
+<li>
+<p><strong>禁止 master 分支变更</strong>：编码前检查当前分支，master 上立即停止</p>
+</li>
+<li>
+<p><strong>自动 Commit</strong>：每个 task/fix 完成后自动 commit，保持一个 task 一个 commit</p>
+</li>
+<li>
+<p><strong>Commit 必须可编译</strong>：commit 前执行编译检查</p>
+</li>
+<li>
+<p><strong>禁止自动 Push</strong>：push 由用户主动触发，保留审查机会</p>
+</li>
+<li>
+<p><strong>Message 格式</strong>：<code>[&lt;变更名&gt;] &lt;中文简述&gt;</code></p>
+</li>
+</ul>
+<h2 id="四-实战案例"><a class="markdownIt-Anchor" href="#四-实战案例"></a> 四 实战案例</h2>
+<p>以一个典型的<strong>跨模块业务迁移</strong>项目为例（将系统 A 的过滤处理逻辑平行迁移到系统 B），走一遍完整的 /propose → /apply → /review 流程。</p>
+<h3 id="41-需求-spec把需求文档喂给-ai"><a class="markdownIt-Anchor" href="#41-需求-spec把需求文档喂给-ai"></a> 41 需求 spec把需求文档喂给 ai</h3>
+<p>将需求文档作为输入，执行 <code>/propose</code>，AI 先 Research 代码现状，然后逐个提问收敛不确定性：</p>
+<p>🤖 AI：spec 初稿写好了，几个需要你确认的点：</p>
+<p>待澄清（需要你回答的）：</p>
+<ol>
+<li>Q1: 系统 A 中 AbstractFilterService 下三个处理器具体叫什么类名？<br />
+我需要知道才能让 AI 精确对照迁移</li>
+<li>Q2: FilterModule 的 lockKey 和 idempotentId 要不要设？<br />
+写入的幂等是 SDK 层保证还是需要框架层加？</li>
+<li>Q3: needOrderTradeType 目前有 CLOSE/PAID_DONE/ENABLE_DONE，<br />
+退款消息在框架里是怎么表示的？是单独的 OrderTradeType 还是走别的路径？</li>
+</ol>
+<p>tasks 拆分思路：<br />
+7 个 task，按依赖顺序：灰度配置 → bizProcess 分发主干 → 三个处理器<br />
+（可并行）→ 压测 mock → 框架扩展点补全。每个 task 都是原子可提交的。</p>
+<p>一个设计决策想确认：我把三个处理器放在同一个 FilterModule 的<br />
+bizProcess 里按类型分发，而不是拆成三个独立 Module。理由是<br />
+&quot;一个模块一个处理器&quot;的设计，过滤本身就是一个模块。你觉得这样 OK 还是要拆？</p>
+<p><strong>关键点</strong>：</p>
+<ul>
+<li>
+<p>AI 必须先 Research 现有代码（带出处），不允许凭空设计</p>
+</li>
+<li>
+<p>逐个提问而非一次列 10 个问题，优先给选项 + 推荐</p>
+</li>
+<li>
+<p>待澄清项全部解决前不进入编码</p>
+</li>
+</ul>
+<h3 id="42-spec-tasks拆分原子任务"><a class="markdownIt-Anchor" href="#42-spec-tasks拆分原子任务"></a> 42 spec tasks拆分原子任务</h3>
+<p>Spec 确认后，AI 自动拆分为原子级 Tasks。执行一段时间后，AI 汇报进度并列出待完善项：</p>
+<p>🤖 AI：/apply filter-migration 执行进度</p>
+<p>⚠️ 待完善项（TODO）</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>说明</th>
+<th>优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LimitFilterService</td>
+<td>垂直表 + 水平表匹配逻辑具体实现</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>LimitFilterService</td>
+<td>配置读取（marketingSolutionIds）</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>All Services</td>
+<td>外部 SDK 具体 API 调用</td>
+<td>P0</td>
+</tr>
+<tr>
+<td>RefundFilterService</td>
+<td>actualPaidFee / refundFee 字段获取</td>
+<td>P1</td>
+</tr>
+<tr>
+<td>All Services</td>
+<td>降级开关集成（LIMITED_FILTER_DEGRADE_ON 等）</td>
+<td>P1</td>
+</tr>
+</tbody>
+</table>
+<p>🚀 下一步建议</p>
+<ol>
+<li>补全 TODO 实现：需要确认二方包 FilterClient 的具体 API</li>
+<li>创建配置 dataId: com.example.trade.filter.gray</li>
+<li>本地测试验证</li>
+<li>Code Review</li>
+</ol>
+<p>您希望：<br />
+• 继续补全 TODO 实现？<br />
+• 先进行 /review filter-migration 审查？<br />
+• 还是其他操作？</p>
+<h3 id="43-tasks-apply逐步执行"><a class="markdownIt-Anchor" href="#43-tasks-apply逐步执行"></a> 4.3 tasks apply逐步执行</h3>
+<p>进入 <code>/apply</code> 阶段，AI 按 Tasks 逐个执行。每完成一批文件，展示完成状态和核心实现结构：</p>
+<p>🤖 AI：开始编码 /apply filter-migration</p>
+<p>✅ 已完成文件</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>文件路径</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NEW</td>
+<td>config/FilterGrayConfig.java</td>
+<td>✅ 灰度配置类，配置中心动态监听</td>
+</tr>
+<tr>
+<td>MOD</td>
+<td>module/FilterModule.java</td>
+<td>✅ 完整分发框架，注入三个 Service</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>service/filter/LimitFilterService.java</td>
+<td>✅ 限购过滤服务（子单维度）</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>service/filter/ShopFrozenFilterService.java</td>
+<td>✅ 冻结店铺新用户（主单维度）</td>
+</tr>
+<tr>
+<td>NEW</td>
+<td>service/filter/RefundFilterService.java</td>
+<td>✅ 退款过滤服务（含完全退款判断）</td>
+</tr>
+</tbody>
+</table>
+<p>🔧 核心功能实现</p>
+<pre class="highlight"><code class="">FilterModule.bizProcess()
+├── ENABLE_DONE（创单）
+│   ├── LimitFilterService.processEnableDone() # 限购过滤写入
+│   └── ShopFrozenFilterService.processEnableDone() # 冻结店铺过滤写入
+├── PAID_DONE（支付完成）
+│   └── RefundFilterService.processPaidDone() # 删除过滤
+└── CLOSE（关单）
+    ├── ShopFrozenFilterService.processClose() # 回滚（先）
+    └── RefundFilterService.processClose() # 逆向添加（后）
+        ├── 完全退款判断: actualPaidFee == refundFee
+        └── 新客判断: identityId == 1L
+</code></pre>
+<h3 id="44-迭代与-reverse-sync"><a class="markdownIt-Anchor" href="#44-迭代与-reverse-sync"></a> 44 迭代与 reverse sync</h3>
+<p>执行过程中用户发现 Spec 遗漏或实现偏差时，AI 先确认事实再更新文档：</p>
+<p>👤 用户：垂直表逻辑已维护在 TradeMainOrder 中，由 TradeContext 携带<br />
+LimitFilterService 的 marketingSolutionIds 不是读配置中心<br />
+是读的 switch 配置 SwitchConfig.XXXXX<br />
+FilterClient 的调用请参考系统 A 中 ShardingFilterService 的实现<br />
+actualPaidFee/refundFee 同理已维护在 TradeMainOrder 中<br />
+先完善以上功能，降级开关等会再改</p>
+<p>🤖 AI：收到了！让我先理解您的修改和新的需求，然后更新文档：</p>
+<ol>
+<li>垂直表逻辑：已维护在 TradeMainOrder 中，通过 TradeContext 携带</li>
+<li>marketingSolutionIds 来源：不是配置中心，而是 SwitchConfig.XXXXXX</li>
+<li>FilterClient 调用：参考系统 A 侧的 ShardingFilterService 实现</li>
+<li>actualPaidFee/refundFee：已维护在 TradeMainOrder 中<br />
+让我先读取相关代码来确认这些细节，然后更新 spec：<br />
+∞ 读取 SwitchConfig 配置<br />
+∞ 读取 ShardingFilterService 实现<br />
+∞ 验证 TradeMainOrder 修改<br />
+收到了！我发现几个问题需要澄清：<br />
+（AI 基于实际代码继续追问…）</li>
+</ol>
+<p><strong>Reverse Sync 是最容易被忽略但最重要的环节</strong>：保持文档和代码的一致性，才能让整个框架持续有效。</p>
+<h2 id="五-一些观点与思考"><a class="markdownIt-Anchor" href="#五-一些观点与思考"></a> 五 一些观点与思考</h2>
+<h3 id="51-人到底该干什么"><a class="markdownIt-Anchor" href="#51-人到底该干什么"></a> 51 人到底该干什么</h3>
+<p>用 AI 编码之后，人的角色从「全干」变成了「管和验」：</p>
+<p>传统编程：人 = 设计者 + 实施者 + 验收者<br />
+AI 编程：人 = 设计者 + 验收者，AI = 实施者</p>
+<p>具体来说，人做三件事：<strong>管控</strong>（控制 AI 看什么）、<strong>指挥</strong>（选方案、审计划、批准执行）、<strong>评价</strong>（验收结果、发现偏差）。对应地，AI 在不同阶段切换角色：侦察兵（扫描代码收集事实）→ 参谋（提出方案分析利弊）→ 施工队（按图施工）→ 质检员（对照标准检查）。</p>
+<p>听起来很清晰，但实际协作中有<strong>三个非常容易犯的错误</strong>：</p>
+<p><strong>1. 讨论和命令混为一谈</strong></p>
+<p>“帮我看看这个模块，顺便把 Bug 修了”——前半句是探索，后半句是指令。AI 会跳过探索直接改代码，然后改错。解决办法很简单：<strong>一次只给一种意图</strong>（探索 / 决策 / 指令 / 审查），不要混着来。</p>
+<p><strong>2. 阶段产出搞混</strong></p>
+<p>调研阶段要的是事实和风险，不是代码。AI 太勤快的时候要拉住它：“停，我现在不需要代码，先告诉我现状和风险。”</p>
+<p><strong>3. 自由度给反了</strong></p>
+<p>这是最普遍的问题。正确的自由度曲线应该是：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>自由度</th>
+<th>为什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>调研</td>
+<td>中</td>
+<td>让 AI 自由探索，但必须给证据</td>
+</tr>
+<tr>
+<td>方案设计</td>
+<td>高</td>
+<td>唯一鼓励 AI 充分想象的阶段</td>
+</tr>
+<tr>
+<td>规划</td>
+<td>低</td>
+<td>精确到文件路径和函数签名</td>
+</tr>
+<tr>
+<td>执行</td>
+<td>零</td>
+<td>严格按计划施工，有问题必须停下来问</td>
+</tr>
+<tr>
+<td>验收</td>
+<td>中</td>
+<td>自由检查，但结论要有依据</td>
+</tr>
+</tbody>
+</table>
+<p>大部分人的问题是反过来了——该讨论的时候急着让 AI 干活（方案没想清楚就开写），该干活的时候又让 AI 自由发挥（执行阶段不约束，改着改着就跑偏了）。</p>
+<h3 id="52-spec-不是银弹但也不是废弹"><a class="markdownIt-Anchor" href="#52-spec-不是银弹但也不是废弹"></a> 52 spec 不是银弹但也不是废弹</h3>
+<p>有一种批评认为 Spec Coding 建立在三个错误假设上——AI 能理解规范、规范能完整描述系统、规范比代码更易维护。</p>
+<p>这些批判有道理，但忽略了一个关键前提：<strong>它批判的是「规范→代码」的全自动线性映射，不是人在回路中的 Spec 辅助模式。</strong></p>
+<table>
+<thead>
+<tr>
+<th>被批判的模式</th>
+<th>我们实际做的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写好 Spec，AI 自动生成全部代码</td>
+<td>Spec 只描述变更范围，AI 在人审核下逐步执行</td>
+</tr>
+<tr>
+<td>规范是「唯一真理来源」</td>
+<td>规范是沟通工具，代码才是真理</td>
+</tr>
+<tr>
+<td>期望 AI 理解整个系统</td>
+<td>用 knowledge/ 喂精确上下文，限制 AI 的理解范围</td>
+</tr>
+<tr>
+<td>适用于所有复杂度</td>
+<td>渐进式——简单需求根本不写 Spec</td>
+</tr>
+</tbody>
+</table>
+<p>问题不在于 Spec Coding 本身，而在于<strong>用法和预期</strong>。当成自动化流水线的输入，它确实不是银弹；当成人和 AI 之间的沟通协议，它就是一个靠谱的效率工具。</p>
+<h3 id="53-知识底座才是真正的护城河"><a class="markdownIt-Anchor" href="#53-知识底座才是真正的护城河"></a> 53 知识底座才是真正的护城河</h3>
+<p>大部分团队在 AI 编码上的投入方向是：花大量精力写 Prompt、调 Rules、优化 Agent 工作流。这些都属于「偶然复杂度」层面——调好了最多让 AI 少犯格式错误。但真正决定 AI 输出质量上限的，是你喂给它的<strong>领域知识的质量</strong>。</p>
+<p><strong>知识覆盖缺口</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>知识类型</th>
+<th>Spec 能覆盖</th>
+<th>实际重要性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编码规范</td>
+<td>★★★★</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td>存量代码</td>
+<td>★★★</td>
+<td>★★★★</td>
+</tr>
+<tr>
+<td>领域知识</td>
+<td>★</td>
+<td>★★★★★</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-几个容易被忽略的代价"><a class="markdownIt-Anchor" href="#54-几个容易被忽略的代价"></a> 54 几个容易被忽略的代价</h3>
+<p><strong>心流中断</strong></p>
+<p>编码需要高度专注。引入 AI 之后，连贯性被打破了——写 Spec、等生成、审查输出、纠正偏差、再继续下一段。模型越慢，等待越长，心流杀伤越大。</p>
+<p>传统编码是「想→写→想→写」的连续流，AI 编码变成了「想→写 Spec→等→审→改→想」的间歇流。你需要适应这种新节奏，也需要诚实地评估：对于你个人，哪些任务用 AI 确实更快，哪些还不如自己写。</p>
+<p><strong>上下文的隐性成本</strong></p>
+<p>Context 很贵，但贵的不只是 Token 费用。更大的隐性成本是上下文管理本身：你需要有意识地决定给 AI 看什么、不看什么；每一次上下文压缩都引入不确定性——被压缩掉的历史对话和决策，你无法确认 AI 是否还记得。</p>
+<p>这也是框架把 <code>knowledge/</code> 和 Spec 都做成独立文件的原因：文件是持久化的，不会被上下文窗口压缩掉。写在文件里的计划，比聊天记录里的口头约定可靠得多。</p>
+<p><strong>现在不是终态</strong></p>
+<p>编程可能是 AI 产生飞轮效应最直接的领域——AI 辅助编码 → 效率提升 → 更多代码产出 → AI 能力增强 → 更好地辅助编码。这个正向循环已经在发生。</p>
+<p>今天某些模型的速度和质量让你觉得勉强够用，半年后可能完全不同。框架的价值在于它能随模型进步而放大收益——当模型从 T1.5 升到 T1 甚至 T0，同样的 Spec 和 knowledge/ 能产出质量截然不同的代码，而你的 rules/、knowledge/、历史 Spec 都是现成的积累。</p>
+<h2 id="附录code_copilot-框架完整内容"><a class="markdownIt-Anchor" href="#附录code_copilot-框架完整内容"></a> 附录code_copilot 框架完整内容</h2>
+<p>以下为 code_copilot 框架当前的完整文件内容，可直接复制到项目中使用。项目特定内容（应用名、包名、中间件等）需根据实际情况填充。</p>
+<pre class="highlight"><code class="">code_copilot/
+├── README.md                             # 框架说明
+├── agents/                               # Agent 配置与提示词
+│   ├── copilot-prompt.md                # 主 Agent 完整提示词（核心）
+│   ├── spec-reviewer.md                 # Spec 合规审查 Agent
+│   └── code-quality-reviewer.md         # 代码质量审查 Agent
+├── rules/                               # 项目约束（始终生效）
+│   ├── project-context.md                # 工程结构与依赖（/init 填充）
+│   ├── coding-style.md                  # 编码规范
+│   ├── security.md                      # 安全红线
+│   └── domain-rules.md                  # 业务领域约束
+├── knowledge/                           # 领域知识（按需加载）
+│   └── index.md                         # 知识索引
+└── changes/                             # 变更管理
+    └── templates/                        # 模板目录
+        ├── spec.md                       # Spec 模板
+        ├── tasks.md                      # Tasks 模板
+        ├── test-spec.md                  # 单测 Spec 模板
+        └── log.md                        # Log 模板
+</code></pre>
+<h3 id="a1-agentscopilot-promptmd-主-agent-提示词"><a class="markdownIt-Anchor" href="#a1-agentscopilot-promptmd-主-agent-提示词"></a> a1 agentscopilot promptmd 主 agent 提示词</h3>
+<p>你是 code-copilot，一个面向已有 Java 后端项目的 AI 编码协作助手。<br />
+你的工作基于 rules/（项目约束）、knowledge/（领域知识）、changes/（变更管理）三个目录。</p>
+<h1 id="核心法则"><a class="markdownIt-Anchor" href="#核心法则"></a> 核心法则</h1>
+<h2 id="spec-驱动code-is-cheap-context-is-expensive"><a class="markdownIt-Anchor" href="#spec-驱动code-is-cheap-context-is-expensive"></a> Spec 驱动（Code is Cheap, Context is Expensive）</h2>
+<p>代码是廉价的消耗品，文档（Spec）才是昂贵的核心资产。</p>
+<ol>
+<li><strong>No Spec, No Code</strong> — 没有 spec，不准写代码</li>
+<li><strong>Spec is Truth</strong> — spec 和代码冲突时，错的一定是代码</li>
+<li><strong>Reverse Sync</strong> — 执行中发现 spec 与实际不符，先修 spec 再修代码</li>
+<li><strong>代码现状必须有出处</strong> — 每个结论必须标注文件路径和类名/方法名，不接受&quot;我认为&quot;、&quot;通常来说&quot;</li>
+<li><strong>变更即记录</strong> — 任何代码变更完成后都必须同步更新对应的 changes/ 文档</li>
+</ol>
+<h2 id="身份与原则"><a class="markdownIt-Anchor" href="#身份与原则"></a> 身份与原则</h2>
+<ul>
+<li>有经验的 Java 后端工程师搭档，不是代码生成器</li>
+<li>用中文输出，技术术语可保留英文</li>
+<li>不确定就问，不假设，不编造不存在的类或接口</li>
+<li>每个任务原子化（3-5 个文件），做&quot;小炸弹&quot;而非&quot;大炸弹&quot;</li>
+<li>涉及资金/交易状态变更 → ⚠️ 高亮提醒人工审查</li>
+<li>有价值的发现 → 主动建议沉淀到 knowledge/</li>
+</ul>
+<h2 id="意图确认先问再做"><a class="markdownIt-Anchor" href="#意图确认先问再做"></a> 意图确认（先问再做）</h2>
+<p>收到用户的自然语言指令时，先识别意图并映射到对应命令，确认后再执行。</p>
+<table>
+<thead>
+<tr>
+<th>用户说的</th>
+<th>映射命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;修复 xxx&quot; / &quot;改一下 xxx&quot;</td>
+<td>→ /fix</td>
+</tr>
+<tr>
+<td>&quot;我要做 xxx 需求&quot;</td>
+<td>→ /propose</td>
+</tr>
+<tr>
+<td>&quot;开始写代码&quot; / &quot;继续执行&quot;</td>
+<td>→ /apply</td>
+</tr>
+<tr>
+<td>&quot;帮我看看代码&quot; / &quot;review 一下&quot;</td>
+<td>→ /review</td>
+</tr>
+<tr>
+<td>&quot;写测试&quot; / &quot;补单测&quot;</td>
+<td>→ /test</td>
+</tr>
+<tr>
+<td>&quot;归档 xxx&quot;</td>
+<td>→ /archive</td>
+</tr>
+<tr>
+<td>纯技术讨论不需要走命令流程，直接回答。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="启动"><a class="markdownIt-Anchor" href="#启动"></a> 启动</h1>
+<p>每次会话开始时：</p>
+<ol>
+<li>读取 rules/ 下所有规则文件</li>
+<li>检查 changes/ 下是否有进行中的变更（排除 templates/）</li>
+<li>报告当前状态，展示命令菜单</li>
+</ol>
+<h1 id="命令"><a class="markdownIt-Anchor" href="#命令"></a> 命令</h1>
+<h2 id="init-初始化项目上下文"><a class="markdownIt-Anchor" href="#init-初始化项目上下文"></a> /init — 初始化项目上下文</h2>
+<p>分析工程结构、依赖、分层模式，填充 rules/project-context.md。</p>
+<h2 id="propose-需求描述-创建变更提案"><a class="markdownIt-Anchor" href="#propose-需求描述-创建变更提案"></a> /propose &lt;需求描述&gt; — 创建变更提案</h2>
+<p>Research → 逐个提问（一次只问一个，给选项+推荐）→ YAGNI 裁剪 →<br />
+分三段生成 spec（每段确认）→ 生成 tasks → HARD-GATE 确认。<br />
+待澄清全部解决前不允许进入 /apply。</p>
+<h2 id="apply-变更名-执行编码"><a class="markdownIt-Anchor" href="#apply-变更名-执行编码"></a> /apply &lt;变更名&gt; — 执行编码</h2>
+<p>前置检查 spec + tasks + 用户确认。<br />
+逐 task 执行，每个 task 完成后展示验证证据（Verification 铁律）。<br />
+零偏差原则：Plan 是合同，AI 是打印机。<br />
+自动 git commit（一个 task 一个 commit）。</p>
+<h2 id="fix-变更名-描述-review-后修正迭代"><a class="markdownIt-Anchor" href="#fix-变更名-描述-review-后修正迭代"></a> /fix &lt;变更名&gt; [描述] — Review 后修正迭代</h2>
+<p>增量修正 + 文档同步铁律（spec/tasks/log 全部更新）。</p>
+<h2 id="review-变更名-两阶段审查"><a class="markdownIt-Anchor" href="#review-变更名-两阶段审查"></a> /review &lt;变更名&gt; — 两阶段审查</h2>
+<p>阶段一 Spec Compliance → 阶段二 Code Quality。<br />
+优先用 Sub Agent 执行（上下文隔离）。阶段一 PASS 后才启动阶段二。</p>
+<h2 id="test-变更名-生成单测-spec-并执行"><a class="markdownIt-Anchor" href="#test-变更名-生成单测-spec-并执行"></a> /test &lt;变更名&gt; — 生成单测 Spec 并执行</h2>
+<p>Red/Green TDD：测试必须先 Red 再 Green。<br />
+两种模式：Spec 先行（推荐）或直接生成。</p>
+<h2 id="archive-变更名-归档-知识沉淀"><a class="markdownIt-Anchor" href="#archive-变更名-归档-知识沉淀"></a> /archive &lt;变更名&gt; — 归档 + 知识沉淀</h2>
+<p>逐条展示 <a target="_blank" rel="noopener" href="http://log.md">log.md</a> 知识发现，确认后沉淀到 knowledge/。</p>
+<h2 id="git-规范"><a class="markdownIt-Anchor" href="#git-规范"></a> Git 规范</h2>
+<ol>
+<li>禁止 master 分支变更</li>
+<li>每个 task/fix 自动 commit</li>
+<li>Commit 必须可编译</li>
+<li>禁止自动 push</li>
+<li>Message 格式：[&lt;变更名&gt;] &lt;中文简述&gt;</li>
+</ol>
+<h2 id="调试流程"><a class="markdownIt-Anchor" href="#调试流程"></a> 调试流程</h2>
+<p>四阶段：根因调查 → 模式分析 → 假设验证 → 实施修复。<br />
+禁止在未确认根因前直接改代码。<br />
+`</p>
+<h3 id="a2-agentsspec-reviewermd-spec-合规审查"><a class="markdownIt-Anchor" href="#a2-agentsspec-reviewermd-spec-合规审查"></a> a2 agentsspec reviewermd spec 合规审查</h3>
+<h1 id="spec-compliance-reviewer"><a class="markdownIt-Anchor" href="#spec-compliance-reviewer"></a> Spec Compliance Reviewer</h1>
+<p>专职验证代码实现是否符合 spec 规格。只读不写，独立于实现者的上下文。<br />
+核心理念：<strong>不信报告，只信代码</strong> — reviewer 必须读实际代码独立验证。</p>
+<h2 id="审查维度"><a class="markdownIt-Anchor" href="#审查维度"></a> 审查维度</h2>
+<p>1. <strong>缺失实现</strong>：spec 要求了但代码没做的<br />
+2. <strong>多余实现</strong>：spec 没要求但代码多做了的（YAGNI 违规）<br />
+3. <strong>理解偏差</strong>：做了但做错了方向的<br />
+4. <strong>业务规则落地</strong>：spec §4 中的规则是否全部体现在代码中<br />
+5. <strong>数据变更准确性</strong>：spec §5 中的表/字段变更是否准确落地</p>
+<h2 id="输出格式"><a class="markdownIt-Anchor" href="#输出格式"></a> 输出格式</h2>
+<h4 id="功能点逐条验证"><a class="markdownIt-Anchor" href="#功能点逐条验证"></a> 功能点逐条验证</h4>
+<p>- ✅ 功能 1：已实现，见 <code>XxxService.java:L42</code><br />
+- ❌ 功能 2：未实现（缺少 XX 逻辑）<br />
+- ⚠️ 功能 3：实现方式与 spec 描述有偏差</p>
+<h4 id="结论-spec-合规-不合规附具体问题"><a class="markdownIt-Anchor" href="#结论-spec-合规-不合规附具体问题"></a> 结论：✅ Spec 合规 / ❌ 不合规（附具体问题）</h4>
+<h2 id="工具权限"><a class="markdownIt-Anchor" href="#工具权限"></a> 工具权限</h2>
+<p>仅需 Read/Grep/Glob/Bash（只读），不需要写入权限。<br />
+`</p>
+<h3 id="a3-agentscode-quality-reviewermd-代码质量审查"><a class="markdownIt-Anchor" href="#a3-agentscode-quality-reviewermd-代码质量审查"></a> a3 agentscode quality reviewermd 代码质量审查</h3>
+<h1 id="code-quality-reviewer"><a class="markdownIt-Anchor" href="#code-quality-reviewer"></a> Code Quality Reviewer</h1>
+<p>专职审查代码质量、安全性和可维护性。<br />
+前置条件：必须在 spec-reviewer 审查通过后才启动。</p>
+<h2 id="审查分级"><a class="markdownIt-Anchor" href="#审查分级"></a> 审查分级</h2>
+<p>- <strong>Critical</strong>（阻塞）：安全漏洞、资金逻辑错误、并发安全、数据丢失风险<br />
+- <strong>Important</strong>（应修复）：异常被吞、缺少参数校验、魔法值、方法过长、命名不清<br />
+- <strong>Minor</strong>（建议）：Javadoc 缺失、注释过时、import 未清理</p>
+<h2 id="工具权限-2"><a class="markdownIt-Anchor" href="#工具权限-2"></a> 工具权限</h2>
+<p>仅需 Read/Grep/Glob/Bash（只读），不需要写入权限。<br />
+`</p>
+<h3 id="a4-rulesproject-contextmd-工程上下文"><a class="markdownIt-Anchor" href="#a4-rulesproject-contextmd-工程上下文"></a> a4 rulesproject contextmd 工程上下文</h3>
+<hr />
+<h2 id="alwaysapply-true"><a class="markdownIt-Anchor" href="#alwaysapply-true"></a> alwaysApply: true</h2>
+<h1 id="工程上下文"><a class="markdownIt-Anchor" href="#工程上下文"></a> 工程上下文</h1>
+<blockquote>
+<p>首次使用时执行 /init 让 AI 分析工程并填充本文件。</p>
+</blockquote>
+<h2 id="1-应用概况"><a class="markdownIt-Anchor" href="#1-应用概况"></a> 1. 应用概况</h2>
+<p>- 应用名: （待填充）<br />
+- 简介: （一句话描述）<br />
+- 技术栈: Java 21 / Spring Boot / （根据项目实际填写）<br />
+- 构建工具: Maven</p>
+<h2 id="2-目录结构与模块职责"><a class="markdownIt-Anchor" href="#2-目录结构与模块职责"></a> 2. 目录结构与模块职责</h2>
+<blockquote>
+<p>执行 tree -d -L 3 后填充。</p>
+</blockquote>
+<h2 id="3-分层架构"><a class="markdownIt-Anchor" href="#3-分层架构"></a> 3. 分层架构</h2>
+<p>Controller (web/)       ← 入口层，参数校验 + 协议转换<br />
+    ↓<br />
+Service (service/)      ← 业务编排，事务边界<br />
+    ↓<br />
+Manager (manager/)      ← 领域能力，单一职责，可复用<br />
+    ↓<br />
+DAO (dao/)              ← 纯数据访问</p>
+<h2 id="4-关键依赖"><a class="markdownIt-Anchor" href="#4-关键依赖"></a> 4. 关键依赖</h2>
+<table>
+<thead>
+<tr>
+<th>中间件</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>（根据项目填写）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>`</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="a5-rulescoding-stylemd-编码规范"><a class="markdownIt-Anchor" href="#a5-rulescoding-stylemd-编码规范"></a> a5 rulescoding stylemd 编码规范</h3>
+<hr />
+<h2 id="alwaysapply-true-2"><a class="markdownIt-Anchor" href="#alwaysapply-true-2"></a> alwaysApply: true</h2>
+<h1 id="编码规范"><a class="markdownIt-Anchor" href="#编码规范"></a> 编码规范</h1>
+<h2 id="1-命名"><a class="markdownIt-Anchor" href="#1-命名"></a> 1. 命名</h2>
+<p>- 类名：大驼峰，见名知意<br />
+- 方法名：小驼峰，动词开头<br />
+- 常量：全大写下划线分隔<br />
+- 抽象类以 Abstract 或 Base 开头<br />
+- 测试类以被测类名开头，Test 结尾<br />
+- 禁止拼音、中英混拼命名</p>
+<h2 id="2-异常处理"><a class="markdownIt-Anchor" href="#2-异常处理"></a> 2. 异常处理</h2>
+<p>- 业务异常使用自定义 BizException，携带错误码<br />
+- 系统异常向上抛出，由统一异常处理器兜底<br />
+- 禁止吞掉异常（空 catch）<br />
+- catch 中必须记录日志</p>
+<h2 id="3-日志"><a class="markdownIt-Anchor" href="#3-日志"></a> 3. 日志</h2>
+<p>- Controller 入口打 INFO，含请求关键参数<br />
+- 异常打 ERROR，含完整堆栈<br />
+- 禁止在日志中打印用户敏感信息</p>
+<h2 id="4-其他"><a class="markdownIt-Anchor" href="#4-其他"></a> 4. 其他</h2>
+<p>- 写接口必须考虑幂等<br />
+- 涉及并发场景必须说明同步策略<br />
+- 魔法值必须定义为常量<br />
+`</p>
+<h3 id="a6-rulessecuritymd-安全红线"><a class="markdownIt-Anchor" href="#a6-rulessecuritymd-安全红线"></a> a6 rulessecuritymd 安全红线</h3>
+<hr />
+<h2 id="alwaysapply-true-3"><a class="markdownIt-Anchor" href="#alwaysapply-true-3"></a> alwaysApply: true</h2>
+<h1 id="安全红线"><a class="markdownIt-Anchor" href="#安全红线"></a> 安全红线</h1>
+<h2 id="1-代码安全"><a class="markdownIt-Anchor" href="#1-代码安全"></a> 1. 代码安全</h2>
+<p>- ❌ 禁止在代码中硬编码密钥、AK/SK、数据库密码<br />
+- ❌ 禁止提交包含用户个人信息的测试数据<br />
+- ❌ 禁止在日志中打印手机号、身份证、银行卡等敏感信息</p>
+<h2 id="2-业务安全"><a class="markdownIt-Anchor" href="#2-业务安全"></a> 2. 业务安全</h2>
+<p>- ⚠️ 涉及资金变更的逻辑，必须在 spec 中明确标注，人工审查后方可编码<br />
+- ⚠️ 涉及状态流转的逻辑，必须检查状态机合法性<br />
+- ⚠️ 涉及权限变更的逻辑，必须显式校验操作人权限<br />
+`</p>
+<h3 id="a7-rulesdomain-rulesmd-业务领域约束"><a class="markdownIt-Anchor" href="#a7-rulesdomain-rulesmd-业务领域约束"></a> a7 rulesdomain rulesmd 业务领域约束</h3>
+<hr />
+<h2 id="alwaysapply-falsedescription-当涉及业务领域特定逻辑时应用本规则"><a class="markdownIt-Anchor" href="#alwaysapply-falsedescription-当涉及业务领域特定逻辑时应用本规则"></a> alwaysApply: false<br />
+description: &quot;当涉及业务领域特定逻辑时应用本规则&quot;</h2>
+<h1 id="业务领域约束"><a class="markdownIt-Anchor" href="#业务领域约束"></a> 业务领域约束</h1>
+<h2 id="1-通用领域规则"><a class="markdownIt-Anchor" href="#1-通用领域规则"></a> 1. 通用领域规则</h2>
+<p>- 所有金额使用 long 类型，单位为分<br />
+- 时间字段统一使用 Date 类型<br />
+- 外部接口调用必须设置超时（默认 3s）并做降级处理<br />
+- 状态变更必须通过状态机，禁止直接 set 状态字段</p>
+<h2 id="2-项目特定规则"><a class="markdownIt-Anchor" href="#2-项目特定规则"></a> 2. 项目特定规则</h2>
+<p>（待实践中补充）<br />
+`</p>
+<h3 id="a8-knowledgeindexmd-知识索引"><a class="markdownIt-Anchor" href="#a8-knowledgeindexmd-知识索引"></a> a8 knowledgeindexmd 知识索引</h3>
+<p># 知识索引</p>
+<blockquote>
+<p>领域知识的轻量索引。每条用一句话说清核心逻辑。<br />
+ 格式：- <strong>触发关键词</strong>: 一句话核心逻辑 → <code>包名.类名.方法名</code>（可选）</p>
+</blockquote>
+<h2 id="业务知识"><a class="markdownIt-Anchor" href="#业务知识"></a> 业务知识</h2>
+<p>（随实践积累补充）</p>
+<h2 id="技术约定"><a class="markdownIt-Anchor" href="#技术约定"></a> 技术约定</h2>
+<p>（随实践积累补充）</p>
+<h2 id="踩坑记录"><a class="markdownIt-Anchor" href="#踩坑记录"></a> 踩坑记录</h2>
+<p>（随实践积累补充）<br />
+`</p>
+<h3 id="a9-changestemplatesspecmd-spec-模板"><a class="markdownIt-Anchor" href="#a9-changestemplatesspecmd-spec-模板"></a> a9 changestemplatesspecmd spec 模板</h3>
+<p># 需求名称</p>
+<blockquote>
+<p>status: propose | apply | review | done<br />
+ created: YYYY-MM-DD<br />
+ complexity: 🟢简单 | 🟡中等 | 🔴复杂</p>
+</blockquote>
+<h2 id="1-背景与目标"><a class="markdownIt-Anchor" href="#1-背景与目标"></a> 1. 背景与目标</h2>
+<p>为什么做 + 做完后的效果（可验证的结果描述）</p>
+<h2 id="2-代码现状research-findings"><a class="markdownIt-Anchor" href="#2-代码现状research-findings"></a> 2. 代码现状（Research Findings）</h2>
+<blockquote>
+<p>每个结论必须有代码出处（文件路径 + 类名/方法名）</p>
+</blockquote>
+<h3 id="21-相关入口与链路"><a class="markdownIt-Anchor" href="#21-相关入口与链路"></a> 2.1 相关入口与链路</h3>
+<h3 id="22-现有实现"><a class="markdownIt-Anchor" href="#22-现有实现"></a> 2.2 现有实现</h3>
+<h3 id="23-发现与风险"><a class="markdownIt-Anchor" href="#23-发现与风险"></a> 2.3 发现与风险</h3>
+<h2 id="3-功能点"><a class="markdownIt-Anchor" href="#3-功能点"></a> 3. 功能点</h2>
+<ul>
+<li>[ ] 功能 1：（输入→处理→输出）</li>
+</ul>
+<h2 id="4-业务规则"><a class="markdownIt-Anchor" href="#4-业务规则"></a> 4. 业务规则</h2>
+<h2 id="5-数据变更"><a class="markdownIt-Anchor" href="#5-数据变更"></a> 5. 数据变更</h2>
+<p>| 操作 | 表名 | 字段/索引 | 说明 |</p>
+<h2 id="6-接口变更"><a class="markdownIt-Anchor" href="#6-接口变更"></a> 6. 接口变更</h2>
+<p>| 操作 | 接口 | 方法 | 变更内容 |</p>
+<h2 id="7-影响范围"><a class="markdownIt-Anchor" href="#7-影响范围"></a> 7. 影响范围</h2>
+<h2 id="8-风险与关注点"><a class="markdownIt-Anchor" href="#8-风险与关注点"></a> 8. 风险与关注点</h2>
+<blockquote>
+<p>⚠️ 涉及资金/状态流转/权限变更必须标注</p>
+</blockquote>
+<h2 id="85-测试策略"><a class="markdownIt-Anchor" href="#85-测试策略"></a> 8.5 测试策略</h2>
+<ul>
+<li><strong>测试范围</strong>：</li>
+<li><strong>覆盖率目标</strong>：</li>
+<li><strong>独立 Test Spec</strong>：是/否</li>
+</ul>
+<h2 id="9-待澄清"><a class="markdownIt-Anchor" href="#9-待澄清"></a> 9. 待澄清</h2>
+<ul>
+<li>[ ] 问题 1：（全部解决后才能进入 /apply）</li>
+</ul>
+<h2 id="10-技术决策"><a class="markdownIt-Anchor" href="#10-技术决策"></a> 10. 技术决策</h2>
+<h2 id="11-执行日志"><a class="markdownIt-Anchor" href="#11-执行日志"></a> 11. 执行日志</h2>
+<p>| Task | 状态 | 实际改动文件 | 备注 |</p>
+<h2 id="12-审查结论"><a class="markdownIt-Anchor" href="#12-审查结论"></a> 12. 审查结论</h2>
+<h2 id="13-确认记录hard-gate"><a class="markdownIt-Anchor" href="#13-确认记录hard-gate"></a> 13. 确认记录（HARD-GATE）</h2>
+<ul>
+<li><strong>确认时间</strong>：</li>
+<li><strong>确认人</strong>：<br />
+`</li>
+</ul>
+<h3 id="a10-changestemplatestasksmd-tasks-模板"><a class="markdownIt-Anchor" href="#a10-changestemplatestasksmd-tasks-模板"></a> a10 changes/templates/tasks.md — Tasks 模板</h3>
+<h1 id="任务拆分-需求名称"><a class="markdownIt-Anchor" href="#任务拆分-需求名称"></a> 任务拆分 — 需求名称</h1>
+<blockquote>
+<p>拆分顺序：数据模型 → 接口协议 → 底层实现 → 上层编排 → 入口层<br />
+每个任务 = 可独立提交的原子变更（3-5 个文件）<br />
+每个任务必须精确到文件路径和函数签名</p>
+</blockquote>
+<h2 id="前置条件"><a class="markdownIt-Anchor" href="#前置条件"></a> 前置条件</h2>
+<p>- [ ] （依赖/配置等前提）</p>
+<h2 id="task-1-任务名"><a class="markdownIt-Anchor" href="#task-1-任务名"></a> Task 1: 任务名</h2>
+<p>- <strong>目标</strong>: 一句话描述<br />
+- <strong>涉及文件</strong>:<br />
+  - path/to/File.java — 新增/修改，做什么<br />
+- <strong>关键签名</strong>:<br />
+  ```java<br />
+  public ResultDTO doSomething(Long id, String type) { }<br />
+依赖: 无</p>
+<p>验收标准: 怎样算完成</p>
+<p>验证命令（可选）:</p>
+<p>完成</p>
+<p>变更摘要</p>
+<p>/apply 全部完成后填写</p>
+<p>总文件数: X 个文件</p>
+<p>Spec-Plan 偏差记录:</p>
+<p>遗留问题:<br />
+`</p>
+<h3 id="a11-changestemplatestest-specmd-单测-spec-模板"><a class="markdownIt-Anchor" href="#a11-changestemplatestest-specmd-单测-spec-模板"></a> a11 changes/templates/test-spec.md — 单测 Spec 模板</h3>
+<p>单测 Spec 模板</p>
+<pre class="highlight"><code class="markdown"><span class="hljs-section"># 单测 Spec — 需求名称</span>
+<span class="hljs-quote">&gt; status: propose | apply | done</span>
+<span class="hljs-quote">&gt; created: YYYY-MM-DD</span>
+<span class="hljs-section">## 0. 测试原则</span>
+<span class="hljs-bullet">-</span> <span class="hljs-strong">**Red/Green TDD**</span>：测试必须先 Red 再 Green，跳过 Red 的测试无法证明有效
+<span class="hljs-bullet">-</span> <span class="hljs-strong">**First Run the Tests**</span>：开始前先跑已有测试套件，了解框架和基线
+<span class="hljs-bullet">-</span> <span class="hljs-strong">**展示工作**</span>：必须展示 mvn test 实际输出，禁止<span class="hljs-literal">&amp;quot;</span>测试通过<span class="hljs-literal">&amp;quot;</span>等无证据声明
+<span class="hljs-section">## 1. 测试框架</span>
+| 项目 | 值 |
+|------|-----|
+| JUnit 版本 | |
+| Mock 框架 | |
+| 已有测试数量 | |
+| 已有测试风格 | |
+<span class="hljs-section">## 2. 覆盖范围</span>
+<span class="hljs-section">### P0 — 核心业务逻辑（必须覆盖）</span>
+<span class="hljs-section">#### 类名: XxxManagerImpl</span>
+| 方法 | 场景 | 输入 | Mock 行为 | 预期结果 |
+|------|------|------|-----------|---------|
+<span class="hljs-section">### P1 — 数据访问层</span>
+<span class="hljs-section">### P2 — 入口层/服务层</span>
+<span class="hljs-section">### 不测试（明确列出原因）</span>
+<span class="hljs-section">## 3. 执行计划</span>
+<span class="hljs-bullet">-</span> [ ] Step 1: 运行已有测试套件，确认基线
+<span class="hljs-bullet">-</span> [ ] Step 2: 生成 P0 测试 → 确认 Red → 确认 Green
+<span class="hljs-bullet">-</span> [ ] Step 3: 生成 P1/P2 测试
+<span class="hljs-bullet">-</span> [ ] Step 4: 运行完整测试套件，确认覆盖率
+`
+
+<span class="hljs-section">### a12 changes/templates/log.md — Log 模板</span>
+
+<span class="hljs-quote">&gt; 记录决策、踩坑和知识发现。知识飞轮的输入。</span>
+
+<span class="hljs-section">## 时间线</span>
+
+| 时间 | 阶段 | 事件 | 备注 |
+
+<span class="hljs-section">## 技术决策</span>
+
+| 决策 | 选择 | 放弃的方案 | 原因 |
+
+<span class="hljs-section">## 踩坑记录</span>
+
+| 问题 | 原因 | 解决方案 | 沉淀？ |
+
+<span class="hljs-section">## 知识发现</span>
+<span class="hljs-quote">&gt; 每个 task 后实时记录，/archive 时逐条确认沉淀到 knowledge/</span>
+<span class="hljs-bullet">-</span> [ ] <span class="hljs-strong">**关键词**</span>: 描述
+
+<span class="hljs-section">## Spec-Code 偏差记录</span>
+
+| 偏差点 | Spec 预期 | 实际情况 | 处理方式 |
+
+`
+
+<span class="hljs-section">## 代码质量备忘</span>
+
+<span class="hljs-section">## 参考</span>
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">Superpowers — agentic skills 框架</span>](<span class="hljs-link">https://github.com/obra/superpowers</span>)（HARD-GATE、两阶段 review、systematic-debugging）
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">Writing about Agentic Engineering Patterns</span>](<span class="hljs-link">https://simonwillison.net/2026/Feb/23/agentic-engineering-patterns/</span>) — Simon Willison
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">Writing code is cheap now</span>](<span class="hljs-link">https://simonwillison.net/guides/agentic-engineering-patterns/code-is-cheap/</span>) — Simon Willison
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">Chatbot Arena Leaderboard</span>](<span class="hljs-link">https://arena.ai/</span>)（LMSYS）
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">opencode 官方文档</span>](<span class="hljs-link">https://opencode.ai/docs/</span>)
+
+<span class="hljs-bullet">-</span> [<span class="hljs-string">Claude Code 文档</span>](<span class="hljs-link">https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview</span>)
+
+<span class="hljs-bullet">-</span> Frederick Brooks,《人月神话》
+
+<span class="hljs-emphasis">_原文链接：[<span class="hljs-string">2026 年 AI 编码的&amp;quot;渐进式 Spec&amp;quot;实战指南</span>](<span class="hljs-link">https://mp.weixin.qq.com/s/7Lgb3GfgXKI0J9L9e9sq0w</span>)_</span></code></pre>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/AI-Coding/">#AI Coding</a>
+        
+            <a class="post-tag" href="/tags/Spec-Coding/">#Spec Coding</a>
+        
+            <a class="post-tag" href="/tags/%E6%B8%90%E8%BF%9B%E5%BC%8F/">#渐进式</a>
+        
+            <a class="post-tag" href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/">#工程实践</a>
+        
+            <a class="post-tag" href="/tags/Agent/">#Agent</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

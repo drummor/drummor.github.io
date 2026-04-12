@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>Android那两个你碰不到但是很重要的类之ActivityThread - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言 上篇文章我们聊了些Android里那些我们平时碰不到但很重要的类ViewRootImpl，这一篇我们就来看看另外那个类ActivityThread。 通过本文能了解一下内容   1、和系统进程打交道的桥头堡 应用进程起来之后ART(Android Runtime)第一站就是ActivityThread，代码层面上就是ActivityThread的main()方法，是不是很熟悉，爷青回啊，这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android那两个你碰不到但是很重要的类之ActivityThread">
+<meta property="og:url" content="https://drummor.github.io/2023/05/06/Android%E9%82%A3%E4%B8%A4%E4%B8%AA%E4%BD%A0%E7%A2%B0%E4%B8%8D%E5%88%B0%E4%BD%86%E6%98%AF%E5%BE%88%E9%87%8D%E8%A6%81%E7%9A%84%E7%B1%BB%E4%B9%8BActivityThread/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言 上篇文章我们聊了些Android里那些我们平时碰不到但很重要的类ViewRootImpl，这一篇我们就来看看另外那个类ActivityThread。 通过本文能了解一下内容   1、和系统进程打交道的桥头堡 应用进程起来之后ART(Android Runtime)第一站就是ActivityThread，代码层面上就是ActivityThread的main()方法，是不是很熟悉，爷青回啊，这">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/1681706186368_.pic.jpg">
+<meta property="og:image" content="https://drummor.github.io/images/k3u1fbpfcp-zoom-1.png">
+<meta property="article:published_time" content="2023-05-06T11:17:02.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.222Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/1681706186368_.pic.jpg">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2023/05/06/Android那两个你碰不到但是很重要的类之ActivityThread/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                Android那两个你碰不到但是很重要的类之ActivityThread
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2023.05.06</span>
+                
+                    <a class="post-category-link" href="/categories/basic/">basic</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> <strong>前言</strong></h2>
+<p>上篇文章我们聊了些<code>Android</code>里那些我们平时碰不到但很重要的类<code>ViewRootImpl</code>，这一篇我们就来看看另外那个类ActivityThread。</p>
+<p>通过本文能了解一下内容</p>
+<p><img src="/images/1681706186368_.pic.jpg" alt="Alt text" /></p>
+<h2 id="1-和系统进程打交道的桥头堡"><a class="markdownIt-Anchor" href="#1-和系统进程打交道的桥头堡"></a> <strong>1、和系统进程打交道的桥头堡</strong></h2>
+<p>应用进程起来之后ART(Android Runtime)第一站就是ActivityThread，代码层面上就是ActivityThread的main()方法，是不是很熟悉，爷青回啊，这不就是java的main方法嘛</p>
+<pre class="highlight"><code class="">public static void main(String[] args) {
+    Looper.prepareMainLooper();
+    ActivityThread thread = new ActivityThread();
+    thread.attach(false, startSeq);
+    sMainThreadHandler = thread.getHandler();
+    Looper.loop();
+    throw new RuntimeException(&quot;Main thread loop unexpectedly exited&quot;);
+}
+</code></pre>
+<p>该方法是一个静态方法，里面做了重要的两件事</p>
+<ul>
+<li>创建了让主线程Looper开始工作，并创建了一个Handler</li>
+<li>给system_server【递纸条】告诉他联系方式，告诉sytem_servr进程与应用进程取得联系可以通过ApplicationThread这个binder。看下面这个代码</li>
+</ul>
+<pre class="highlight"><code class="">    private void attach(boolean system, long startSeq) {
+            final IActivityManager mgr = ActivityManager.getService();
+            mgr.attachApplication(mAppThread, startSeq);//调用远端的binder
+    }
+</code></pre>
+<ul>
+<li>通过<code>ActivityManager.getService()</code>拿到<code>system_server</code>进程的binder，然后把<code>mAppThread</code> binder传递过去。<code>mAppThread</code>是<code>ApplicationThread</code>的一个对象，是ActivityThread的一个内部类。</li>
+<li>取得联系后的第一站创建Applicaiton。</li>
+</ul>
+<pre class="highlight"><code class="">   private class ApplicationThread extends IApplicationThread.Stub {
+        @Override
+        public final void bindApplication() {
+            sendMessage(H.BIND_APPLICATION, data);
+        }
+</code></pre>
+<ul>
+<li>接下来就是H主线程的Hanlder，调用handleBindApplication</li>
+</ul>
+<pre class="highlight"><code class=""> private void handleBindApplication(AppBindData data) {
+        Application app;
+        data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo, isSdkSandbox);//内部创建LoadedApk
+        app = data.info.makeApplicationInner(data.restrictedBackupMode, null);//内部创建Applicaiton对象，调用onCreate()方法
+        installContentProviders(app, data.providers); //cotentprovider初始化
+        mInstrumentation.callApplicationOnCreate(app);//调用onCreate()方法
+    }
+</code></pre>
+<ul>
+<li>这里找到了为什么使用ContentProvider能够实现初始化，构建的时候会创建ContenProvider。</li>
+</ul>
+<pre class="highlight"><code class=""> public Activity newActivity(ClassLoader cl, String className,
+            Intent intent)
+            throws InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
+        String pkg = intent != null &amp;&amp; intent.getComponent() != null
+                ? intent.getComponent().getPackageName() : null;
+        return getFactory(pkg).instantiateActivity(cl, className, intent);//加载创建Activity
+    }
+</code></pre>
+<p><img src="/images/k3u1fbpfcp-zoom-1.png" alt="Alt text" /></p>
+<ul>
+<li>IActivityManager(binder)：应用进程和SystemServer进程打交道的时候。</li>
+<li>AppliactionThread(binder)：SystemServer进程与应用进程通信。</li>
+</ul>
+<h2 id="2-为什么使用contentprovider可以实现初始化"><a class="markdownIt-Anchor" href="#2-为什么使用contentprovider可以实现初始化"></a> <strong>2、为什么使用ContentProvider可以实现初始化</strong></h2>
+<pre class="highlight"><code class=""> private void handleBindApplication(AppBindData data) {
+        Application app;
+        data.info = getPackageInfoNoCheck(data.appInfo, data.compatInfo, isSdkSandbox);//内部创建LoadedApk
+        app = data.info.makeApplicationInner(data.restrictedBackupMode, null);//内部创建Applicaiton对象，调用onCreate()方法
+        installContentProviders(app, data.providers); //cotentprovider初始化
+        mInstrumentation.callApplicationOnCreate(app);//调用onCreate()方法
+    }
+</code></pre>
+<p>上一段分析时已经找打了答案，应用进程被拉起来之后，在创建<code>Application</code>对象调用attachBaseContext()和onCreate()方法之间会调用ContentProvider的onCreate(）方法这也是很多第三方SDK使用该特性实现初始化的原理。</p>
+<h2 id="3-activity是什么时候开始渲染的"><a class="markdownIt-Anchor" href="#3-activity是什么时候开始渲染的"></a> <strong>3、Activity是什么时候开始渲染的</strong></h2>
+<pre class="highlight"><code class="">  public void handleResumeActivity() {
+        performResumeActivity(r, finalStateRequest, reason)//调用Activity onResume
+        final Activity a = r.activity;
+        View decor = r.window.getDecorView();
+        ViewManager wm = a.getWindowManager();
+        a.mWindowAdded = true;
+        wm.addView(decor, l);
+   }
+</code></pre>
+<p>ActivityThread.java<code>的</code>handleResumeActivity()<code>有这样一段代码，我们可以得出结论，Activity渲染的起点是在</code> <code>onResume</code>阶段,在onResume阶段会把decorView交给WindowManager开始执行渲染。</p>
+<h2 id="4-原来还可以监控组件的生命周期"><a class="markdownIt-Anchor" href="#4-原来还可以监控组件的生命周期"></a> <strong>4、原来还可以监控组件的生命周期</strong></h2>
+<pre class="highlight"><code class="">class H extends Handler {
+  
+    public static final int RECEIVER                = 113; //广播接收者
+  
+    @UnsupportedAppUsage
+    public static final int CREATE_SERVICE          = 114;//Service创建
+  
+    public static final int INSTALL_PROVIDER        = 145;//ContentProvider
+  
+    public static final int RELAUNCH_ACTIVITY = 160; //Activity启动
+  
+   public void handleMessage(Message msg) {
+        if (DEBUG_MESSAGES) Slog.v(TAG, &quot;&gt;&gt;&gt; handling: &quot; + codeToString(msg.what));
+        switch (msg.what) {
+            case BIND_APPLICATION:
+                Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, &quot;bindApplication&quot;);
+                AppBindData data = (AppBindData)msg.obj;
+                handleBindApplication(data);
+                Trace.traceEnd(Trace.TRACE_TAG_ACTIVITY_MANAGER);
+                break;
+            case RECEIVER:
+                handleReceiver((ReceiverData)msg.obj);
+                break;
+            case CREATE_SERVICE:
+                handleCreateService((CreateServiceData)msg.obj);
+                break;
+            case BIND_SERVICE:
+                handleBindService((BindServiceData)msg.obj);
+                break;
+                
+            case RELAUNCH_ACTIVITY:
+                handleRelaunchActivityLocally((IBinder) msg.obj);
+                break;
+        }
+    }
+}
+</code></pre>
+<p>系统进程（system_server）指挥应用进程组件生命周期的第一站其实就在ActivityThread这里，交给H对象其实是主线程的Handler来分发处理，如上。我们可以反射拿到这一信息，可以监控到主线程对于这些组件调度的信息，这一信息对我们监控排查ANR很有帮助。</p>
+<h2 id="5-sharedpreference被声讨的根源"><a class="markdownIt-Anchor" href="#5-sharedpreference被声讨的根源"></a> <strong>5 、SharedPreference被声讨的根源</strong></h2>
+<pre class="highlight"><code class=""> private void handleStopService(IBinder token) {
+     QueuedWork.waitToFinish();      
+ }
+ public void handlePauseActivity(){
+      QueuedWork.waitToFinish(); 
+ }
+ public void handleStopActivity(){
+    QueuedWork.waitToFinish(); 
+ }
+public void handleServiceArgs(){
+   QueuedWork.waitToFinish(); 
+}
+</code></pre>
+<p>ActivityThread的以上方法里会调用 <code>QueuedWork.waitToFinish();</code> 该代码会堵塞主线程执行等待SP的写入操作。这也是SP造成ANR的根源。</p>
+<p>稍微展开点</p>
+<pre class="highlight"><code class="">   public static void waitToFinish() {
+        while (true) {
+                Runnable finisher;
+                synchronized (sLock) {
+                    finisher = sFinishers.poll();
+                }
+                if (finisher == null) {
+                    break;
+                }
+                finisher.run();
+            }
+        } 
+    }
+</code></pre>
+<p><code>waitToFinish()</code>方法里有这样一段代码，sFinishers是一个List里面是存放的SP写入操作，会在SP执行<code>commit</code>和apply的时候放入进来。字节跳动团队就是在此处hook了使其<code>poll()</code>方法永远放回空，来杜绝此处产生的ANR。</p>
+<h2 id="7-结"><a class="markdownIt-Anchor" href="#7-结"></a> <strong>7 、结</strong></h2>
+<p>通过阅读ActivityThread的源码我们能在其中获取很多有用的知识。系统进程和应用进程通信的桥梁，Activity真正渲染的起始点，<code>ContentProvider</code>能实现SDK自动初始化的原理等都在<code>ActivityThread</code>看到他们的影子，希望本文对你有所启发有所帮助。</p>
+
+        </div>
+    
+<!-- tags -->
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

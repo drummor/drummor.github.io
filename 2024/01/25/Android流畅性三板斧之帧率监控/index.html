@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>Android流畅性三板斧之帧率监控 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言 Android 流畅性监控的三板斧，这里所指是【帧率的监控】，【卡顿监控】和【ANR 的监控】。之所以讲这三者放在一起是他们的联系比较密切。帧率的下降往往伴随着有卡顿，【过分卡顿】往往就会产生 ANR。 严谨的讲，帧率下降不一定会有卡顿（这里对卡顿是从技术角度定义在主线程执行了耗时任务），卡顿产生的原因还有其他因素导致，比如系统负载、CPU 繁忙等。关于卡顿的详细内容放在流畅性三板斧的第二">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android流畅性三板斧之帧率监控">
+<meta property="og:url" content="https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8B%E5%B8%A7%E7%8E%87%E7%9B%91%E6%8E%A7/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言 Android 流畅性监控的三板斧，这里所指是【帧率的监控】，【卡顿监控】和【ANR 的监控】。之所以讲这三者放在一起是他们的联系比较密切。帧率的下降往往伴随着有卡顿，【过分卡顿】往往就会产生 ANR。 严谨的讲，帧率下降不一定会有卡顿（这里对卡顿是从技术角度定义在主线程执行了耗时任务），卡顿产生的原因还有其他因素导致，比如系统负载、CPU 繁忙等。关于卡顿的详细内容放在流畅性三板斧的第二">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/apm_frame_rate_1706191161099.png">
+<meta property="og:image" content="https://drummor.github.io/images/apm_frame_rate_1706191161453.png">
+<meta property="og:image" content="https://drummor.github.io/images/apm_frame_rate_1706191161989.png">
+<meta property="og:image" content="https://drummor.github.io/images/apm_frame_rate_1706191162204.png">
+<meta property="article:published_time" content="2024-01-25T14:01:04.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.221Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="APM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/apm_frame_rate_1706191161099.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/01/25/Android流畅性三板斧之帧率监控/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                Android流畅性三板斧之帧率监控
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.01.25</span>
+                
+                    <a class="post-category-link" href="/categories/APM/">APM</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>Android 流畅性监控的三板斧，这里所指是【帧率的监控】，【卡顿监控】和【ANR 的监控】。之所以讲这三者放在一起是他们的联系比较密切。帧率的下降往往伴随着有卡顿，【过分卡顿】往往就会产生 ANR。</p>
+<p>严谨的讲，帧率下降不一定会有卡顿（这里对卡顿是从技术角度定义在主线程执行了耗时任务），卡顿产生的原因还有其他因素导致，比如系统负载、CPU 繁忙等。关于卡顿的详细内容放在流畅性三板斧的第二篇。</p>
+<p>【过分的卡顿】也不一定产生 ANR，卡顿但未触发 ANR 产生的条件就不会产生 ANR。关于 ANR 的详细内容我们放在三板斧系列文章的第三篇。</p>
+<p><a href="https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8B%E5%B8%A7%E7%8E%87%E7%9B%91%E6%8E%A7/"><strong>Android 流畅性三板斧之帧率监控</strong></a></p>
+<p><a href="https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8B%E5%8D%A1%E9%A1%BF%E7%9B%91%E6%8E%A7/"><strong>Android 流畅性三板斧之卡顿监控</strong></a></p>
+<p><a href="https://drummor.github.io/2024/01/25/Android%E6%B5%81%E7%95%85%E6%80%A7%E4%B8%89%E6%9D%BF%E6%96%A7%E4%B9%8BANR%E7%9B%91%E6%8E%A7%E4%B8%8E%E8%A7%A3%E5%86%B3/"><strong>Android 流畅性三板斧之 ANR 监控与解决</strong></a></p>
+<p>该篇我们从应用开发者的角度，探索在应用层监控帧率的四种方式。</p>
+<p>温馨提示，本文涉及的实现的代码以上传至 github <a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a>，结合代码食用更佳</p>
+<h2 id="1-什么是帧率"><a class="markdownIt-Anchor" href="#1-什么是帧率"></a> 1 什么是帧率</h2>
+<blockquote>
+<p>帧率（Frame rate）是以帧称为单位的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%BD%8D%E5%9B%BE/1017781?fromModule=lemma_inlink">位图</a>图像连续出现在显示器上的频率（速率)。</p>
+</blockquote>
+<h2 id="2-android-中帧率的监控"><a class="markdownIt-Anchor" href="#2-android-中帧率的监控"></a> 2 Android 中帧率的监控</h2>
+<p>线下开发我们可以使用开发者选项的帧率监控或者 <code>adb shell dumpsys gfxinfo packagename</code>进行监控针对性优化。这些方案不能带到线上。</p>
+<p>惯常我们在 Android 里线下对帧率的监控主要依托 Choreographer,关于 Choreographer 不再赘述在其他的文章有比较全面的介绍可以看这两篇文章</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903818044375053">https://juejin.cn/post/6844903818044375053</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.cn/post/7209861267715637285">https://juejin.cn/post/7209861267715637285</a></li>
+</ul>
+<h2 id="3-简单监控帧率方案"><a class="markdownIt-Anchor" href="#3-简单监控帧率方案"></a> 3 简单监控帧率方案</h2>
+<p>利用 Choreographer 的 postcallback 方法接口轮询方式，能够对帧率进行统计。</p>
+<p><img src="/images/apm_frame_rate_1706191161099.png" alt="image.png" /></p>
+<p><code>choreographer.postCallback()</code>内部是挂载了一个<code>CALLBACK_ANIMATION</code>类型的 callback。轮训方式往<code>choreographer</code>内添加 callback，相邻两个 callback 执行时间间隔即能粗略统计单帧的耗时。严谨的讲这不是单帧的耗时而是两个【半帧】拼凑的耗时。</p>
+<p>代码示例如下。</p>
+<pre class="highlight"><code class="">class PoorFrameTracker {
+    private var mLastFrameTime = -1L
+    private var mFrameCount: Int = 0
+    val calRate = 200 //ms
+    fun startTrack() {
+        mLastFrameTime = 0L
+        mFrameCount = 0
+        Choreographer.getInstance().postFrameCallback(object : FrameCallback {
+            override fun doFrame(frameTimeNanos: Long) {
+                if (mLastFrameTime == -1L) {
+                    mLastFrameTime = frameTimeNanos
+                }
+                val diff = (frameTimeNanos - mLastFrameTime) / 1_000_000.0f
+                if (diff &gt; calRate) {
+                    var fps = mFrameCount / diff * 1000
+                    if (fps &gt; 60) {fps = 60.0f}
+                    //todo :统计
+                    mFrameCount = 0
+                    mLastFrameTime = -1
+                } else {
+                      mFrameCount++
+                }
+                Choreographer.getInstance().postFrameCallback(this);
+            }
+        })
+    }
+}
+</code></pre>
+<h3 id="优点"><a class="markdownIt-Anchor" href="#优点"></a> 优点</h3>
+<ul>
+<li>简单快捷，无黑科技</li>
+</ul>
+<h3 id="缺点"><a class="markdownIt-Anchor" href="#缺点"></a> 缺点</h3>
+<ul>
+<li>无活动时，也会监控，无效信息会把帧率较低时给平均掉。</li>
+<li>对应用带来不必要的负担。</li>
+</ul>
+<h2 id="4-帧率监控进化之一-hook-choreographer"><a class="markdownIt-Anchor" href="#4-帧率监控进化之一-hook-choreographer"></a> 4 帧率监控进化之一 hook Choreographer</h2>
+<p>针对章节三的方案，首先我们有两个主要的优化方向希望在主线程不活动的时候不进行帧率的检测</p>
+<p>我们调用公开 api <code>Choreographer.postCallback()</code>时会触发垂直同步（这部分可以参考另一篇文章）。</p>
+<pre class="highlight"><code class=""> # choreographer
+ private final class FrameDisplayEventReceiver extends DisplayEventReceiver
+             implements Runnable {
+        private long mTimestampNanos;
+         @Override
+         public void onVsync(long timestampNanos, long physicalDisplayId, int frame,
+                 VsyncEventData vsyncEventData) {
+                ...
+                 mTimestampNanos = timestampNanos;
+                 Message msg = Message.obtain(mHandler, this);
+                 msg.setAsynchronous(true);
+                 mHandler.sendMessageAtTime(msg, timestampNanos / TimeUtils.NANOS_PER_MS);
+                  ...
+         }
+         @Override
+         public void run() {
+             mHavePendingVsync = false;
+             doFrame(mTimestampNanos, mFrame, mLastVsyncEventData);
+         }
+     }
+</code></pre>
+<ul>
+<li>【采集每帧的开始】利用 Looper 中 Printer 采集 Message 的开始和结束。上段代码是<code>Choreographer</code>中的一段代码。当收到底层垂直同步信号的时,利用 Handler 机制 post 的一个 Runable，执行该帧的动作<code>doFrame()</code>。依次我们可以采集到每帧的开始和结束。</li>
+</ul>
+<pre class="highlight"><code class=""># Choreographer
+private final CallbackQueue[] mCallbackQueues;
+</code></pre>
+<p><img src="/images/apm_frame_rate_1706191161453.png" alt="image.png" /></p>
+<ul>
+<li>【过滤出每帧的执行动作】我们知道主线程中不单单执行每帧的动作，还会执行其他动作。如何过滤出执行的是每帧的动作。反射往 Choreographer 往里添加 callback 不触发垂直同步，同时在同步信号回调时，会调用我们传入的 callback，如果执行了传入的 callbacl 就可以标识该次执行动作是帧的执行动作。</li>
+<li>【采集真实的垂直同步到达时间】反射拿到<code>mTimestampNanos</code></li>
+<li>结合以上，我们能够采集到每帧执行耗时，依次可以计算出准确的帧率。且比我们第一种方案要优雅很多。</li>
+</ul>
+<pre class="highlight"><code class="">  void doFrame(long frameTimeNanos, int frame, DisplayEventReceiver.VsyncEventData vsyncEventData) {
+        ...
+        final long frameIntervalNanos = vsyncEventData.frameInterval;
+        doCallbacks(Choreographer.CALLBACK_INPUT, frameData, frameIntervalNanos);
+        doCallbacks(Choreographer.CALLBACK_ANIMATION, frameData, frameIntervalNanos);
+        doCallbacks(Choreographer.CALLBACK_INSETS_ANIMATION, frameData, frameIntervalNanos);
+        doCallbacks(Choreographer.CALLBACK_TRAVERSAL, frameData, frameIntervalNanos);
+        doCallbacks(Choreographer.CALLBACK_COMMIT, frameData, frameIntervalNanos);
+        ...
+    }
+</code></pre>
+<ul>
+<li>同时我们还可以通过反射的方式给 Chorographer 里 mCallbackQueues 添加不同的类型动作，采集不同类型动作的耗时。</li>
+</ul>
+<p><strong>补充</strong></p>
+<p><img src="/images/apm_frame_rate_1706191161989.png" alt="image.png" /></p>
+<ul>
+<li>严格意义上，该方案统计的也不是真实的帧率，而是一帧所有耗时中在 UI Thread 执行部分的耗时，上图<code>doFrame</code>部分。其他线程和进程还会执行其他动作最终才能完成一帧的绘制。但对于我们应用层来说更关注监控<code>doFrame</code>，我们在应用开发层面大部分能够干预的也在<code>doFrame</code>这部分。</li>
+</ul>
+<p>（方案思路 Matrix）</p>
+<p>关于这个方案可查看： <a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a></p>
+<h2 id="5-帧率监控进化之二-滑动帧率"><a class="markdownIt-Anchor" href="#5-帧率监控进化之二-滑动帧率"></a> 5 帧率监控进化之二 滑动帧率</h2>
+<pre class="highlight"><code class="">#View
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        ...
+        final AttachInfo ai = mAttachInfo;
+        if (ai != null) {
+            ai.mViewScrollChanged = true;
+        }
+      ...
+    }
+</code></pre>
+<ul>
+<li>View 里如果有滑动行为产生最终都会调用到<code>onScrollChanged()</code>,当该方法调用的时候，会将 mAttachInfo 的 mViewScrollChanged 值设为 true</li>
+</ul>
+<pre class="highlight"><code class="">#ViewRootImpl
+    private boolean draw(boolean fullRedrawNeeded, boolean forceDraw) {
+        ...
+        if (mAttachInfo.mViewScrollChanged) {
+            mAttachInfo.mViewScrollChanged = false;
+            mAttachInfo.mTreeObserver.dispatchOnScrollChanged();
+        }
+    }
+​
+</code></pre>
+<ul>
+<li>如上代码 ViewRootImpl 的 draw 方法会如果 check 到<code>mAttachInfo.mViewScrollChanged</code>值为 true 就会就会调用<code>ViewTreeObserver</code>的<code>dispatchOnScrollChanged()</code>方法，只要我们在<code>viewTreeObserver</code>设置监听，就能获取到界面是否正在滑动这一重要事件。</li>
+</ul>
+<p><img src="/images/apm_frame_rate_1706191162204.png" alt="image.png" /></p>
+<ul>
+<li>
+<p>整个过程的如上图所示，我们收到滑动回调这一事件的时候，其实是 choreographer 的 doFrame()调用而来。</p>
+</li>
+<li>
+<p>结合上面我们就可以在收到【滑动事件】的时候使用 Choreographer 的 postCallback 开始统计帧率。</p>
+</li>
+<li>
+<p>什么时候结束呢？在没有【滑动信息】生成出来的时候看下面代码</p>
+<pre class="highlight"><code class="">   private var isScroll = false
+    init {
+        window.decorView.viewTreeObserver.addOnScrollChangedListener {
+            //标识正在滑动
+            isScroll = true
+            //开始统计帧率        
+            Choreographer.getInstance().postFrameCallback(FrameCallback())
+        }
+    }
+​
+   private inner class FrameCallback : Choreographer.FrameCallback {
+        override fun doFrame(frameTimeNanos: Long) {
+            if (isScroll) {
+                isScroll = false //重置滑动状态
+                if (lastFrameTime != 0L) {
+                    val dropFrame =
+                        (((frameTimeNanos - lastFrameTime) / 1000000f / 16.6667f) + 1f).toInt()
+                    notifyListener(dropFrame)
+                }
+                lastFrameTime = frameTimeNanos
+            } else {
+                lastFrameTime = 0
+            }
+        }
+    }
+</code></pre>
+<p>这样我们就实现了一个监控滑动帧率的方案，代码实现放在了 <a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a></p>
+</li>
+</ul>
+<p>（方案来自淘宝技术团队）</p>
+<h2 id="6-帧率监控进化-之三-官方方案"><a class="markdownIt-Anchor" href="#6-帧率监控进化-之三-官方方案"></a> 6 帧率监控进化 之三 官方方案</h2>
+<p>官方出手，官方在 Android N 以上新增了<code>Window.OnFrameMetricsAvailableListener</code>可以监听每帧的执行状态。包含总耗时，绘制耗时，布局耗时，动画耗时，测量耗时。依次我们可以计算出帧率。</p>
+<pre class="highlight"><code class="">  private val metricsAvailableListener =
+        Window.OnFrameMetricsAvailableListener { window, frameMetrics, dropCountSinceLastInvocation -&gt;
+            val intent = frameMetrics?.getMetric(FrameMetrics.INTENDED_VSYNC_TIMESTAMP) ?: 0
+            val vsync = frameMetrics?.getMetric(FrameMetrics.VSYNC_TIMESTAMP) ?: 0
+            val animation = frameMetrics?.getMetric(FrameMetrics.ANIMATION_DURATION) ?: 0
+            val vsyncTotal = frameMetrics?.getMetric(FrameMetrics.TOTAL_DURATION) ?: 0
+            val measureCost = frameMetrics?.getMetric(FrameMetrics.LAYOUT_MEASURE_DURATION) ?: 0    
+            //计算帧率
+        }
+​
+ this.window.addOnFrameMetricsAvailableListener(//向window注册监听
+                    metricsAvailableListener,
+                    Handler(handlerThread.looper)
+</code></pre>
+<p>同时配合 Jetpack 的<code>FrameMetricsAggregator</code>的可以统计出帧耗时情况。</p>
+<pre class="highlight"><code class=""> private val frameMetricsAggregator = FrameMetricsAggregator()
+ frameMetricsAggregator.add(this@FrameActivity)
+ frameMetricsAggregator.metrics?.let {
+                it[FrameMetricsAggregator.TOTAL_INDEX] //总耗时概况
+                it[FrameMetricsAggregator.INPUT_INDEX] //输入事件耗时
+                it[FrameMetricsAggregator.DRAW_INDEX]  //绘制事件耗时概况
+            }
+</code></pre>
+<p><code>FrameMetricsAggregator</code>内部存储比较有意思，是有一个 SparseIntArray 数组<code>SparseIntArray[] mMetrics = new SparseIntArray[LAST_INDEX + 1]</code>，存储各个阶段的耗时 SparseIntArray 的 key 为耗时，value 为该耗时的个数。</p>
+<pre class="highlight"><code class="">mMetrics[TOTAL_INDEX]:
+{3=8, 4=13, 5=2, 6=44, 7=4, 15=1, 196=1, 198=1, 204=1, 209=1, 210=1, 233=1, 265=1}
+</code></pre>
+<p>如上这是每帧总耗时的分布，耗时 3ms 的有 8 个，耗时 4ms 的有 8 个</p>
+<p>我们可以制定自己的标准，诸如单帧耗时&lt;30ms 为优秀，单帧耗时&gt;30ms 且&lt;60ms 为正常，单帧耗时&gt;60ms 且&lt;200ms 为过高，单帧&gt;200 为严重。</p>
+<h2 id="7-数据统计"><a class="markdownIt-Anchor" href="#7-数据统计"></a> 7 数据统计</h2>
+<p>首先有一个大的原则，帧耗时统计是在有渲染动作发生时统计，空闲状态不统计。</p>
+<p>帧率的统计就是，渲染帧的数量除以有帧渲染发生动作时间得到。</p>
+<p>另，每帧的耗时不尽相同，希望抓住主线，针对性的统计慢帧冻帧的数量以及占比。或者切割的更为精细，如 Matrix 里默认的把帧的耗时表现分为四个等级。</p>
+<ul>
+<li>正常帧，❤️*16ms</li>
+<li>中间帧，&lt;9*16ms</li>
+<li>慢帧，&lt;24*16ms</li>
+<li>冻帧，&lt;42*16ms</li>
+</ul>
+<p>再有就是，如通过 adb shell dumpsys gfxinfo packagename 命令或者<code>FrameMetricsAggregator</code>里的统计方式，把相同耗时的帧进行合并。</p>
+<p>帧的统计往往以 page（Activity）为维度，作为一个数据大盘数据。</p>
+<h2 id="8-其他"><a class="markdownIt-Anchor" href="#8-其他"></a> 8 其他</h2>
+<ul>
+<li>帧率真实一个笼统的指标，会存在单帧耗时很高，还是帧率平均下来很优秀，从数据上看问题不大，但是用户的感知会比较强烈。我们更需要做的找到那个隐藏着的【耗时高】的单帧；我们需要全面的对主线程里的执行任务进行全面的监控，也就是卡顿监控的范畴。</li>
+<li>帧率只是统计【页面绘制】的概况，不能够全面反映主线程的耗时情况。主线程如果存在耗时动作，比如一个主线程的 Handler 的执行了一个&gt;100ms 的任务，如果此时并没有绘制任务需要执行,此时的不一定帧率就会降低。</li>
+<li>【warning!!】最后，已经困扰好几天，实际测试中发现，使用<code>Window.OnFrameMetricsAvailableListener</code>与 hook choreograoher 方案对比，<code>Window.OnFrameMetricsAvailableListener</code>有漏报的情况产生。这需要看 framework 源码进一步追查，有对这方面有研究的同学欢迎留言讨论。</li>
+<li>本文涉及的实现的代码以上传至 github <a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a></li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/APM/">#APM</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

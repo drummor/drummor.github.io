@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>Android那两个你碰不到但是很重要的类之ViewRootImpl - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言 这两个类就是ActivityThread和ViewRootImpl，之所以说碰不到是因为我们无法通过正常的方式引用这两个类或者其类的对象，调用方法或者直接拿他的属性。但他们其实又无处不在，应用开发中很多时候都和他们息息相关，阅读他们掌握其内部实现对我们理解Android运行机理有醍醐灌顶之疗效，码读百变其义自见，常读常新。本文就尝试从几个我们经常接触的方面先谈谈ViewRootImpl。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android那两个你碰不到但是很重要的类之ViewRootImpl">
+<meta property="og:url" content="https://drummor.github.io/2024/01/25/Android%E9%82%A3%E4%B8%A4%E4%B8%AA%E4%BD%A0%E7%A2%B0%E4%B8%8D%E5%88%B0%E4%BD%86%E6%98%AF%E5%BE%88%E9%87%8D%E8%A6%81%E7%9A%84%E7%B1%BB%E4%B9%8BViewRootImpl/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言 这两个类就是ActivityThread和ViewRootImpl，之所以说碰不到是因为我们无法通过正常的方式引用这两个类或者其类的对象，调用方法或者直接拿他的属性。但他们其实又无处不在，应用开发中很多时候都和他们息息相关，阅读他们掌握其内部实现对我们理解Android运行机理有醍醐灌顶之疗效，码读百变其义自见，常读常新。本文就尝试从几个我们经常接触的方面先谈谈ViewRootImpl。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-01-25T11:32:36.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.222Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/01/25/Android那两个你碰不到但是很重要的类之ViewRootImpl/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                Android那两个你碰不到但是很重要的类之ViewRootImpl
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.01.25</span>
+                
+                    <a class="post-category-link" href="/categories/%E6%BA%90%E7%A0%81/">源码</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p>这两个类就是ActivityThread和ViewRootImpl，之所以说碰不到是因为我们无法通过正常的方式引用这两个类或者其类的对象，调用方法或者直接拿他的属性。但他们其实又无处不在，应用开发中很多时候都和他们息息相关，阅读他们掌握其内部实现对我们理解Android运行机理有醍醐灌顶之疗效，码读百变其义自见，常读常新。本文就尝试从几个我们经常接触的方面先谈谈ViewRootImpl。</p>
+<h2 id="11-viewrootimpl哪来的"><a class="markdownIt-Anchor" href="#11-viewrootimpl哪来的"></a> 1.1 ViewRootImpl哪来的？</h2>
+<p>首先是ViewRootImpl，位于<code>android.view</code>包下，从它所处的位置大概能猜到，跟View相关。其作用一句话总结，就是连接Window和View的纽带。</p>
+<p>这个要从我们最熟悉的Activity开始，我们知道Activity的设置布局View是通过<code>setContentView()</code> 方法这个方法里面也大有文章，我们简单的梳理下。</p>
+<ul>
+<li>Activity setcontentView（）内部调用了<code>getWindow().setContentView(layoutResID);</code>也就是调用了Window的<code>setContentView</code>方法,Android里Window的唯一实现类就是PhoneWindow，PhoneWindow setContentView，初始化DecorView和把我们设置的View作为其子类。</li>
+<li>目光转移到<code>ActivityThread </code>没错是我们提及的另外一个主角，先关注他的handleResumeActivity()方法，里面关键的代码如下。</li>
+</ul>
+<pre class="highlight"><code class="java">
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleResumeActivity</span><span class="hljs-params">()</span>{
+    r.window = r.activity.getWindow();
+    <span class="hljs-type">View</span> <span class="hljs-variable">decor</span> <span class="hljs-operator">=</span> r.window.getDecorView();
+    <span class="hljs-type">ViewManager</span> <span class="hljs-variable">wm</span> <span class="hljs-operator">=</span> a.getWindowManager();
+    <span class="hljs-type">ViewManager</span> <span class="hljs-variable">wm</span> <span class="hljs-operator">=</span> a.getWindowManager();
+    WindowManager.<span class="hljs-type">LayoutParams</span> <span class="hljs-variable">l</span> <span class="hljs-operator">=</span> r.window.getAttributes();
+    wm.addView(decor, l);
+}
+</code></pre>
+<ul>
+<li><code>WindowManager</code>的实现类<code>WindowManageImpl</code>的addView方法里调用了<code>mGlobal.updateViewLayout(view, params);</code></li>
+<li>最后我们在WindowManagerGlobal的addView方法里找到了</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addView</span><span class="hljs-params">()</span>{
+    root = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ViewRootImpl</span>(view.getContext(), display);
+    view.setLayoutParams(wparams);
+    mViews.add(view);
+    mRoots.add(root);
+    mParams.add(wparams);
+}
+</code></pre>
+<p><strong>小结</strong></p>
+<ul>
+<li>通过梳理这个过程我们知道，setContenview()其实只是在Window的下面挂了一个View链，View链的根就是ViewRootImpl。</li>
+<li>通过Window把View和Activity联系在一起。</li>
+<li>View链的真正添加操作最终交给了WindowManagerGlobal执行。</li>
+<li>补充一点：PopupWindow本质就是在当前Window下挂了一个View链，PopupWindow本身没有Window，就如雷锋塔没有雷锋一样；Dialog是有自己的window关于这点可自行查阅源码考证。</li>
+</ul>
+<h2 id="2-viewrootimpl-一个view链渲染的中转站"><a class="markdownIt-Anchor" href="#2-viewrootimpl-一个view链渲染的中转站"></a> 2 ViewRootImpl 一个View链渲染的中转站</h2>
+<p>View的渲染是自顶而下、层层向下发起的，大致经历测量布局和绘制，View链的管理者也就是<code>ViewRootImpl</code>。通过<code>scheduleTraversals（）</code>方法发起渲染动作。交给Choreographer安排真正执行的事件。关于<code>Choreographer</code>不熟悉的可以参考我的其他文章。最终执行<code>performTraversals()</code> 方法。</p>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">performTraversals</span><span class="hljs-params">()</span>{
+    performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
+    performLayout(lp, mWidth, mHeight);
+    performDraw();
+}
+</code></pre>
+<h2 id="3-不能在子线程操作view"><a class="markdownIt-Anchor" href="#3-不能在子线程操作view"></a> 3 不能在子线程操作View？</h2>
+<p>ViewRoot的RequestLayout中有这样一段代码：</p>
+<pre class="highlight"><code class="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">requestLayout</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">if</span> (!mHandlingLayoutInLayoutRequest) {
+        checkThread();
+        mLayoutRequested = <span class="hljs-literal">true</span>;
+        scheduleTraversals();
+    }
+}
+
+<span class="hljs-keyword">void</span> <span class="hljs-title function_">checkThread</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">if</span> (mThread != Thread.currentThread()) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CalledFromWrongThreadException</span>(
+                <span class="hljs-string">&quot;Only the original thread that created a view hierarchy can touch its views.&quot;</span>);
+    }
+}
+</code></pre>
+<ul>
+<li>我们对View的操作，比如给TextView设置text，最终都会触发ViewRootImpl的<code>requestLayout()</code> 方法，该方法有如上的一个check逻辑。这就是我们常说的不能在子线程中更新View。</li>
+<li>其实子线程中可以执行View的操作，但是有个前提是：<strong>View还未挂载时。</strong> View未挂载时不会触发<code>requestLayout</code>，只是一个普普通通的java对象。那挂载逻辑在哪？</li>
+</ul>
+<h2 id="4-view-挂载"><a class="markdownIt-Anchor" href="#4-view-挂载"></a> 4 View 挂载</h2>
+<ul>
+<li>在ViewRootImpl的<code>performTraversals()</code> 里有这个代码</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">performTraversals</span><span class="hljs-params">()</span>{
+    host.dispatchAttachedToWindow(mAttachInfo, <span class="hljs-number">0</span>);<span class="hljs-comment">//此处的host为ViewGroup</span>
+}
+</code></pre>
+<ul>
+<li>ViewGroup的<code>dispatchAttachedToWindo()</code>方法会把AttachInfo对象分配每一个View，最终实现我们所谓的挂载。</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatchAttachedToWindow</span><span class="hljs-params">(AttachInfo info, <span class="hljs-type">int</span> visibility)</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; count; i++) {
+        <span class="hljs-keyword">final</span> <span class="hljs-type">View</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> children[i];
+        child.dispatchAttachedToWindow(info,
+                combineVisibility(visibility, child.getVisibility()));
+    }
+ 
+</code></pre>
+<ul>
+<li>实现挂载的View有任何风吹草动就会把事件传递到大bossViewRootImpl这里了。</li>
+</ul>
+<p>通过addView添加进的View也是会收到父View的mAttachInfo这里不展开了。</p>
+<h2 id="5-viewpost的runnable最终在哪执行了"><a class="markdownIt-Anchor" href="#5-viewpost的runnable最终在哪执行了"></a> 5 View.post()的Runnable最终在哪执行了？</h2>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">post</span><span class="hljs-params">(Runnable action)</span> {
+    <span class="hljs-keyword">final</span> <span class="hljs-type">AttachInfo</span> <span class="hljs-variable">attachInfo</span> <span class="hljs-operator">=</span> mAttachInfo;
+    <span class="hljs-keyword">if</span> (attachInfo != <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">return</span> attachInfo.mHandler.post(action);
+    }
+    getRunQueue().post(action);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+}
+</code></pre>
+<ul>
+<li>以上是View post()的代码，可见如果已经实现挂载的View，会直接把post进来的消息交给Hanlder处理，不然就post了HandlerActionQueue里等待后续被处理。</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">dispatchAttachedToWindow</span><span class="hljs-params">(AttachInfo info, <span class="hljs-type">int</span> visibility)</span> {
+  ..
+    <span class="hljs-keyword">if</span> (mRunQueue != <span class="hljs-literal">null</span>) {
+        mRunQueue.executeActions(info.mHandler);<span class="hljs-comment">//内部也是调用handler.post()</span>
+        mRunQueue = <span class="hljs-literal">null</span>;
+    }
+    ..
+}
+</code></pre>
+<ul>
+<li>最终这些Runnable会在View挂载的时候执行，也就是<code>dispatchAttachedToWindow()</code>方法里执行。</li>
+</ul>
+<h2 id="6-为什么viewpost-可以获取宽高"><a class="markdownIt-Anchor" href="#6-为什么viewpost-可以获取宽高"></a> 6 为什么View.post 可以获取宽高</h2>
+<ul>
+<li>这是一个延伸问题，在Activity的<code>OnCreate()</code>方法中直接获取宽高是获取不到的，我们通常会使用view.post一个Runnable来获取。原因就是Activity <code>onCreate</code>时通过setContentView只是创建了View而未实现挂载，挂载是在onResume时，未挂载的View没有经历测量过程。</li>
+<li>而通过post的方式，通过上一小节知道，未挂载的View上post之后，任务会在挂载之后，通过handler重新post，此时iewRootImpl已经执行了<code>performTraversals()</code>完成了测量自然就可以得到宽高。</li>
+</ul>
+<h2 id="7-还有一点值得注意"><a class="markdownIt-Anchor" href="#7-还有一点值得注意"></a> 7 还有一点值得注意</h2>
+<p><code>ViewRootImpl</code> 不单单是渲染的中转站，还是触摸事件的中转站。</p>
+<p>硬件传感器接收到触摸事件经过层层传递分发到应用窗口的第一站就是ViewRootImpl。为什么这么说？因为我有证据~。这是ViewRoot里的代码</p>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setView</span><span class="hljs-params">()</span>{
+    ..
+    mInputEventReceiver = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WindowInputEventReceiver</span>(inputChannel,
+        Looper.myLooper());
+}
+</code></pre>
+<ul>
+<li>WindowInputEventReceiver是ViewRootImpl的一个内部类，其接收到input事件后，就会进行事件分发。</li>
+<li>这里给我们的启发是，并不是<strong>所有的主线程任务执行都是通过Handler机制，</strong> onTouch（）事件是底层直接回调过来的，这就和我们之前卡顿监控说的方案里有一项就是对onTouchEvent的监控。</li>
+</ul>
+<h2 id="结"><a class="markdownIt-Anchor" href="#结"></a> 结</h2>
+<ul>
+<li>ViewRoot的代码有一万多行，本文分析的只是冰山一角，里面有大量细节直接研究。</li>
+<li>通过ViewRootImpl相关几个点，简单的做了介绍分析希望对你有帮助。</li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

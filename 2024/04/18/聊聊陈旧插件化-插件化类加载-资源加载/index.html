@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>聊聊陈旧插件化: 插件化类加载 &amp; 资源加载 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言  先大概了解下整个Apk的构成。  AndroidManifest.xml：用于描述APK包的组件和权限信息。 classes.dex：这是一个包含Java字节码文件的文件。 resources.arsc：会把资源打包编译成该格式，被为每份资源分配一个ID。。 lib 目录：这个目录中包含了应用程序的所有本地代码库文件。（so文件） assets 目录：文件和资源，该目录下文件不会分配资源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="聊聊陈旧插件化: 插件化类加载 &amp; 资源加载">
+<meta property="og:url" content="https://drummor.github.io/2024/04/18/%E8%81%8A%E8%81%8A%E9%99%88%E6%97%A7%E6%8F%92%E4%BB%B6%E5%8C%96-%E6%8F%92%E4%BB%B6%E5%8C%96%E7%B1%BB%E5%8A%A0%E8%BD%BD-%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言  先大概了解下整个Apk的构成。  AndroidManifest.xml：用于描述APK包的组件和权限信息。 classes.dex：这是一个包含Java字节码文件的文件。 resources.arsc：会把资源打包编译成该格式，被为每份资源分配一个ID。。 lib 目录：这个目录中包含了应用程序的所有本地代码库文件。（so文件） assets 目录：文件和资源，该目录下文件不会分配资源">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/plugin001.jpg">
+<meta property="article:published_time" content="2024-04-18T15:54:23.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.223Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/plugin001.jpg">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/04/18/聊聊陈旧插件化-插件化类加载-资源加载/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                聊聊陈旧插件化: 插件化类加载 &amp; 资源加载
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.04.18</span>
+                
+                    <a class="post-category-link" href="/categories/%E5%9F%BA%E5%BB%BA/">基建</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h2 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h2>
+<p><img src="/images/plugin001.jpg" alt="" /></p>
+<p>先大概了解下整个Apk的构成。</p>
+<ul>
+<li>AndroidManifest.xml：用于描述APK包的组件和权限信息。</li>
+<li>classes.dex：这是一个包含Java字节码文件的文件。</li>
+<li>resources.arsc：会把资源打包编译成该格式，被为每份资源分配一个ID。。</li>
+<li>lib 目录：这个目录中包含了应用程序的所有本地代码库文件。（so文件）</li>
+<li>assets 目录：文件和资源，该目录下文件不会分配资源ID。</li>
+<li>res 目录：资源文件会被分配资源ID存储在resources.arsc里，包括布局文件、字符串文件、颜色文件等。</li>
+<li>META-INF 目录：包含了APK的签名信息。</li>
+</ul>
+<p>本文着重是从加载 Dex也就是类和资源(resources.arsc/res)的方向展开讨论。</p>
+<h2 id="1-插件类加载"><a class="markdownIt-Anchor" href="#1-插件类加载"></a> 1、 插件类加载</h2>
+<p>插件化的三个核心问题的第一个，类的动态加载和使用。具体一些就是加载未安装等 Apk 中的类执行其方法、读取获取其属性属性等。解决插件化中如何动态加载【可执行】代码这一核心问题。</p>
+<h3 id="11-类的动态加载"><a class="markdownIt-Anchor" href="#11-类的动态加载"></a> 1.1、 <strong>类的动态加载</strong></h3>
+<ul>
+<li>首先自定义 ClassLoader，使用自定义 ClassLoader 我们可以加载指定的不在宿主内的类文件。这个特性是Java语言的特性。</li>
+<li>通过自定义的 ClassLoader 我们可以加载我们想要的指定的类。</li>
+</ul>
+<p>继承 DexClassLoader，DexClassLoader 的构造方法有四个参数</p>
+<pre class="highlight"><code class="">public DexClassLoader(String dexPath, 
+                      String optimizedDirectory,
+                      String librarySearchPath,
+                      ClassLoader parent) {
+</code></pre>
+<ul>
+<li><strong>dexPath :</strong> apk、aar、jar 等包含 [class] 的文件路径，该 ClassLoader 执行类加载动作时，会在该路径下查找类文件。</li>
+<li><strong>optimizedDirectory :</strong> 用于设置 DexClassLoader 对.dex优化后的存储位置，该参数在 Android8.0 以上(api26)以上失效。</li>
+<li><strong>librarySearchPath:</strong> 本地库文件( so )的存储位置。关于so文件的动态加载这里暂时不展开。</li>
+<li><strong>parent</strong>：设置该 ClassLoader 的父 ClassLoader。众所周知，ClassLoader 有双亲委派机制，即加载动作先交给父 ClassLoader 加载，父ClassLoader不加载时才自身来加载。可能有疑问为啥叫【双亲】委派，可能是翻译水平的问题，parent 翻译成了双亲。</li>
+</ul>
+<p>动手写，如下其实没那么复杂不是么。</p>
+<pre class="highlight"><code class="">public class ApkClassLoader extends DexClassLoader {
+    public ApkClassLoader(String dexPath,
+                          String optimizedDirectory,
+                          String librarySearchPath,
+                          ClassLoader hostClassLoader) {
+        super(dexPath, optimizedDirectory, librarySearchPath, hostClassLoader);
+    }
+}
+</code></pre>
+<h3 id="12-插件逻辑使用"><a class="markdownIt-Anchor" href="#12-插件逻辑使用"></a> 1.2、 <strong>插件逻辑使用</strong></h3>
+<p>有了锤子我们得找钉子哇，用定义好的 ClassLoader 去动态加载 Apk 中的 [class]。</p>
+<p>制作一个 Apk ，使用全包类名加载指定的类。</p>
+<ul>
+<li>有了 插件中的 Class 我们就可以创建对象，执行其静态方法，创建对象等诸多操作。</li>
+</ul>
+<blockquote>
+<ul>
+<li>展开说下 interface 在里面起到的作用。</li>
+<li>以及 interface class 由谁负责加载</li>
+<li>ApkclassLoader 与宿主 ClassLoader 的父子关系。</li>
+</ul>
+</blockquote>
+<p>把一个类加载起来之后，就可以利用反射，调用方法、获取属性、创建实例了。但在实际的工程里这种方式还是比较野路子。往往更为正规的方式，我们会规定好必要的接口让插件来实现。这也符合软件工程设计里的【依赖倒置原则】即不依赖具体实现，而是依赖抽象类或者接口。具体的实现可变，抽象/接口不常变。</p>
+<p>举个例子，我们规定一种加法操作，然后在插件 Apk 里实现这个加法操作。对于使用方来说依赖 PluginArithmetic 这个接口，实现由我们的插件承接。</p>
+<ul>
+<li><strong>声明</strong>：定义一个算法接口内声明一个加法方法。</li>
+</ul>
+<pre class="highlight"><code class="">interface IPluginArithmetic {
+    //加法
+    fun plus(num: Int, addNum: Int): Int
+}
+</code></pre>
+<ul>
+<li><strong>实现：</strong> 在插件中对接口做具体的实现</li>
+</ul>
+<pre class="highlight"><code class="">@Keep
+class IPluginArithmeticImpl : IPluginArithmetic {
+    override fun plus(num: Int, addNum: Int): Int {
+        return num + addNum
+    }
+}
+</code></pre>
+<ul>
+<li><strong>发现&amp;使用:</strong> 宿主中获取类创建实例调用方法。</li>
+</ul>
+<pre class="highlight"><code class="">
+private fun invokeIncreaseByPlugin() {
+    val arithmeticClzName = &quot;com.sample.sample_plugin.PluginArithmeticImpl&quot;
+    val arithmeticClzNameImpl: Class&lt;*&gt; = apkClassLoader.loadClass(arithmeticClzName)
+    val arithmetic: IPluginArithmetic =
+        getInterface(IPluginArithmetic::class.java, arithmeticClzNameImpl)
+    val result = arithmetic.plus(1, 1)
+    Toast.makeText(this.applicationContext, &quot;result:${result}&quot;, Toast.LENGTH_SHORT).show()
+}
+</code></pre>
+<h3 id="13-classloader-的分与合"><a class="markdownIt-Anchor" href="#13-classloader-的分与合"></a> 1.3、ClassLoader 的分与合</h3>
+<p>宿主和插件的类加载共用一个ClassLoader还是分开用不同的ClassLoader，市面上大部分插件化方案都是采用插件用单独 ClassLoader。两种方案各有优劣，以下是他们的一些特点。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:left"><strong>优点</strong></th>
+<th style="text-align:left"><strong>缺点</strong></th>
+<th style="text-align:left"><strong>适用场景</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>合并 classlaoder</strong></td>
+<td style="text-align:left">宿主与插件之间方便相互访问;减少重复的冗余类，降低包体</td>
+<td style="text-align:left">引入兼容问题，宿主与插件依赖的library库需要做版本控制。插件/宿主的发版，不灵活</td>
+<td style="text-align:left">插件需要大量使用宿主的能力，本身存在比较大耦合</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>插件独立classloader</strong></td>
+<td style="text-align:left">插件更独立，对宿主的依赖小，发版更灵活；ClassLoader天然隔离，无依赖库版本不兼容问题。</td>
+<td style="text-align:left">宿主与插件之间通信有限制需要引入通信机制。宿主/插件有相同的类影响包体</td>
+<td style="text-align:left">插件相对独立，与宿主共用依赖库少，通信接口单一</td>
+</tr>
+</tbody>
+</table>
+<p>从降低维护成本和开发灵活度的角度出发，个人比较倾向分开的方式。下面就独立ClassLoader这个方向举两个Case详细的说明阐述。</p>
+<h4 id="131-通信接口谁加载"><a class="markdownIt-Anchor" href="#131-通信接口谁加载"></a> 1.3.1、通信接口谁加载</h4>
+<p>在插件中和使用方（宿主）中都使用了 IPluginArithmetic 这一接口类，我们的插件和宿主是不同的 ClassLoader，那这个 IPluginArithmetic 类由哪个 ClassLoader 负载加载呢 ？</p>
+<p>这里似乎没有标准答案，我们这个例子，这种情形下，接口类是相对固定的，让 HostClassLaoder 加载比较合适。反过来如果让插件加载这个类，那么插件的Classloader作为HostClassLoader的父类，是不合理的。</p>
+<p>实现宿主Classloader加载这个插件类的方式，插件 ClassLoader 的 Parent classeLoader 设置为宿主的 classloader，ClassLoader 双亲委派是让其父ClassLoader 先加载。</p>
+<h4 id="132-相同类谁加载"><a class="markdownIt-Anchor" href="#132-相同类谁加载"></a> 1.3.2、相同类谁加载</h4>
+<p>延伸出来，对于同一个类（全包类名相同），宿主与插件之间，插件与插件之间如果相同怎么办？</p>
+<p>互不打扰，各自用各自的。这也是独立ClassLoader的重要作用。</p>
+<p>再有一个问题，如果我们 B 插件要使用 A 插件中的某段逻辑，假设他们的也是通过接口方式该怎么做呢？这里有一个依赖的概念，B 插件使用A插件，那么B插件在逻辑上仰仗“依赖”A插件的实现。</p>
+<p>依赖的实现，是可以通过我们自定义的ClassLoader传入要依赖的插件所属的 ClassLoader，优先让被依赖插件的ClassLoader先加载。当然如果有其他的考量需要引入白名单机制，在白名单里的类让被依赖的插件ClassLoader具备优先加载权利。</p>
+<h2 id="2-资源的插件化"><a class="markdownIt-Anchor" href="#2-资源的插件化"></a> 2、<strong>资源的插件化</strong></h2>
+<p>正常的 Apk 安装到系统后，我们APP能够正常通过 Resource 对象了使用资源了，无论在在 Xml 中使用<code>@drawable/xxxx</code> 还是在代码，使用诸如 <code>R.layout.xxx</code> 。</p>
+<p>但对于一个插件 Apk 是没有安装到系统的，我们如何能够正常的使用到插件中的资源呢？解决这个问题的方案我们姑且称之为 <strong>资源的插件化</strong>。</p>
+<p>如何使用插件包中的资源，插件包可能会用到宿主的资源。</p>
+<p>创建Resource有两种方式</p>
+<h3 id="21-创建-resource对象"><a class="markdownIt-Anchor" href="#21-创建-resource对象"></a> 2.1、<strong>创建 Resource对象</strong></h3>
+<p>如何创建一个插件的Resource，加载Resource的资源呢。</p>
+<p>系统有公开的API。</p>
+<p>主要有两种方式：通过AssetManager</p>
+<pre class="highlight"><code class="">@Deprecated
+public Resources(AssetManager assets, DisplayMetrics metrics, Configuration config) {
+    this(null);
+    mResourcesImpl = new ResourcesImpl(assets, metrics, config, new DisplayAdjustments());
+}
+</code></pre>
+<p>AssetManager没有公开的API的构建，我们可以通过反射的方式创建。</p>
+<pre class="highlight"><code class="">protected AssetManager createAssetManager(File apk) throws Exception {
+    AssetManager am = AssetManager.class.newInstance();
+    Reflector.with(am).method(&quot;addAssetPath&quot;, String.class).call(apk.getAbsolutePath());
+    return am;
+}
+</code></pre>
+<p>Resources 构造需要的另外两个参数，直接使用宿主 Resource 的 DisplayMetrics 和 Configuration 。</p>
+<p>这样就构建出了插件的 Resource 对象。</p>
+<p>插件可能会用到宿主的资源，主要是系统有可能从宿主 Manifest 中获取 app icon 或者logo 的资源ID，然后直接向插件的 Resources 对象查询这些资源。为了解决这个问题，需要让插件的 Resource 包含宿主的 Resource。还是刚刚那个套路构建一个 MixResource，复写Resource的方法，在资源获取不到时，再尝试从宿主Resource中获取，方法比较多，以获取字符串方法为例。</p>
+<pre class="highlight"><code class="">override fun getString(id: Int): String {
+    return try {
+        pluginResource.getString(id)
+    } catch (e: Exception) {
+        hostResources.getString(id)
+    }
+</code></pre>
+<h3 id="22-无-hook-方式"><a class="markdownIt-Anchor" href="#22-无-hook-方式"></a> 2.2、无 hook 方式</h3>
+<p>2.1 章节中，为了使用 Resource 构造方法所需的 AssetManager 对象，创建 AssetManager 使用反射的方式。系统还提供了另外一种方式创建 Resource 对象 ，如下</p>
+<pre class="highlight"><code class=""> # PackageManager
+@NonNull
+public abstract Resources getResourcesForApplication(@NonNull ApplicationInfo app)
+        throws NameNotFoundException;
+</code></pre>
+<p>使用该方法，我们不需要 AssetManager 对象，就可以创建 Resource 对象，而 AssetsManager 对象，可以直接在 Resource 对象中获取。</p>
+<pre class="highlight"><code class="">
+val packageManager = hostAppContext.packageManager
+val hostApplicationInfo = hostAppContext.applicationInfo
+val pluginApplicationInfo = ApplicationInfo()
+pluginApplicationInfo.packageName = hostApplicationInfo.packageName
+pluginApplicationInfo.uid = hostApplicationInfo.uid
+val pluginResource = packageManager.getResourcesForApplication(pluginApplicationInfo)
+</code></pre>
+<h3 id="23-资源冲突"><a class="markdownIt-Anchor" href="#23-资源冲突"></a> 2.3、资源冲突</h3>
+<h4 id="231-resources-id-的构成"><a class="markdownIt-Anchor" href="#231-resources-id-的构成"></a> 2.3.1 、Resources ID 的构成</h4>
+<pre class="highlight"><code class="">[0xPPTTEEEE]
+</code></pre>
+<p>appt对资源打包时，每个资源都对应一个唯一的资源 id，资源 id 是一个 8 位的 16 进制 int 值 0xPPTTEEEE ：</p>
+<ul>
+<li>PP ：前两位是 PackageId 字段，系统资源是 01，正常打包的PP字段值为7f。</li>
+<li>TT ：中间两位是 TypeId 字段，表示资源的类型</li>
+<li>EEEE ：最后四位是 EntryId 字段。相同PP且相同TT时不会有相同的EEE。</li>
+</ul>
+<h4 id="232-资源冲突问题"><a class="markdownIt-Anchor" href="#232-资源冲突问题"></a> 2.3.2 、资源冲突问题</h4>
+<p>插件包和宿主是独立打包的，就会存在插件中和宿主中生成了相同的资源ID，插件先加载自己的再去加载宿主的，如果存在相同的ID，可能加载不同类型甚至不存在的资源。</p>
+<h4 id="223-解决方案"><a class="markdownIt-Anchor" href="#223-解决方案"></a> 2.2.3 、<strong>解决方案</strong></h4>
+<p>这里介绍以下官方插件化的案（AAB）解决资源冲突的方案</p>
+<pre class="highlight"><code class="">//Resources.java
+public String sourceDir;
+public String publicSourceDir;
+public String[] sharedLibraryFiles;
+</code></pre>
+<p>是把宿主路径和插件包路径都给Resources，以下是Resources的代码，sourceDir和sharedLibraryFiles制定的路径资源都会进入到 Resources 中。再结合 aapt2 提供的参数配置我们可以指定资源ID的PP字段，避免与宿主资源产生冲突。但是这里有个需要注意的点</p>
+<ul>
+<li>additionalParameters 指定参数在Android O （26）及以上不能指定小于 0x7F 的package-id。Android O （26） 以下不能指定大于0x7F以下的点。</li>
+<li>指定小于0x7f的package-id时，需要追加 --allow-reserved-package-id 参数。示例如下：</li>
+</ul>
+<pre class="highlight"><code class="">aaptOptions {
+additionalParameters &quot;--package-id&quot;, &quot;0x7E&quot;, &quot;--allow-reserved-package-id&quot;
+} 
+</code></pre>
+<h4 id="224-其他方案"><a class="markdownIt-Anchor" href="#224-其他方案"></a> 2.2.4、 其他方案</h4>
+<ul>
+<li>修改 aapt 生成 ResoruceID、或者插件包生成后修改插件包重新改造 ResoruceID。市面上开源库常用方案这里不展开。</li>
+<li>字节方案，看到字节团队博文通过修改插件包获取资源的方式。核心原理是利用Resources#getIdentifier方法可以通过资源名称获取资源ID，结合字节码编辑讲直接使用ID方式转换为通过名称获取资源的方式。</li>
+</ul>
+<h3 id="24-资源插件化小结"><a class="markdownIt-Anchor" href="#24-资源插件化小结"></a> 2.4 、资源插件化小结</h3>
+<ul>
+<li>构建插件 Resource 有两种方式，一种通过反射创建AssetManager，然后公开的Resource构造方法创建得到。</li>
+<li>另外一种是通过公开的 Resource 构造方案是通过 packageManager.getResourcesForApplication(…) 创建。</li>
+<li>资源 ID 冲突的问题也有方案解决。一种是无 hook 的通过AAPT2设置PP字段方案，另外是一些hook的方式修改插件包绕开。</li>
+<li>我们这里没有讨论资源合并或者分开的问题。上述方案插件是能够使用宿主资源的。宿主使用插件的资源，是可以在宿主中获取到插件的 Resource 对象然后进行自由的控制使用。</li>
+</ul>
+<h2 id="3-练习"><a class="markdownIt-Anchor" href="#3-练习"></a> 3、 练习</h2>
+<blockquote>
+<p>Talk is cheap. Show me the code.</p>
+</blockquote>
+<ul>
+<li>动态加载插件，执行其中的方法。</li>
+<li>加载插件中的View，添加到指定的布局中。</li>
+</ul>
+<p>代码已经上传到 github <a target="_blank" rel="noopener" href="https://github.com/drummor/PluginSampleApplication">https://github.com/drummor/PluginSampleApplication</a></p>
+
+        </div>
+    
+<!-- tags -->
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

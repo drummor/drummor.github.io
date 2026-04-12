@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>Agent 自我改进的六条路 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="导读精华  六条技术路径：输出自审、持久记忆、进化搜索、对抗训练、自我修改、编排自优化——都在回答同一个问题：怎么让 AI Agent 不重新训练就能越来越强 记忆是关键转折：从&quot;当次做好&quot;升级到&quot;越用越好&quot;，核心是把状态从&quot;对话级&quot;提升到&quot;Agent级&quot;，跨 session 知识不丢失 小模型也能逆袭：7B 模型经">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 自我改进的六条路">
+<meta property="og:url" content="https://drummor.github.io/2026/04/06/agent-self-improvement-six-paths/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="导读精华  六条技术路径：输出自审、持久记忆、进化搜索、对抗训练、自我修改、编排自优化——都在回答同一个问题：怎么让 AI Agent 不重新训练就能越来越强 记忆是关键转折：从&quot;当次做好&quot;升级到&quot;越用越好&quot;，核心是把状态从&quot;对话级&quot;提升到&quot;Agent级&quot;，跨 session 知识不丢失 小模型也能逆袭：7B 模型经">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-04-06T05:09:00.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.222Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="自我改进">
+<meta name="twitter:card" content="summary">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2026/04/06/agent-self-improvement-six-paths/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                Agent 自我改进的六条路
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2026.04.06</span>
+                
+                    <a class="post-category-link" href="/categories/AI%E8%B5%84%E8%AE%AF/">AI资讯</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <blockquote>
+<p><strong>导读精华</strong></p>
+<ol>
+<li><strong>六条技术路径</strong>：输出自审、持久记忆、进化搜索、对抗训练、自我修改、编排自优化——都在回答同一个问题：怎么让 AI Agent 不重新训练就能越来越强</li>
+<li><strong>记忆是关键转折</strong>：从&quot;当次做好&quot;升级到&quot;越用越好&quot;，核心是把状态从&quot;对话级&quot;提升到&quot;Agent级&quot;，跨 session 知识不丢失</li>
+<li><strong>小模型也能逆袭</strong>：7B 模型经自我进化在特定任务上逼近数倍大的模型，细粒度信用分配（ADCA-GRPO）是关键</li>
+</ol>
+</blockquote>
+<p>当一个 AI Agent 完成任务之后，它能从这次经历中学到什么吗？下次遇到类似问题，它能做得更好吗？</p>
+<p>这个问题，正在被越来越多的开源项目认真回答。从 Meta、阿里巴巴到 Nous Research，从 Karpathy 个人项目到斯坦福博士论文等方案，至少有十几个团队在不同的技术方向上探路。</p>
+<p>梳理这些项目的技术路线，可以归为六种机制。每一种都在回答同一个问题：<strong>怎么让 Agent 不重新训练，就能越来越强。</strong></p>
+<hr />
+<h2 id="01-输出自审"><a class="markdownIt-Anchor" href="#01-输出自审"></a> 01 输出自审</h2>
+<p>最基础的一种：Agent 生成回答后不直接输出，先让另一个 Agent 审一遍。</p>
+<p>技术上叫 Reflection，核心结构是一个双 Agent 循环：</p>
+<pre class="highlight"><code class="">Generator 接收用户输入，生成初始回答。
+Critic 接收这个回答，判断有没有问题。
+有问题就把修改建议传回 Generator，Generator 据此重新生成。
+循环一直转，直到 Critic 没什么可改的了，返回空消息，循环终止。
+</code></pre>
+<p>终止条件的设计算是颇为优雅：<strong>Critic 不返回消息 = 通过。</strong> 不需要额外评分阈值。</p>
+<p>LangChain 的 LangGraph Reflection 是这个模式的标准实现，核心就一行 API：</p>
+<pre class="highlight"><code class="">create_reflection_graph(assistant_graph, judge_graph)
+</code></pre>
+<p>在代码生成场景中，Critic 可以直接跑 Pyright 做静态类型检查，把错误作为 feedback 传回去。每一轮循环都有明确的、可验证的改进标准。</p>
+<p>不过 Reflection 有一个硬限制：<strong>改进只发生在单次执行内。</strong> 下次对话开始，Agent 并不会记得上次犯过什么错。它能在当下把事情做好，但没有跨 session 的学习能力。</p>
+<hr />
+<h2 id="02-持久记忆"><a class="markdownIt-Anchor" href="#02-持久记忆"></a> 02 持久记忆</h2>
+<p>Reflection 解决了「当次做好」的问题。但「越用越好」需要另一种能力：<strong>跨 session 的记忆持久化。</strong></p>
+<p>核心思路是把 Agent 的状态从「对话级」提升到「Agent 级」。对话可以结束，但 Agent 的知识不清零。</p>
+<p>技术上有几种不同的实现路径。</p>
+<p><strong>Letta Code</strong> 采用的是 API 层持久化。Agent 的记忆存在 Letta 后端服务中（云端或自部署 Docker），每次新对话自动加载之前积累的状态。<code>/remember</code> 显式写入记忆，<code>/skill</code> 把当前操作轨迹抽象成可复用的技能模块。</p>
+<p>这里有个关键的架构决策：<strong>记忆绑定在 Agent 上，不绑定在 LLM 上。</strong> 今天用 Claude，明天换 GPT，后天换 Gemini，记忆都在。</p>
+<p><strong>Agent Zero（16,700 星）</strong> 走了另一条路：动态工具生成 + 记忆。Agent 遇到没有现成工具的任务时，当场写代码创建新工具，然后存入记忆，下次直接复用。</p>
+<p><strong>Hermes Agent（25,700 星）</strong> 则是目前机制最完整的。它在记忆之上加了两层：一是自动技能提炼，二是定期回顾（nudging）。</p>
+<p>这些方案的共同技术洞见是：<strong>不改权重，改状态。</strong> 在 LLM 参数冻结的情况下，通过外部的持久化状态层来积累知识。</p>
+<hr />
+<h2 id="03-进化搜索"><a class="markdownIt-Anchor" href="#03-进化搜索"></a> 03 进化搜索</h2>
+<p>记忆解决了「记住经验」。但如果 Agent 的 prompt 写法、工具配置，工作流拓扑本身就有优化空间呢？</p>
+<p><strong>EvoAgentX（2,700 星）</strong> 的做法是：给一个自然语言目标，它先自动生成多 Agent 工作流，然后用进化算法迭代优化。</p>
+<p>它同时优化三个层面：</p>
+<table>
+<thead>
+<tr>
+<th>优化层面</th>
+<th>技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prompt 文本</td>
+<td>TextGrad 调整每个 Agent 的指令措辞</td>
+</tr>
+<tr>
+<td>工作流拓扑</td>
+<td>AFlow 搜索 Agent 间的连接方式</td>
+</tr>
+<tr>
+<td>配置参数</td>
+<td>MIPRO 优化工具选择和参数设定</td>
+</tr>
+</tbody>
+</table>
+<p>实测 HotPotQA F1 提升 7.44%，MATH 准确率提升 10%，GAIA 综合最高提升 20%。</p>
+<p><strong>阿里巴巴的 AgentEvolver（1,300 星）</strong> 把进化粒度做得更细，分三个阶段：</p>
+<ul>
+<li><strong>自我提问（Self-Questioning）</strong>：Agent 自主探索环境，给自己生成训练任务，不需要人工准备数据</li>
+<li><strong>自我导航（Self-Navigating）</strong>：用 ReMe 经验池管理模块，把跨任务的成功经验存储起来</li>
+<li><strong>自我归因（Self-Attributing）</strong>：用 ADCA-GRPO 算法做轨迹级别的因果信用分配</li>
+</ul>
+<p>这种细粒度信用分配让优化效率大幅提升。<strong>7B 模型在 AppWorld 上从 1.8% 跳到 32.4%</strong>，14B 达到 48.7%。</p>
+<p>一个 7B 小模型经过自我进化，就能在特定任务上逼近数倍大的模型。这个结论本身，就说明了进化搜索的价值。</p>
+<hr />
+<h2 id="04-对抗训练"><a class="markdownIt-Anchor" href="#04-对抗训练"></a> 04 对抗训练</h2>
+<p>进化搜索需要评估环境来打分。但如果……连训练数据和评估基准都没有呢？</p>
+<p><strong>Agent0（1,100 星）</strong> 的方案叫零数据自我进化，核心机制是双 Agent 对抗。</p>
+<p>两个 Agent 从同一个基础模型初始化，分配到两个对立角色：</p>
+<ul>
+<li><strong>Curriculum Agent</strong> 生成越来越难的任务</li>
+<li><strong>Executor Agent</strong> 用工具集成推理来解题</li>
+</ul>
+<p>关键动力学在于：Executor 变强后，简单题目没有训练价值了，Curriculum Agent 就被迫生成更难的任务。更难的任务又倒逼 Executor 进化出更强能力。<strong>竞争本身就是训练信号。</strong></p>
+<p>效果出乎意料：基于 Qwen3-8B-Base 的数学推理提升了 18%（达到 58.2 分），超过了需要人工标注的 R-Zero 和 Socratic-Zero。通用推理提升 24%。视觉版本 Agent0-VL 在开源视觉语言模型中排到了第一。</p>
+<p>零标注，胜过有标注。这个结论背后的含义值得琢磨：也许精心策划的「对抗压力」比精心标注的数据集更能激发模型潜力。</p>
+<hr />
+<h2 id="05-自我修改"><a class="markdownIt-Anchor" href="#05-自我修改"></a> 05 自我修改</h2>
+<p>前面四种方法有一个共同前提：<strong>改进机制本身是人设计的、固定的。</strong></p>
+<p><strong>Meta 的 HyperAgents（2,100 星）</strong> 打破了这个限制。</p>
+<p>它的核心思路：<strong>让负责改进的 Agent，也能被改进。</strong></p>
+<p>系统由 Task Agent（干活）和 Meta Agent（改进）两部分组成，统一写在一个可编辑程序中。Meta Agent 不仅能改 Task Agent 的代码，还能改自己的代码。<strong>改进的策略本身也在进化。改进改进方法的方法……也在进化。</strong></p>
+<p>实验中最让人印象深刻的现象是：<strong>系统自己发明了持久化记忆和性能追踪机制。</strong> 没有人预设这些功能，Agent 自己判断需要它们，就写代码给自己加上了。它记录的内容相当具体：</p>
+<blockquote>
+<p>“Gen55 的准确率最高但太严格了，Gen64 改善了平衡性。需要结合 Gen55 的批判性推理和 Gen64 的平衡感。”</p>
+</blockquote>
+<p>跨领域迁移的结果更值得关注。把在论文审稿和机器人任务上进化出的 HyperAgent，直接拿去做 IMO 数学评分，原版 DGM 的迁移效果约等于 0，而 DGM-H 的 imp@50 达到了 <strong>0.630</strong>。</p>
+<p>原因在于：DGM 学到的是领域特定技巧，换了领域就失效。DGM-H 学到的是通用的「如何改进」策略，这些在新领域照样管用。</p>
+<hr />
+<h2 id="06-编排自优化"><a class="markdownIt-Anchor" href="#06-编排自优化"></a> 06 编排自优化</h2>
+<p>前五种方法都在改 Agent 自身。但 Agent 的表现还取决于另一个东西：<strong>围绕它的编排层（Harness）。</strong></p>
+<p>Harness 指的是模型之外的那一层编排逻辑：prompt 结构、检索策略、工具调用顺序、状态管理。同一个模型换一套 Harness，性能可能翻倍。</p>
+<p><strong>斯坦福的 Meta-Harness（629 星）</strong> 回答了这个问题。</p>
+<p>方案本身倒是颇为简洁：用一个 Coding Agent（Claude Code + Opus 4.6）来迭代优化 Harness。每一轮，Agent 读取文件系统中所有的历史记录，提出新的 Harness 方案，跑评估，把结果写回文件系统。</p>
+<p>设计上有一个关键选择：<strong>给 Agent 完整的文件系统访问权限，取代压缩摘要。</strong></p>
+<p>消融实验显示，只给分数和摘要时中位数准确率 34%，给完整文件系统直接跳到 50%。<strong>摘要版最高准确率（38.7%）甚至不如完整版的中位数（50.0%）。</strong> 压缩不只是丢了边角细节，而是丢掉了做正确决策所需的关键线索。</p>
+<p>结果在文本分类上比人工最优方案 ACE 高 7.7 个百分点，context 用量只有 ACE 的四分之一。在 TerminalBench-2 上拿到 76.4% 通过率，超过人工精调的方案。</p>
+<hr />
+<h2 id="两层天花板"><a class="markdownIt-Anchor" href="#两层天花板"></a> 两层天花板</h2>
+<p><strong>Big Model 和 Big Harness，两层天花板，缺一不可。</strong></p>
+<p>模型能力决定了理论上限，Harness 决定了实际达到的高度。Meta-Harness 做的事情，是把 Harness 这一层的天花板尽量往模型天花板靠近。</p>
+<hr />
+<h2 id="回到同一个问题"><a class="markdownIt-Anchor" href="#回到同一个问题"></a> 回到同一个问题</h2>
+<p>六条路，每条都从不同角度回答了同一个问题：怎么让 Agent 在不重新训练的情况下变强。</p>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>核心思路</th>
+<th>代表项目</th>
+<th>Stars</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输出自审</td>
+<td>生成后审查，循环修正</td>
+<td>LangGraph Reflection</td>
+<td>173</td>
+</tr>
+<tr>
+<td>持久记忆</td>
+<td>跨 session 积累知识和技能</td>
+<td>Letta Code · Agent Zero · Hermes Agent</td>
+<td>2.1k · 16.7k · 25.7k</td>
+</tr>
+<tr>
+<td>进化搜索</td>
+<td>用算法优化 prompt、工具和工作流</td>
+<td>EvoAgentX · AgentEvolver</td>
+<td>2.7k · 1.3k</td>
+</tr>
+<tr>
+<td>对抗训练</td>
+<td>双 Agent 竞争产生训练信号</td>
+<td>Agent0</td>
+<td>1.1k</td>
+</tr>
+<tr>
+<td>自我修改</td>
+<td>改写自己的代码和改进机制</td>
+<td>HyperAgents</td>
+<td>2.1k</td>
+</tr>
+<tr>
+<td>编排自优化</td>
+<td>自动优化 Agent 的编排层</td>
+<td>Meta-Harness</td>
+<td>629</td>
+</tr>
+</tbody>
+</table>
+<p>六种机制并非互斥。Hermes Agent 同时用了反思、记忆和技能进化。AgentEvolver 同时做了自我提问和进化搜索。Meta-Harness 的内部循环本身也包含反思和进化。</p>
+<p>它们共同指向的核心命题：<strong>AI 的学习，正在从训练阶段溢出到部署阶段。</strong></p>
+<p>过去十年，模型变强的唯一方式是改权重。这些项目展示了另一种可能：权重冻结的情况下，通过外部记忆、行为搜索、对抗训练、代码自修改、编排自优化来持续积累能力。</p>
+<p>如果说，训练是「上学」</p>
+<p>那这些机制，就是毕业之后的……</p>
+<p><strong>自学能力。</strong></p>
+<hr />
+<p><strong>相关链接：</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/Hyperagents">HyperAgents (Meta)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/aiming-lab/Agent0">Agent0</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/EvoAgentX/EvoAgentX">EvoAgentX</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/modelscope/AgentEvolver">AgentEvolver</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/frdel/agent-zero">Agent Zero</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/letta-ai/letta-code">Letta Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/karpathy/autoresearch">autoresearch (Karpathy)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/stanford-iris-lab/meta-harness-tbench2-artifact">Meta-Harness (Stanford)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph-reflection">LangGraph Reflection</a></li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/Agent/">#Agent</a>
+        
+            <a class="post-tag" href="/tags/AI/">#AI</a>
+        
+            <a class="post-tag" href="/tags/%E8%87%AA%E6%88%91%E6%94%B9%E8%BF%9B/">#自我改进</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

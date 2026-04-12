@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>Get Hands Dirty｜&lt;200行手写一个Choreographer - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="如果你嫌弃啰嗦可以直接看代码：https:&#x2F;&#x2F;github.com&#x2F;drummor&#x2F;GetHandsDirty  1 基本原理 简单看下Choreographer的原理，具体的可以看之前写的一篇文章https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;6844903818044375053  基本的原理其实简单的讲就是两点：  使用DisplayEventReceiver 初始化监听、请求垂直信号、接收垂">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Get Hands Dirty｜&lt;200行手写一个Choreographer">
+<meta property="og:url" content="https://drummor.github.io/2024/01/26/Get-Hands-Dirty%EF%BD%9C200%E8%A1%8C%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AAChoreographer/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="如果你嫌弃啰嗦可以直接看代码：https:&#x2F;&#x2F;github.com&#x2F;drummor&#x2F;GetHandsDirty  1 基本原理 简单看下Choreographer的原理，具体的可以看之前写的一篇文章https:&#x2F;&#x2F;juejin.cn&#x2F;post&#x2F;6844903818044375053  基本的原理其实简单的讲就是两点：  使用DisplayEventReceiver 初始化监听、请求垂直信号、接收垂">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/gh_choreographer_1706238159839.png">
+<meta property="og:image" content="https://drummor.github.io/images/gh_choreographer_1706238159985.png">
+<meta property="article:published_time" content="2024-01-26T03:03:37.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.222Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/gh_choreographer_1706238159839.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/01/26/Get-Hands-Dirty｜200行手写一个Choreographer/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                Get Hands Dirty｜&lt;200行手写一个Choreographer
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.01.26</span>
+                
+                    <a class="post-category-link" href="/categories/basic/">basic</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <p>如果你嫌弃啰嗦可以直接看代码：<a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a></p>
+<h2 id="1-基本原理"><a class="markdownIt-Anchor" href="#1-基本原理"></a> 1 基本原理</h2>
+<p>简单看下Choreographer的原理，具体的可以看之前写的一篇文章<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903818044375053">https://juejin.cn/post/6844903818044375053</a></p>
+<p><img src="/images/gh_choreographer_1706238159839.png" alt="image.png" /></p>
+<p>基本的原理其实简单的讲就是两点：</p>
+<ul>
+<li>使用<code>DisplayEventReceiver</code> 初始化监听、请求垂直信号、接收垂直信号。</li>
+<li>收到垂直同步信号之后，执行设置的<code>callback</code></li>
+</ul>
+<h2 id="2-choreographer是线程内单例的"><a class="markdownIt-Anchor" href="#2-choreographer是线程内单例的"></a> 2 Choreographer是线程内单例的</h2>
+<pre class="highlight"><code class="">private val sThreadInstance = object : ThreadLocal&lt;MiniChoreographer&gt;() {
+  override fun initialValue(): MiniChoreographer {
+     val looper = Looper.myLooper()?: throw IllegalStateException(&quot;需要有Looper!&quot;)
+     return MiniChoreographer(looper)
+  }
+}
+​
+fun getInstance(): MiniChoreographer {
+  return sThreadInstance.get()
+}
+</code></pre>
+<ul>
+<li>使用<code>ThreadLoacal</code>实现线程内的单例使用</li>
+<li><code>Choreographer</code>创建所在的需要<code>Looper</code>对象</li>
+</ul>
+<h2 id="3-模拟一个vsync信号"><a class="markdownIt-Anchor" href="#3-模拟一个vsync信号"></a> 3 模拟一个VSync信号</h2>
+<ul>
+<li>
+<p><code>DisplayEventReceiver</code>用以接受底层的诸如VSync信号等绘制相关的Event。</p>
+</li>
+<li>
+<p>FrameDisplayEventReceiver 继承自<code>DisplayEventReceiver</code>;<code>Choreographer</code>内申请和监听绘制垂直信号需要使用<code>FrameDisplayEventReceiver</code>，而该api未对外开放只能模拟一个垂直信号。</p>
+</li>
+<li>
+<p>模拟的方式就是开启一个子线程，子线程内部创建一个<code>Choreographer</code>，利用Choreographer的postFrameCallbackApi模拟申请垂直脉冲，执行其<code>callback</code>的回调模拟收到垂直信号。</p>
+</li>
+<li>
+<p>听上去像套娃了😂，这里只是模拟垂直信号，“别人一开源我就遥遥领先”，客官莫急，先往后看，并不只是包别人的api。</p>
+<pre class="highlight"><code class="">abstract class DisplayEventReceiver {
+​
+    private val lock: Object = Object()
+    private var choreographer: Choreographer? = null
+​
+    init {//1
+        Executors.newSingleThreadExecutor().submit {
+            synchronized(lock) {
+                Looper.prepare()
+                choreographer = Choreographer.getInstance()
+                lock.notifyAll()
+            }
+            Looper.loop()
+        }
+    }
+    abstract fun onVsync(frameTimeNanos: Long, frame: Int)
+    fun scheduleVsyncLocked() {//2
+        choreographer?.postFrameCallback {
+            onVsync(it, 0)
+        } ?: kotlin.run {
+            synchronized(lock) {
+                if (choreographer == null) {
+                    lock.wait() //doNothing
+                }
+                scheduleVsyncLocked()
+            }
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>需要注意的是，在开启的线程里准备Looper</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-组织framecallback"><a class="markdownIt-Anchor" href="#4-组织framecallback"></a> 4 组织FrameCallback</h2>
+<p>通常收到垂直脉冲后，要执行已经注册了的<code>callbck</code>，这里我们先处理三种类型的。</p>
+<ul>
+<li>Input类型：CALLBACK_INPUT</li>
+<li>动画类型：CALLBACK_INSETS_ANIMATION</li>
+<li>和绘制类型：CALLBACK_TRAVERSAL</li>
+</ul>
+<p><img src="/images/gh_choreographer_1706238159985.png" alt="" /></p>
+<p>每种类型存放在一个<code>CallbackQueue</code>，<code>CallbackQueue</code>一个数组里。<code>CallbackQueue</code>维护了一个<code>CallbackRecord</code>类型的单向链表。链表里的元素根据时间大小以此存放。</p>
+<pre class="highlight"><code class="">inner class CallbackRecord {
+    var next: CallbackRecord? = null
+    var dueTime: Long = 0
+    var action: FrameCallback? = null//存放要执行的动作
+    fun run(time: Long) {
+        action?.doFrame(time)
+    }
+}
+</code></pre>
+<h3 id="41-callbackqueue"><a class="markdownIt-Anchor" href="#41-callbackqueue"></a> 4.1 CallbackQueue</h3>
+<p>存和取的关键是维护链表元素的时间序。</p>
+<h4 id="411-存callback"><a class="markdownIt-Anchor" href="#411-存callback"></a> 4.1.1 存callback</h4>
+<pre class="highlight"><code class="">fun addCallbackLocked(dueTime: Long, action: FrameCallback) {
+    val callback: CallbackRecord = obtainCallbackLocked(dueTime, action)
+    var entry = mHead
+    if (entry == null) {
+        mHead = callback //如果当前为空直接将该recode设置为头
+        return
+    }
+    if (dueTime &lt; entry.dueTime) { //如果不为空且小于头部的时间，就将该record设置为头
+        callback.next = entry
+        mHead = callback
+        return
+    }
+    while (entry?.next != null) {//依次往后找 直到找到不必起时间小的插入其中
+        if (dueTime &lt; entry.next!!.dueTime) {
+            callback.next = entry.next
+            break
+        }
+        entry = entry.next
+    }
+    entry?.next = callback
+}
+</code></pre>
+<ul>
+<li>如果当head为空直接将该recode设置为头，返回。</li>
+<li>如果不为空且小于头部的时间，就将该record设置为头返回。</li>
+<li>否则依次往后找 直到找到不必起时间小的插入其中。</li>
+</ul>
+<h4 id="412-取callback"><a class="markdownIt-Anchor" href="#412-取callback"></a> 4.1.2 取callback</h4>
+<pre class="highlight"><code class="">//取出符合条件的callback
+fun extractDueCallbacksLocked(now: Long): CallbackRecord? {
+    val callbacks = mHead
+    if ((callbacks?.dueTime ?: 0) &gt; now) {//未找到比改时间小的直接返回
+        return null
+    }
+    var last = callbacks
+    var next = last?.next
+    while (next != null) {
+        if (next.dueTime &gt; now) {
+            last?.next = null
+            break
+        }
+        last = next
+        next = next.next
+    }
+    mHead = next
+    return callbacks
+}
+</code></pre>
+<h2 id="5-处理回调"><a class="markdownIt-Anchor" href="#5-处理回调"></a> 5 处理回调</h2>
+<ul>
+<li>
+<p>取出符合条的<code>callback</code>依次执行</p>
+<pre class="highlight"><code class="">private fun doFrame(mTimestampNanos: Long, mFrame: Int) {
+    if (mTimestampNanos &lt; mLastFrameTimeNanos) {
+        //垂直信号的时间小于已经处理过的最小时间了，申请监听一个脉冲
+        scheduleFrameLocked()
+        return
+    }
+    mLastFrameTimeNanos = mTimestampNanos
+    //处理input事件
+    doCallbacks(CALLBACK_INPUT, mTimestampNanos)
+    //处理动画，我们平时使用choreographer postCallback就是这个类型的
+    doCallbacks(CALLBACK_INSETS_ANIMATION, mTimestampNanos)
+    //处理绘制，通常是ViewRootImpl设置的监听
+    doCallbacks(CALLBACK_TRAVERSAL, mTimestampNanos)
+}
+</code></pre>
+</li>
+</ul>
+<p>在每个类型的<code>Queue</code>里取出符合条件的callback，依次处理</p>
+<ul>
+<li>处理input事件</li>
+<li>处理动画，我们平时使用<code>choreographer</code> <code>postCallback()</code>就是这个类型的</li>
+<li>处理绘制，通常是ViewRootImpl设置的监听</li>
+</ul>
+<pre class="highlight"><code class="">// 取出对应类型符合时间条件的callback处理
+private fun doCallbacks(callbackType: Int, frameTimeNanos: Long) {
+    var callbacks: CallbackRecord?
+    val now = System.nanoTime()
+    callbacks = mCallbackQueues[callbackType].extractDueCallbacksLocked(now / NANOS_PER_MS)
+    if (callbacks == null) {
+        return
+    }
+    var callback = callbacks
+    while (callback != null) {
+        callback.run(frameTimeNanos)
+        callback = callback.next
+    }
+}
+</code></pre>
+<h2 id="6-暴漏给外部垂直信号的同步"><a class="markdownIt-Anchor" href="#6-暴漏给外部垂直信号的同步"></a> 6 暴漏给外部垂直信号的同步</h2>
+<pre class="highlight"><code class="">fun postCallback(
+    callbackType: Int = CALLBACK_INPUT, delayMillis: Long = 0, action: FrameCallback,
+) {
+    synchronized(mLock) {
+        //两件事件：
+        //1.根据事件类型放到对应的队列里
+        //2.申请垂直同步,如果时间未到通过handler发送一个延时消息处理
+        val now = SystemClock.uptimeMillis()
+        val dueTime = now + delayMillis
+        mCallbackQueues[callbackType].addCallbackLocked(dueTime, action)
+        if (dueTime &lt;= now) {
+            scheduleFrameLocked()
+        } else {
+            mHandler.obtainMessage(MSG_DO_SCHEDULE_CALLBACK, action).apply {
+                this.arg1 = callbackType
+                this.isAsynchronous = true
+            }.let { mHandler.sendMessageAtTime(it, dueTime) }
+        }
+    }
+}
+</code></pre>
+<p>两件事件：</p>
+<ul>
+<li>1.根据事件类型放到对应的队列里</li>
+<li>2.申请垂直同步,如果时间未到通过handler发送一个延时消息处理</li>
+</ul>
+<h2 id="7-结"><a class="markdownIt-Anchor" href="#7-结"></a> 7 结</h2>
+<ul>
+<li>CallbackRecord对象进行池化复用，这部分没有实现，对CallbackRecord对象池化复用还是很有必要的，Choreographer在实际运行中会大量创建销毁该对象。</li>
+<li>没有实现移除callback的方法。</li>
+<li>最终运行跑起来，代码地址<a target="_blank" rel="noopener" href="https://github.com/drummor/GetHandsDirty">https://github.com/drummor/GetHandsDirty</a></li>
+<li>通过Choreographer简单的实现能够加深对Choreographer的理解，希望对你有所帮助。</li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

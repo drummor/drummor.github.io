@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>2023 也该知道了：kotlin 协程取消和异常传播机制 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="什么是结构化并发？ 说好的异常传播为啥失效了？ 怎么还有async不抛异常的问题？   1 结构化并发(Structured Concurrency)  1.1 java的&quot;离散性并发&quot; kotlin 的 Coroutine 是【结构化并发】，与结构化并发对应的方式是【fire-and-forget 】姑且称之为【离散性并发】吧，可能不太准确。一个例子解释下离散性并发，jav">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2023 也该知道了：kotlin 协程取消和异常传播机制">
+<meta property="og:url" content="https://drummor.github.io/2024/01/26/2023%E4%B9%9F%E8%AF%A5%E7%9F%A5%E9%81%93%E4%BA%86%EF%BC%9Akotlin%E5%8D%8F%E7%A8%8B%E5%8F%96%E6%B6%88%E5%92%8C%E5%BC%82%E5%B8%B8%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="什么是结构化并发？ 说好的异常传播为啥失效了？ 怎么还有async不抛异常的问题？   1 结构化并发(Structured Concurrency)  1.1 java的&quot;离散性并发&quot; kotlin 的 Coroutine 是【结构化并发】，与结构化并发对应的方式是【fire-and-forget 】姑且称之为【离散性并发】吧，可能不太准确。一个例子解释下离散性并发，jav">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/kotlin_coroutine_exc_1706238534065.png">
+<meta property="og:image" content="https://drummor.github.io/images/kotlin_coroutine_exc_1706238534232.png">
+<meta property="article:published_time" content="2024-01-26T03:09:28.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.219Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="basic">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/kotlin_coroutine_exc_1706238534065.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/01/26/2023也该知道了：kotlin协程取消和异常传播机制/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                2023 也该知道了：kotlin 协程取消和异常传播机制
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.01.26</span>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <ul>
+<li>什么是结构化并发？</li>
+<li>说好的异常传播为啥失效了？</li>
+<li>怎么还有async不抛异常的问题？</li>
+</ul>
+<h2 id="1-结构化并发structured-concurrency"><a class="markdownIt-Anchor" href="#1-结构化并发structured-concurrency"></a> 1 结构化并发(Structured Concurrency)</h2>
+<h3 id="11-java的离散性并发"><a class="markdownIt-Anchor" href="#11-java的离散性并发"></a> 1.1 java的&quot;离散性并发&quot;</h3>
+<p>kotlin 的 Coroutine 是【结构化并发】，与结构化并发对应的方式是【fire-and-forget 】姑且称之为【离散性并发】吧，可能不太准确。一个例子解释下离散性并发，java 里我们开启一个线程之后，是不具备跟踪管理这个线程的能力的。如下</p>
+<pre class="highlight"><code class="java">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">javaThreadFun</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Thread</span> <span class="hljs-variable">thread</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Runnable</span>() {
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> {
+                <span class="hljs-comment">//do some work</span>
+            }
+        });
+        thread.setName(<span class="hljs-string">&quot;child-thread&quot;</span>);
+        thread.start();
+    }
+</code></pre>
+<p>这个例子中,调用javaThreadFun（）方法所在的线程，创建并启动child-thread线程之后两个线程没有明确的父子关系，javaThreadFun（）方法所在的线程不能天然的感知在自己线程里启动的&quot;子线程&quot;，子线程发生异常之后也不会影响到自己。如果父线程要取消中止在自己线程里启动的那些线程也没有现成的方式去供使用。总之，层级关系管理上很离散。</p>
+<h3 id="12-kotlin-协程的的结构化并发"><a class="markdownIt-Anchor" href="#12-kotlin-协程的的结构化并发"></a> 1.2 kotlin 协程的的结构化并发</h3>
+<p><img src="/images/kotlin_coroutine_exc_1706238534065.png" alt="image.png" /></p>
+<p>kotlin的协程天然的具备父协程管理取消子协程、子协程的异常失败影响父协程或者父协程感知子协程错误和失败的能力。如下示例</p>
+<pre class="highlight"><code class="kotlin">      GlobalScope.launch {
+            <span class="hljs-keyword">val</span> parentJob = launch {
+                <span class="hljs-keyword">val</span> childJob = launch {
+                    delay(<span class="hljs-number">1_000</span>)<span class="hljs-comment">//子任务做一些事情</span>
+                    <span class="hljs-keyword">throw</span> NullPointerException() <span class="hljs-comment">//会导致父协程任务和兄弟协程任务都会被取消</span>
+                }
+                delay(<span class="hljs-number">5_000</span>)
+            }
+        }
+</code></pre>
+<ul>
+<li>childJob 失败抛出异常，会影响到父job，进而父job会取消掉其所有的子job。</li>
+<li>另外，父 job 也会等待所有的子任务结束后自己才会结束。</li>
+</ul>
+<p>与传统的相比</p>
+<ul>
+<li>有跟踪：在协程作用域里启动一个协程，会把新启动的协程作为该协程的子协程，会跟踪这些子协程的状态。而不是像线程那些开启之后就忘记没有跟踪。父协程的结束也是要在所有子协程都完成之后自己才会完成，颇有家长负责制的感觉。</li>
+<li>可取消：取消父协程也会把其子协程一并取消掉。如上图，取消掉parent-job会导致从属于他的所有子协程取消。</li>
+<li>能传播：这特性体现在，子协程发生异常，会通知其父协程，父协程会取消掉自己所有的子协程然后再向上传递直到根协程。当然如果想改变这种既定的传播策略可通过supervisorJob.(这个下文我们会展开分析)</li>
+</ul>
+<h2 id="2-取消机制"><a class="markdownIt-Anchor" href="#2-取消机制"></a> 2 取消机制</h2>
+<h3 id="21-父协程的取消会取消子协程"><a class="markdownIt-Anchor" href="#21-父协程的取消会取消子协程"></a> 2.1 父协程的取消会取消子协程</h3>
+<p>这一章节我们展开聊下Kotlin协程的取消机制，上一节我们提到，父协程/作用域的取消也会取消其子协程我们看个例子。</p>
+<pre class="highlight"><code class="kotlin"> GlobalScope.launch {
+        <span class="hljs-keyword">val</span> mParentJOb: Job = <span class="hljs-keyword">this</span>.launch {
+            <span class="hljs-keyword">val</span> child1Job: Job = <span class="hljs-keyword">this</span>.launch {
+                <span class="hljs-keyword">this</span>.launch {
+                    delay(<span class="hljs-number">300</span>)
+                }.invokeOnCompletion { throwable -&gt;
+                    println(<span class="hljs-string">&quot;child1Job 执行完毕，收到了<span class="hljs-subst">${throwable}</span>&quot;</span>)
+                }
+                <span class="hljs-keyword">val</span> child2Job = <span class="hljs-keyword">this</span>.launch {
+                    delay(<span class="hljs-number">500</span>)
+                }.invokeOnCompletion { throwable -&gt;
+                    println(<span class="hljs-string">&quot;child2Job 执行完毕，收到了<span class="hljs-subst">${throwable}</span>&quot;</span>)
+                }
+            }
+            delay(<span class="hljs-number">100</span>)
+        }
+        mParentJOb.invokeOnCompletion { throwable -&gt;
+            println(<span class="hljs-string">&quot;mParentJOb 执行完毕，收到了<span class="hljs-subst">${throwable}</span>&quot;</span>)
+        }
+        println(<span class="hljs-string">&quot;发起取消 mParentJOb&quot;</span>)
+        mParentJOb.cancel()
+    }.join()
+</code></pre>
+<p>运行结果：</p>
+<pre class="highlight"><code class="">发起取消 mParentJOb
+child1Job 执行完毕，收到了kotlinx.coroutines.JobCancellationException: StandaloneCoroutine was cancelled; job=StandaloneCoroutine{Cancelling}@100b06de
+child2Job 执行完毕，收到了kotlinx.coroutines.JobCancellationException: StandaloneCoroutine was cancelled; job=StandaloneCoroutine{Cancelling}@100b06de
+mParentJOb 执行完毕，收到了kotlinx.coroutines.JobCancellationException: StandaloneCoroutine was cancelled; job=StandaloneCoroutine{Cancelled}@100b06de
+</code></pre>
+<h3 id="22-兄弟协程取消不影响"><a class="markdownIt-Anchor" href="#22-兄弟协程取消不影响"></a> 2.2 兄弟协程取消不影响</h3>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">brotherCoroutine</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+        launch {
+            delay(<span class="hljs-number">500</span>)
+            println(<span class="hljs-string">&quot;is running&quot;</span>)
+        }
+        launch {
+            delay(<span class="hljs-number">100</span>)
+            cancel()
+        }.invokeOnCompletion {
+            println(<span class="hljs-string">&quot;job2 is canceled&quot;</span>)
+        }
+    }
+}
+</code></pre>
+<p>这似乎没有什么可解释的，某个协程的取消并不会影响到其兄弟协程。</p>
+<h3 id="23-协程的取消是协作式的"><a class="markdownIt-Anchor" href="#23-协程的取消是协作式的"></a> 2.3 协程的取消是协作式的</h3>
+<p>协程的取消是协作式的体现在，对取消的通知需要主动的感知然后做出处理。举个例子</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">coroutineCanceling</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+        <span class="hljs-keyword">val</span> job = launch {
+            <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>
+            <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {<span class="hljs-comment">//1</span>
+                println(<span class="hljs-string">&quot; is running <span class="hljs-subst">${i++}</span>&quot;</span>)
+            }
+        }
+        job.invokeOnCompletion {
+            println(<span class="hljs-string">&quot;job is completion <span class="hljs-subst">${it}</span>&quot;</span>)
+        }
+        delay(<span class="hljs-number">50</span>)
+        job.cancel()
+    }
+}
+</code></pre>
+<p>会发现上面这个段代码并不能被取消，原因就是协程并没有感知到自己已经被取消了。这一点跟java thead interrupt机制类似，需要我们感知取消。感知取消的方式有</p>
+<ul>
+<li>可以使用CoroutineScope.isActive（）的方法check是否已经被取消做出反应,代码一处可改成while (isActive)</li>
+<li>所有的suspend方法内部也会感知cancel。比如delay()方法就是一个suspend方法。</li>
+</ul>
+<h3 id="24-做好善后取消"><a class="markdownIt-Anchor" href="#24-做好善后取消"></a> 2.4 做好善后取消</h3>
+<p>协程取消后我们可能会做一些诸如回收资源的动作，但在一个已经处于取消状态的协程里再调用suspend方法就抛出CancellationException异常。此时我们要使用 withContext(NonCancellable) 做取消后的工作</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">handleCanceling</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+        <span class="hljs-keyword">val</span> job = launch {
+            <span class="hljs-keyword">try</span> {
+                delay(<span class="hljs-number">100</span>)<span class="hljs-comment">//do Something</span>
+            } <span class="hljs-keyword">finally</span> {
+                withContext(NonCancellable) {
+                    delay(<span class="hljs-number">100</span>)
+                }
+            }
+        }
+        job.invokeOnCompletion {
+            println(<span class="hljs-string">&quot;job is completion <span class="hljs-subst">${it}</span>&quot;</span>)
+        }
+        delay(<span class="hljs-number">50</span>)
+        job.cancel()
+    }
+}
+</code></pre>
+<p>另外，还有特别注意的一点是，被取消的协程会向外抛出异常如果使用try-catch捕获但不抛出异常CancellationException，会影响到异常的传播，也就破坏了协程的异常传播机制，具体下一节异常传播机制展开。</p>
+<h3 id="25-kotlin协程的父子结构"><a class="markdownIt-Anchor" href="#25-kotlin协程的父子结构"></a> 2.5 kotlin协程的父子结构</h3>
+<p>看下面这段代码，思考一个问题，2处字符串会被打印出出来吗，为什么？</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parentChildStructTest</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+       <span class="hljs-keyword">val</span> job1 =  launch {
+         <span class="hljs-keyword">val</span> job2 =  launch(Job()) {<span class="hljs-comment">//1</span>
+                delay(<span class="hljs-number">500</span>)
+                println(<span class="hljs-string">&quot;job2 is finish&quot;</span>)<span class="hljs-comment">//2</span>
+            }
+            delay(<span class="hljs-number">100</span>)
+            <span class="hljs-keyword">this</span>.cancel()
+        }
+    }
+}
+</code></pre>
+<p>会打印，不知道你有没有答对。</p>
+<p>不是说好的，取消父协程的时候会取消掉其子协程吗？而且子协程里还调用了delay()方式，也会响应取消。问题的关键点在于，job1和job2的<strong>父子结构被破坏了</strong>。示例代码里1处传入了一个Job对象，此时job2的父层级已经变成了传入的job对象。我们稍加改造下，这里只是为了理解，不建议这么用，会发现job2可以被取消了。</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">parentChildStructTest</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+        <span class="hljs-keyword">val</span> job1 = launch {
+            <span class="hljs-keyword">val</span> j = Job()
+            <span class="hljs-keyword">val</span> job2 = launch(j) {
+                delay(<span class="hljs-number">500</span>)
+                println(<span class="hljs-string">&quot;job2 is finish&quot;</span>)
+            }.invokeOnCompletion {
+                println(<span class="hljs-string">&quot;job2 OnCompletion <span class="hljs-variable">$it</span>&quot;</span>)
+            }
+            delay(<span class="hljs-number">100</span>)
+            j.cancel() <span class="hljs-comment">//1</span>
+        }
+    }
+}
+</code></pre>
+<p>新协程的context的组成有两个公式</p>
+<pre class="highlight"><code class="kotlin">parentContext = scopeContext + AddionalContext(launch方法传入的context)
+​
+childContext = parentConxtext + job(新建)
+</code></pre>
+<p><img src="/images/kotlin_coroutine_exc_1706238534232.png" alt="1_zuX5Ozc2TwofXlmDajxpzg.webp" />(图来自[Roman Elizarov])</p>
+<ul>
+<li>新协程的context是【parent context】和【新建job】的相加操作而来。</li>
+<li>【parent context】是由父层级的context和传入的参数context相加操作而来。</li>
+<li>子协程的job会和父层级中context的job建立一个父子关系。</li>
+</ul>
+<p>当我们使用coroutineScope.launch(Job()){}传入了一个job实例的时候，其实子协程的job和传入的job实例建立了父子结构，破坏了原本的父子结构。</p>
+<h2 id="3-异常传播机制"><a class="markdownIt-Anchor" href="#3-异常传播机制"></a> 3 异常传播机制</h2>
+<h3 id="31-异常的传播"><a class="markdownIt-Anchor" href="#31-异常的传播"></a> 3.1 异常的传播</h3>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">destroyCoroutineScope</span><span class="hljs-params">()</span></span> {
+    coroutineScope {
+        launch {
+            launch {
+                delay(<span class="hljs-number">500</span>)
+                <span class="hljs-keyword">throw</span> NullPointerException()
+            }.invokeOnCompletion {
+                println(<span class="hljs-string">&quot;job-1 invokeOnCompletion <span class="hljs-variable">$it</span>&quot;</span>)
+            }
+​
+            launch {
+                delay(<span class="hljs-number">800</span>)
+            }.invokeOnCompletion {
+                println(<span class="hljs-string">&quot;job-2 invokeOnCompletion <span class="hljs-variable">$it</span>&quot;</span>)
+            }
+        }.invokeOnCompletion {
+            println(<span class="hljs-string">&quot;job-parent completion <span class="hljs-variable">$it</span>&quot;</span>)
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>子job异常后，传播到父协程，父协程会取消到自己所有的子协程，然后再往上传播。</li>
+<li>如果是一个取消异常(CancellationException)并不会被父协程消费，父协程的处理器会忽略他。也就是在子协程上抛出取消异常之后，父协程接收到不会做处理。</li>
+</ul>
+<h3 id="32-监督作用域异常传播supervision"><a class="markdownIt-Anchor" href="#32-监督作用域异常传播supervision"></a> 3.2 监督作用域异常传播（Supervision﻿）</h3>
+<p><strong>基本表现</strong>：使用supervisorScope启动的子协程发生异常时，不影响父协程和兄弟协程。</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">supervisorJobTest</span><span class="hljs-params">()</span></span> {
+    supervisorScope {
+        launch {
+            delay(<span class="hljs-number">100</span>)
+            <span class="hljs-keyword">throw</span> NullPointerException()
+        }
+        launch {
+            delay(<span class="hljs-number">800</span>)
+            println(<span class="hljs-string">&quot;job 2 is running&quot;</span>)
+        }
+    }
+}
+</code></pre>
+<p>如上代码，supervisor范围内第一个job抛出异常后，并不会影响第二个job；把错误异常控制在范围内。</p>
+<ul>
+<li>SupervisorCoroutine的子协程发生了异常之后不会影响父协程自身，也不会向上传播。</li>
+<li>如果 CoroutineContext没有设置CoroutineExceptionHandle，最终异常会传播到ExceptionHandler</li>
+</ul>
+<p>但其他的结构化并发特性仍然存在</p>
+<ul>
+<li>当父协程取消，他的协程也被取消。</li>
+<li>子协程取消不影响父协程。</li>
+<li>父协程抛出异常，子协程也会被取消。</li>
+<li>父协程要等所有子协程完成后才结束。</li>
+</ul>
+<p>简单的讲，监督协程具备单向传播的特性，即子协程的异常和取消不影响父协程，父协程的异常和取消会影响子协程</p>
+<p><strong>两种方式</strong>:</p>
+<ul>
+<li>构建CoroutineScope时传入SupervisorJob()</li>
+<li>使用supervisorScope{}产生</li>
+</ul>
+<p><strong>注意</strong>：</p>
+<p>监督协程中的每一个子作业应该通过异常处理机制处理自身的异常。如果不处理异常会被吞掉。</p>
+<h3 id="33-coroutineexceptionhandler"><a class="markdownIt-Anchor" href="#33-coroutineexceptionhandler"></a> 3.3 CoroutineExceptionHandler</h3>
+<p>用于捕获协程执行过程中未捕获的异常，被用来定义一个全局的异常处理器。</p>
+<ul>
+<li>不能恢复异常,只是打印、记录、重启应用。</li>
+<li>只能在【根作用域】或者【supervisorScope的直接子协程】启动协程是传入才生效。</li>
+</ul>
+<p>举个例子</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">coroutineExceptionHandlerTest</span><span class="hljs-params">()</span></span> {
+    supervisorScope {
+        <span class="hljs-keyword">val</span> handler = CoroutineExceptionHandler { _, _ -&gt; println(<span class="hljs-string">&quot;handleException in coroutineExceptionHandler&quot;</span>) }
+        launch(handler) {
+            delay(<span class="hljs-number">100</span>)
+            <span class="hljs-keyword">throw</span> NullPointerException()
+        }
+    }
+}  
+</code></pre>
+<h3 id="34-浅看源码"><a class="markdownIt-Anchor" href="#34-浅看源码"></a> 3.4 浅看源码</h3>
+<p>主从作用域和协作作用域的表现区别上文已经讲到了，通常我们构建一个协程作用域两种方式</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">val</span> scope = CoroutineScope(Job())
+<span class="hljs-keyword">val</span> supervisorJob = CoroutineScope(SupervisorJob())
+</code></pre>
+<ul>
+<li>CourotineScope()方法(没错这是个方法)，通过传入Job()SupervisorJob生成的对象最终获得主从作用域和协同作用域。</li>
+</ul>
+<pre class="highlight"><code class="kotlin">  supervisorScope { scope -&gt; xx }
+  coroutineScope { scope -&gt;xx  }
+</code></pre>
+<ul>
+<li>通过supervisorScope()或者coroutineScope()构建作用域。</li>
+</ul>
+<pre class="highlight"><code class="kotlin">​
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SupervisorCoroutine</span>&lt;<span class="hljs-type">in T</span>&gt;(
+    context: CoroutineContext,
+    uCont: Continuation&lt;T&gt;
+) : ScopeCoroutine&lt;T&gt;(context, uCont) {
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">childCancelled</span><span class="hljs-params">(cause: <span class="hljs-type">Throwable</span>)</span></span>: <span class="hljs-built_in">Boolean</span> = <span class="hljs-literal">false</span>
+}
+​
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SupervisorJobImpl</span>(parent: Job?) : JobImpl(parent) {
+    <span class="hljs-keyword">override</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">childCancelled</span><span class="hljs-params">(cause: <span class="hljs-type">Throwable</span>)</span></span>: <span class="hljs-built_in">Boolean</span> = <span class="hljs-literal">false</span>
+}
+​
+</code></pre>
+<p>两种作用域在代码上的区别是 fun childCancelled(cause: Throwable) 方法的实现不同，监督作用域直接返回fasle表示不处理子协程的错误异常。让其自己处理</p>
+<pre class="highlight"><code class="kotlin"><span class="hljs-comment">//JobSupport</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">cancelParent</span><span class="hljs-params">(cause: <span class="hljs-type">Throwable</span>)</span></span>: <span class="hljs-built_in">Boolean</span> {
+        ... 
+        <span class="hljs-keyword">return</span> parent.childCancelled(cause) || isCancellation <span class="hljs-comment">//1</span>
+    }
+​
+    <span class="hljs-keyword">private</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">finalizeFinishingState</span><span class="hljs-params">(state: <span class="hljs-type">Finishing</span>, proposedUpdate: <span class="hljs-type">Any</span>?)</span></span>: Any? {
+      ...
+       <span class="hljs-keyword">val</span> handled = cancelParent(finalException) || handleJobException(finalException)<span class="hljs-comment">//2</span>
+       <span class="hljs-keyword">if</span> (handled) (finalState <span class="hljs-keyword">as</span> CompletedExceptionally).makeHandled()
+      ...
+    }
+</code></pre>
+<p>源代码中的核心逻辑，</p>
+<ul>
+<li>1处的parent.childCanceled的值的最终来源其实就是我们实现的childCancelled方法的返回值</li>
+<li>2处当我们是一个监督作用域起cancelParent的返回值为false，这种情况下代码就会执行后半句handleJobException()，这半句的内部其实最终是执行了我们设置的CoroutineExceptionHandler。</li>
+<li>2处cancelParent除了在我们监督作用域的时候返回fasle，在根协程下会返回fasle，这也就是为什么CoroutineExceptionHandler设置在根协程下生效的原因。</li>
+</ul>
+<p>代码很多细节不展开有兴趣的自行研究。</p>
+<h2 id="4-异常传播需注意问题"><a class="markdownIt-Anchor" href="#4-异常传播需注意问题"></a> 4 异常传播需注意问题</h2>
+<h3 id="41-supervisorscope的孙子协程"><a class="markdownIt-Anchor" href="#41-supervisorscope的孙子协程"></a> 4.1 supervisorScope的孙子协程</h3>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">childChildSupervisorJob</span><span class="hljs-params">()</span></span> {
+    supervisorScope { <span class="hljs-comment">// SupervisorCouroutine</span>
+        launch {  <span class="hljs-comment">// ScopeCoroutine</span>
+           <span class="hljs-keyword">val</span> job1 =  launch {
+                delay(<span class="hljs-number">100</span>)
+                <span class="hljs-keyword">throw</span> NullPointerException()
+            }
+           <span class="hljs-keyword">val</span> job2 = launch {
+                delay(<span class="hljs-number">800</span>)
+                println(<span class="hljs-string">&quot;job 2 is running&quot;</span>)
+            }.invokeOnCompletion {
+                println(<span class="hljs-string">&quot;job2 is completion <span class="hljs-variable">$it</span>&quot;</span>)
+            }
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>看上面这个例子job1抛出空指针异常后，job2会不会受影响。</li>
+<li>是正常的coroutineScope而非supervisorScope，因此supervisorScope的“孙子协程”不遵循互不影响原则</li>
+</ul>
+<h3 id="42-注意不要破坏父子结构"><a class="markdownIt-Anchor" href="#42-注意不要破坏父子结构"></a> 4.2 注意不要破坏父子结构</h3>
+<pre class="highlight"><code class="kotlin"><span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">textSupervisorJob</span><span class="hljs-params">()</span></span> {
+    supervisorScope {
+        launch(SupervisorJob()) {<span class="hljs-comment">//1</span>
+            launch {
+                delay(<span class="hljs-number">100</span>)
+                <span class="hljs-keyword">throw</span> NullPointerException()
+            }
+            launch {
+                delay(<span class="hljs-number">800</span>)
+                println(<span class="hljs-string">&quot;job 2 is running&quot;</span>)
+            }.invokeOnCompletion {
+                println(<span class="hljs-string">&quot;job2 is completion <span class="hljs-variable">$it</span>&quot;</span>)
+            }
+        }
+    }
+}
+</code></pre>
+<ul>
+<li>job1抛出异常也会影响job2,原因1处虽然传入了SupervisorJob，但是这个实例其实是作为父context的job传入的，真是job1和job2的parentContext还是job类型，而不是SupervisorJob。具体原理可以看<strong>2.5小节</strong></li>
+</ul>
+<h2 id="5-关于async的误会"><a class="markdownIt-Anchor" href="#5-关于async的误会"></a> 5 关于async的误会</h2>
+<p>通常构建一个协程除了使用CoroutineScope.launch{}还会使用CoroutineScope.async{}。</p>
+<p>经常看到这种说法，async方式启动的协程返回一个Deferred对象，当调用deffered的await()方法的时候才会抛出异常</p>
+<pre class="highlight"><code class="kotlin">
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">suspend</span> <span class="hljs-function"><span class="hljs-keyword">fun</span> <span class="hljs-title">asyncSample</span><span class="hljs-params">()</span></span> {
+    <span class="hljs-keyword">val</span> h = CoroutineScope(CoroutineExceptionHandler { _, _ -&gt; println(<span class="hljs-string">&quot;发生了异常&quot;</span>) })
+    <span class="hljs-keyword">val</span> d = h.launch {
+        async {
+            delay(<span class="hljs-number">100</span>)
+            <span class="hljs-keyword">throw</span> NullPointerException()
+        }
+        launch { <span class="hljs-comment">//job2</span>
+            delay(<span class="hljs-number">500</span>)
+            println(<span class="hljs-string">&quot;job 2 is finish&quot;</span>)
+        }
+    }.join()
+}
+</code></pre>
+<p>这个例子没有调用await()，实际发现也会立马抛出异常，导致jo2都没执行完。跟我们认为的不一样。</p>
+<p><strong>实际情况是这样的</strong>：当async被用作构建根协程（由协程作用域直接管理的协程）或者监督作用域直接管理协程时，异常不会主动抛出，而是在调用.await()时抛出。其他情况不等待await就会抛出异常。</p>
+<h2 id="6-总结"><a class="markdownIt-Anchor" href="#6-总结"></a> 6 总结</h2>
+<p>本文梳理了Kotlin的协程的取消和异常传播处理机制。机制的设置总的来说是服务于结构化并发的。本文应该能让我们了解掌握以下问题才算合格</p>
+<ul>
+<li>kotlin协程结构化并发的特性</li>
+<li>协程的context是怎么来的？怎么构成的？父协程的context和协程的parentContext是同一个概念吗？</li>
+<li>kotlin的协程是怎么传播的？主从作用域监督作用域的区别？怎么实现</li>
+<li>async方式启动的协程要await()的时候才抛出异常？</li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/basic/">#basic</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

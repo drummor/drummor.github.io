@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>当我们讨论Android重建机制时在讨论什么 - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="前言 Android应用有一个常常被忽略的问题，但问题出现时你又不得不面对。比如   Activity横竖屏转换时Fragment重影   应用长时间处于后台，并用户重新切到前台时，Activity显示异样或者需要等待一段时间才能显示内容   这类问题都与Activity的恢复重建机制相关，如果你想知道怎么解决这类问题，以及Activity恢复重建机制内部原理。这篇文或许能够帮到你。  1) 什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="当我们讨论Android重建机制时在讨论什么">
+<meta property="og:url" content="https://drummor.github.io/2023/01/25/%E5%BD%93%E6%88%91%E4%BB%AC%E8%AE%A8%E8%AE%BAAndroid%E9%87%8D%E5%BB%BA%E6%9C%BA%E5%88%B6%E6%97%B6%E5%9C%A8%E8%AE%A8%E8%AE%BA%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="前言 Android应用有一个常常被忽略的问题，但问题出现时你又不得不面对。比如   Activity横竖屏转换时Fragment重影   应用长时间处于后台，并用户重新切到前台时，Activity显示异样或者需要等待一段时间才能显示内容   这类问题都与Activity的恢复重建机制相关，如果你想知道怎么解决这类问题，以及Activity恢复重建机制内部原理。这篇文或许能够帮到你。  1) 什">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/android_recreate1706192281232.png">
+<meta property="og:image" content="https://drummor.github.io/images/android_recreate1706192281499.png">
+<meta property="article:published_time" content="2023-01-25T14:18:36.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.223Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="basic">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/android_recreate1706192281232.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2023/01/25/当我们讨论Android重建机制时在讨论什么/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                当我们讨论Android重建机制时在讨论什么
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2023.01.25</span>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h3 id="前言"><a class="markdownIt-Anchor" href="#前言"></a> 前言</h3>
+<p>Android应用有一个常常被忽略的问题，但问题出现时你又不得不面对。比如</p>
+<ul>
+<li>
+<p>Activity横竖屏转换时Fragment重影</p>
+</li>
+<li>
+<p>应用长时间处于后台，并用户重新切到前台时，Activity显示异样或者需要等待一段时间才能显示内容</p>
+</li>
+</ul>
+<p>这类问题都与Activity的恢复重建机制相关，如果你想知道怎么解决这类问题，以及Activity恢复重建机制内部原理。这篇文或许能够帮到你。</p>
+<h3 id="1-什么时候会重建"><a class="markdownIt-Anchor" href="#1-什么时候会重建"></a> 1) 什么时候会重建</h3>
+<p>并不是任何Activity的销毁行为都会触发Activity数据的保存**。只有销毁行为是被系统发起的并且今后有可能恢复的时候才会触发**。</p>
+<h4 id="11不会触发重建机制"><a class="markdownIt-Anchor" href="#11不会触发重建机制"></a> 1.1）不会触发重建机制</h4>
+<ul>
+<li>按返回按键。比如,A Activity启动B Activity，BActivity中返回不会调用BActivity的OnSaveInstanceState()方法</li>
+<li>最近使用屏幕中滑动关闭 Activity。</li>
+<li>从设置中【停止】应用</li>
+<li>完成某种“完成”操作，开发者通过调用Activity #finish()方法完成</li>
+</ul>
+<h4 id="12有可能会触发重建机制的"><a class="markdownIt-Anchor" href="#12有可能会触发重建机制的"></a> 1.2）有可能会触发重建机制的</h4>
+<p>触发恢复重建机制就是两大类</p>
+<ul>
+<li>系统回收内存时kill掉。</li>
+<li>横竖屏切换和语言切换等配置发生变化时kill重建。(可以通过 Activity #isChangingConfigurations()方法判断是否为配置更改发生的)。</li>
+</ul>
+<p>当由系统发起而非人为手动关闭Activity的时候，Activity有可能在未来的某个时机恢复重建。Android系统提供了两套机制，用以保存和恢复界面状态。<br />
+这两套机制我个人分别给其取名为 <strong>Save-Restore InstanceState机制</strong>和<strong>RetainNonConfiguration机制</strong></p>
+<h3 id="2save-restore-instancestate机制"><a class="markdownIt-Anchor" href="#2save-restore-instancestate机制"></a> 2）Save-Restore InstanceState机制</h3>
+<p><img src="/images/android_recreate1706192281232.png" alt="1635401794(1).jpg" /></p>
+<ul>
+<li>Save-Restore InstanceState机制的初衷是保存界面的一些瞬时状态，比如ListView滑动的位置、ViewPager的position一些TextView的文本内容。保证用户进入新建Activity的时候能尽快的看到界面状态的恢复。</li>
+<li>Save-Restore InstanceState是一些比较轻量级的数据，因为保存过程需要经历数据的序列化和反序列化。</li>
+</ul>
+<p>对于开发者时机操作层面来说，Save-Restore InstanceState机制的核心就是Activity中 onSaveInstanceState() 、onCreate(）和onRestoreInstanceState(）这三个回调方法。</p>
+<h4 id="21-onsaveinstancestate"><a class="markdownIt-Anchor" href="#21-onsaveinstancestate"></a> 2.1） onSaveInstanceState()</h4>
+<pre class="highlight"><code class="java">#Activity
+<span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onSaveInstanceState</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> Bundle outState)</span> {
+    <span class="hljs-comment">//A、整个view树中的view相关信息有机会保存到整个bundle中</span>
+    outState.putBundle(WINDOW_HIERARCHY_TAG, mWindow.saveHierarchyState());
+    outState.putInt(LAST_AUTOFILL_ID, mLastAutofillId);
+    <span class="hljs-type">Parcelable</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> mFragments.saveAllState();
+    <span class="hljs-keyword">if</span> (p != <span class="hljs-literal">null</span>) {
+        outState.putParcelable(FRAGMENTS_TAG, p);
+    }
+    <span class="hljs-keyword">if</span> (mAutoFillResetNeeded) {
+        outState.putBoolean(AUTOFILL_RESET_NEEDED, <span class="hljs-literal">true</span>);
+        getAutofillManager().onSaveInstanceState(outState);
+    }
+    dispatchActivitySaveInstanceState(outState);
+}
+</code></pre>
+<ul>
+<li>onSaveInstanceState(outState)的被调用的条件：<strong>非手动杀死</strong>Activity而是系统kill同时可能会在未来重建时。</li>
+<li>在Activity被系统kill时会调用onSaveInstanceState(outState)方法，允许开发者把一些今后重建时需要的一些状态数据存储到outState里面；这个方法的的<strong>触发时机</strong>是在onStop之前 （<strong>Android P开始会在onDestory之前执行</strong>）。</li>
+<li>默认地，代码A处，onSaveInstance方法会通过window依次调用整个view树的各个view的onSaveInstanceState()方法，view树的每个符合条件的view都有机会存储一些状态。<strong>需要注意的是</strong>：需要保存view状态的view需要有id作为标识存储在Bundle整个数据结构中。也就是说当view没有id的时候是保存不成功的。</li>
+</ul>
+<h4 id="22oncreatebundle-savedinstancestate方法"><a class="markdownIt-Anchor" href="#22oncreatebundle-savedinstancestate方法"></a> 2.2）onCreate(Bundle savedInstanceState)方法</h4>
+<p>被系统销毁又重建的Activity onCreate(Bundle savedInstanceState)回调方法中savedInstanceState的方法参数不为null。可以在这个位置取出被系统杀死之前保存的一些状态信息用来构建Activity。</p>
+<h4 id="23onrestoreinstancestatebundle-savedinstancestate"><a class="markdownIt-Anchor" href="#23onrestoreinstancestatebundle-savedinstancestate"></a> 2.3）onRestoreInstanceState(Bundle savedInstanceState)</h4>
+<ul>
+<li>
+<p>如果Activity是被系统重建的，会触发onRestoreInstanceState(savedInstanceState)方法，开发者可以在savedInstanceState中取出之前被系统销毁时存储的数据，用以在新Activity中恢复状态。</p>
+</li>
+<li>
+<p>onRestoreInstanceState调用时机是在onStart()之后被调用</p>
+</li>
+<li>
+<p>默认地，onRestoreInstanceState方法会通过 mWindow.restoreHierarchyState()方法把之前保存的view状态信息分发出去，用以恢复view的状态。</p>
+</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onRestoreInstanceState</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> Bundle savedInstanceState)</span> {
+    <span class="hljs-keyword">if</span> (mWindow != <span class="hljs-literal">null</span>) {
+        <span class="hljs-type">Bundle</span> <span class="hljs-variable">windowState</span> <span class="hljs-operator">=</span> savedInstanceState.getBundle(WINDOW_HIERARCHY_TAG);
+        <span class="hljs-keyword">if</span> (windowState != <span class="hljs-literal">null</span>) {
+            <span class="hljs-comment">//window view树有一次机会恢复销毁之前的状态</span>
+            mWindow.restoreHierarchyState(windowState); 
+        }
+    }
+}
+</code></pre>
+<h3 id="3-配置改变发生的重建"><a class="markdownIt-Anchor" href="#3-配置改变发生的重建"></a> 3) 配置改变发生的重建</h3>
+<p><img src="/images/android_recreate1706192281499.png" alt="image.png" /></p>
+<p>当如横竖屏的切换、语言切换等配置发生改变时也会触发Activity的重建。这种由配置发生改变而导致的Activity重建除了会触发Save-Restore InstanceState机制之外也会触发<strong>RetainNonConfigurationInstance机制</strong></p>
+<p><strong>RetainNonConfigurationInstance机制</strong>的核心是Activity中onRetainNonConfigurationInstance（)和 getLastNonConfigurationInstance()这两个回调方法也会回调onRetainNonConfigurationInstance（）方法，</p>
+<h4 id="31-onretainnonconfigurationinstance"><a class="markdownIt-Anchor" href="#31-onretainnonconfigurationinstance"></a> 3.1) onRetainNonConfigurationInstance()</h4>
+<ul>
+<li>
+<p>用于保存配置发生前的数据，这个数据理论上是没有结构和大小限制的甚至可以把旧Activity本身保存其中。</p>
+</li>
+<li>
+<p>触发时机会在onStop之前</p>
+</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> Object <span class="hljs-title function_">onRetainNonConfigurationInstance</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+}
+</code></pre>
+<h4 id="32getlastnonconfigurationinstance"><a class="markdownIt-Anchor" href="#32getlastnonconfigurationinstance"></a> 3.2）getLastNonConfigurationInstance()</h4>
+<ul>
+<li>当Activity 中getLastNonConfigurationInstance()方法返回值不为空的时候，说明当前这个Activity是因为配置发生变化重建而来的,可以使用这个返回值做一些Activity状态恢复的操作。</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getLastNonConfigurationInstance</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">return</span> mLastNonConfigurationInstances != <span class="hljs-literal">null</span>
+            ? mLastNonConfigurationInstances.activity : <span class="hljs-literal">null</span>;
+}
+</code></pre>
+<h3 id="4两种机制有什么不同"><a class="markdownIt-Anchor" href="#4两种机制有什么不同"></a> 4）两种机制有什么不同</h3>
+<ul>
+<li>数据上:
+<ul>
+<li>通过Save-Restore InstanceState方式保存和恢复界面时只是一些简单的瞬时数据。究其原因这个机制是讲保存的数据传递到了系统进程，在恢复的时候又从系统进程传递到应用进程，数据经历序列化和反序列化，而这些操作又是在主线程。</li>
+<li>RetainInstance方式数据可以传递一些大数据甚至可以传递Activity本身。究其原因这个机制保存数据还是在当前应用进程，不会经历数据的序列化和反序列化。</li>
+</ul>
+</li>
+<li>触发条件上
+<ul>
+<li>Save-Restore InstanceState只要Activity有可能被系统kill就会调用onSaveInstance()方法,只要Activity被重建就会在onCreate()方法中传入instanceState数据和调用onRestoreInstaceState()方法。</li>
+<li>RetaineInstance方式只在系统配置发生变化的时候才生效。</li>
+</ul>
+</li>
+</ul>
+<h3 id="5androidx-做了什么"><a class="markdownIt-Anchor" href="#5androidx-做了什么"></a> 5）AndroidX 做了什么</h3>
+<p>坊间流传Jetpack中Viewmodel会比Activity的生命周期长，是怎么回事？</p>
+<p>阅读这个章节之前如果你对ViewModel的创建比较了解读起来可能会省力些</p>
+<h4 id="51-横竖屏切换的时候"><a class="markdownIt-Anchor" href="#51-横竖屏切换的时候"></a> 5.1) 横竖屏切换的时候</h4>
+<p>在androidx.activity:activity包下的ComponentActivity中关键点，</p>
+<pre class="highlight"><code class="java">code <span class="hljs-number">5.5</span><span class="hljs-number">.1</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NonConfigurationInstances</span> {
+    Object custom;
+    ViewModelStore viewModelStore;
+}
+</code></pre>
+<ul>
+<li>
+<p>引入NonConfigurationInstances类，这个类主要有两个属性，分别用来保存自定义数据和viewModelStore.</p>
+<pre class="highlight"><code class="java">code <span class="hljs-number">5.5</span><span class="hljs-number">.2</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> Object <span class="hljs-title function_">onRetainNonConfigurationInstance</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Object</span> <span class="hljs-variable">custom</span> <span class="hljs-operator">=</span> onRetainCustomNonConfigurationInstance();
+    <span class="hljs-type">ViewModelStore</span> <span class="hljs-variable">viewModelStore</span> <span class="hljs-operator">=</span> mViewModelStore;
+    <span class="hljs-keyword">if</span> (viewModelStore == <span class="hljs-literal">null</span>) {
+        <span class="hljs-type">NonConfigurationInstances</span> <span class="hljs-variable">nc</span> <span class="hljs-operator">=</span> (NonConfigurationInstances) getLastNonConfigurationInstance();
+        <span class="hljs-keyword">if</span> (nc != <span class="hljs-literal">null</span>) { viewModelStore = nc.viewModelStore; }
+    }
+    <span class="hljs-keyword">if</span> (viewModelStore == <span class="hljs-literal">null</span> &amp;&amp; custom == <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-type">NonConfigurationInstances</span> <span class="hljs-variable">nci</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NonConfigurationInstances</span>();
+    nci.custom = custom;
+    nci.viewModelStore = viewModelStore;
+    <span class="hljs-keyword">return</span> nci;
+}
+</code></pre>
+</li>
+<li>
+<p>重写了onRetainNonConfigurationInstance（）方法并把方法设置为了final。onRetainNonConfigurationInstance()方法内部创建NonConfigurationInstances对象nci，把viewModelStore存放到nci，同时收集onRetainCustomNonConfigurationInstance（）方法的返回值存在nci里</p>
+</li>
+<li>
+<p>开发者可重写onRetainCustomNonConfigurationInstance()这个方法返回需要保存的数据。</p>
+<pre class="highlight"><code class="java">code <span class="hljs-number">5.5</span><span class="hljs-number">.3</span>
+<span class="hljs-keyword">public</span> <span class="hljs-title function_">ComponentActivity</span><span class="hljs-params">()</span> {
+    ...
+	getLifecycle().addObserver(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LifecycleEventObserver</span>() {
+ 	   <span class="hljs-meta">@Override</span>
+  	  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onStateChanged</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> LifecycleOwner source, <span class="hljs-meta">@NonNull</span> Lifecycle.Event event)</span> {
+      	  <span class="hljs-keyword">if</span> (event == Lifecycle.Event.ON_DESTROY) {
+        	    mContextAwareHelper.clearAvailableContext()
+         	   <span class="hljs-keyword">if</span> (!isChangingConfigurations()) { <span class="hljs-comment">//不在更改配置状态</span>
+         	       getViewModelStore().clear(); <span class="hljs-comment">//1</span>
+         	   }
+      	  }
+   	 }
+	});
+	getLifecycle().addObserver(<span class="hljs-keyword">new</span> <span class="hljs-title class_">LifecycleEventObserver</span>() {
+   		 <span class="hljs-meta">@Override</span>
+    	<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onStateChanged</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> LifecycleOwner source,
+            <span class="hljs-meta">@NonNull</span> Lifecycle.Event event)</span> {
+        	ensureViewModelStore();
+        	getLifecycle().removeObserver(<span class="hljs-built_in">this</span>);
+    		}
+	}); 
+  <span class="hljs-keyword">void</span> <span class="hljs-title function_">ensureViewModelStore</span><span class="hljs-params">()</span> { <span class="hljs-comment">//在NonConfiguration中取出viewModleStore</span>
+    <span class="hljs-keyword">if</span> (mViewModelStore == <span class="hljs-literal">null</span>) {
+        <span class="hljs-type">NonConfigurationInstances</span> <span class="hljs-variable">nc</span> <span class="hljs-operator">=</span>
+                (NonConfigurationInstances) getLastNonConfigurationInstance();
+        <span class="hljs-keyword">if</span> (nc != <span class="hljs-literal">null</span>) {
+            mViewModelStore = nc.viewModelStore;
+        }
+        <span class="hljs-keyword">if</span> (mViewModelStore == <span class="hljs-literal">null</span>) {
+            mViewModelStore = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ViewModelStore</span>();
+        }
+    }
+}
+</code></pre>
+</li>
+<li>
+<p>viewmodel中横竖屏转换，横竖屏切换等配置发生变化导致的重建时，新Activity中可听过ensureViewModelStore()方法获取从旧Activity传递过来viewmodelstore，这样就实现了横竖屏切换的时候viewmodel不丢失。</p>
+</li>
+<li>
+<p>另外值得注意的点是,Activity onDestory的时候，会通过**isChangingConfigurations()**方法判断activity是否处于配置变化状态，如果不是就会将viewmodelstores清空掉。</p>
+</li>
+</ul>
+<p>这套方式解决了一个问题当Activity由横竖屏转换等配置原因发生变化导致Activity重建的时候，会将旧Activity的viewModelStore传给新Activity。如果不是由于配置发生变化导致的Activity重建会清除掉viewModelStore</p>
+<p>那有什么方式能解决<strong>非配置变化</strong>导致Activity重建时保存ViewModel的数据呢？</p>
+<h4 id="52非配置变化引起的activity重建对viewmodel的保存"><a class="markdownIt-Anchor" href="#52非配置变化引起的activity重建对viewmodel的保存"></a> 5.2）非配置变化引起的Activity重建对ViewModel的保存</h4>
+<p>结论先行，因配置变化引起的Activity重建可以将ViewModleStore保存，在新Activity中可以直接获取旧Activity中的ViewModel。而对于非配置变化引起的Activity重建不能直接将ViewModelStore对象传递给新Activity。AndroidX中是将ViewModel的数据保存到Bundle中，给Bundle分配一个Key，这样ViewModel的保存和恢复就可以通过Save-Restore Stated Instance机制实现。</p>
+<p>稍微展开下实现细节</p>
+<h5 id="521-viewmodel销毁时数据保存"><a class="markdownIt-Anchor" href="#521-viewmodel销毁时数据保存"></a> 5.2.1) ViewModel销毁时数据保存</h5>
+<ul>
+<li>数据保存还是通过Activity Save-Restore StateInstace机制，Activity发起saveStatedInstance()时通过调用注册到SavedStateRegistry上SavedStateProvider的saveState（）方法获取到对应的Bundle当然最终存储到saveStatedInstance(outBundle)的outBundle中。</li>
+<li>通常情况下，ViewModel中会有LiveData，SavedStateHandle中也支持LiveData中数据的保存，SavingStateLiveData继承MutableLiveData复写setValue（）方法，设置到LiveData的数据都会保存到mRegular中一份这样实现LiveData数据的保存。</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SavedStateHandle</span> {
+..
+    <span class="hljs-keyword">final</span> Map&lt;String, Object&gt; mRegular;
+    <span class="hljs-keyword">final</span> Map&lt;String, SavedStateProvider&gt; mSavedStateProviders = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;String, SavingStateLiveData&lt;?&gt;&gt; mLiveDatas = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+    
+	<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">SavedStateProvider</span> <span class="hljs-variable">mSavedStateProvider</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SavedStateProvider</span>() {
+  	  <span class="hljs-meta">@SuppressWarnings(&quot;unchecked&quot;)</span>
+  	  <span class="hljs-meta">@NonNull</span>
+   	 <span class="hljs-meta">@Override</span>
+   	 <span class="hljs-keyword">public</span> Bundle <span class="hljs-title function_">saveState</span><span class="hljs-params">()</span> {
+     	...
+        Set&lt;String&gt; keySet = mRegular.keySet();
+        <span class="hljs-type">ArrayList</span> <span class="hljs-variable">keys</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>(keySet.size());
+        <span class="hljs-type">ArrayList</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>(keys.size());
+        <span class="hljs-keyword">for</span> (String key : keySet) {
+            keys.add(key);
+            value.add(mRegular.get(key));
+        }
+        <span class="hljs-type">Bundle</span> <span class="hljs-variable">res</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Bundle</span>();
+        <span class="hljs-comment">//把mRegular保存的数据存放到Bundle中返回</span>
+        res.putParcelableArrayList(<span class="hljs-string">&quot;keys&quot;</span>, keys);
+        res.putParcelableArrayList(<span class="hljs-string">&quot;values&quot;</span>, value);
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+</code></pre>
+<h5 id="522-viewmodel重建时恢复"><a class="markdownIt-Anchor" href="#522-viewmodel重建时恢复"></a> 5.2.2) ViewModel重建时恢复</h5>
+<ul>
+<li>
+<p>带恢复功能的Viewmodel是通过SavedStateViewModelFactory创建，当Activity重建时，会在Activity的onCreate(Bundle data)带后旧Activity存的数据，这bundle中可以取出旧ViewModel的SavedStateHandle对象并以此为构造参数构建ViewModel。这样新建ViewModel就有了旧ViewModel的数据，数据是通过SavedStateHandle对象为介质进行传递的，ViewModel中可以使用对应的key恢复ViewModel的基本数据类型和可序列化的数据类型。</p>
+</li>
+<li>
+<p>所以，在具备保存-恢复数据特性的ViewModle中获取数据时使用SavedStateHandle对象上的 get(@NonNull String key)方法。获取LiveData()时使用 MutableLiveData<T> getLiveData(String key)方法。内部方法实现是通过key在mRegular中获取到对应的值，再用值作为LiveData初始值创建LiveData。</p>
+</li>
+</ul>
+<h5 id="523其他"><a class="markdownIt-Anchor" href="#523其他"></a> 5.2.3）其他</h5>
+<ul>
+<li>
+<p>ViewModle中也会存在非序列化的数据(继承了Parcelable或Serializable)或者不能被Bundle存储的对象，如果要保存恢复这些数据怎么实现呢？ <a target="_blank" rel="noopener" href="https://developer.android.google.cn/jetpack/androidx/releases/lifecycle#2.3.0-alpha03">Lifecycle 2.3.0-alpha03</a> 开始允许设置自定义的SavedStateProvider这样我们可以把非序列化的数据转化成可序列化的数据保存到Bundle中，实现非序列化的数据的保存和恢复。</p>
+</li>
+<li>
+<p>ViewModel的数据保存和恢复虽然逻辑相对比较简单，但是里面涉及到的类和细节比较繁杂这个章节只是说明了一下实现的核心思想，如果大家想了解内部更多的实现细节，今后可以另开一篇展开聊。</p>
+</li>
+</ul>
+<h3 id="6-最后"><a class="markdownIt-Anchor" href="#6-最后"></a> 6) 最后</h3>
+<ul>
+<li>Android销毁重建机制常常会被开发者忽略,进而造成App线上出现非预期问题甚至crash。开发阶段我们可以通过 开发者模式 -&gt;不保留活动选项，尽早的暴露相关的问题。</li>
+<li>关于此类问题的解决时至今日，我们已经有比较完备的工具箱，如果比较熟悉这些工具内部的实现原理机制，在使用这些工具的时候会更得心应手。</li>
+</ul>
+<p>不足处批评指正，望不吝点赞</p>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/basic/">#basic</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>

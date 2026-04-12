@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
+  <meta name="robots" content="index, follow">
+  <!-- title -->
+  
+    
+  <title>视角拉高，系统性地梳理下Gradle - 1024</title>
+    
+  
+
+  <meta name="google-site-verification" content="igPREC091ZsMcPyMqt6hg6HDwnFbZXWOPIbU6J0YDKA" />
+  
+  <!-- open graph -->
+  <meta name="description" content="1 Gradle 的一些概念 Android Studio 默认的构建工具为 Gradle。在使用 Gradle 的过程中会碰到一些概念，理清他们的含义关系对我们使用和深入理解 Gradle 至关重要。  1.1 Gradle 、AGP(Android Gradle Plugin)、 buildTools 分别是什么，他们之间什么关系？   1.1.1 Gradle Gradle 是基于 JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视角拉高，系统性地梳理下Gradle">
+<meta property="og:url" content="https://drummor.github.io/2024/01/26/%E8%A7%86%E8%A7%92%E6%8B%89%E9%AB%98%EF%BC%8C%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E6%A2%B3%E7%90%86%E4%B8%8BGradle/index.html">
+<meta property="og:site_name" content="1024">
+<meta property="og:description" content="1 Gradle 的一些概念 Android Studio 默认的构建工具为 Gradle。在使用 Gradle 的过程中会碰到一些概念，理清他们的含义关系对我们使用和深入理解 Gradle 至关重要。  1.1 Gradle 、AGP(Android Gradle Plugin)、 buildTools 分别是什么，他们之间什么关系？   1.1.1 Gradle Gradle 是基于 JVM">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://drummor.github.io/images/gradle_system_1706238770763.png">
+<meta property="og:image" content="https://drummor.github.io/images/gradle_system_1706238771032.png">
+<meta property="og:image" content="https://drummor.github.io/images/gradle_system_1706238771643.png">
+<meta property="article:published_time" content="2024-01-26T03:14:01.000Z">
+<meta property="article:modified_time" content="2026-04-11T13:48:36.224Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Gradle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://drummor.github.io/images/gradle_system_1706238770763.png">
+  <!-- canonical -->
+  
+  <link rel="canonical" href="https://drummor.github.io/2024/01/26/视角拉高，系统性地梳理下Gradle/">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/img/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+  <!-- CSS -->
+  
+<link rel="stylesheet" href="/css/reset.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/css/markdown.css">
+
+  
+<link rel="stylesheet" href="/css/markdown_thoughts.css">
+
+  
+<link rel="stylesheet" href="/css/fonts.css">
+
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+  <body>
+    <button id="toggle-theme">
+      <svg id="theme-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <!-- 默认图标为太阳 -->
+        <path
+          id="sun-icon"
+          d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z"
+        />
+        <!-- 月亮图标 -->
+        <path id="moon-icon" d="M10 7a7 7 0 0 0 11.95 4.95A9 9 0 1 1 12.05 2.05 7 7 0 0 0 10 7z" style="display: none" />
+      </svg>
+      <span id="theme-text">亮色</span>
+    </button>
+
+    <div class="paper">
+      <div class="paper-main">
+         <div class="post-header">
+    <a class="logo" href="/">1024</a>
+    <!-- <div class="logo"><a href="/" title="Len"><img src="/img/logo.svg" alt="Len" aria-label="logo" height="20"></a></div> -->
+        <ul class="nav">
+            
+            <li><a href="/">Home</a></li>
+            
+            <li><a href="/archives">Archives</a></li>
+            
+            <li><a href="/thoughts">Thoughts</a></li>
+            
+            <li><a href="/about">About</a></li>
+            
+        </ul>
+
+
+    </a>
+</div>
+ 
+        <div class="post-main">
+    
+        
+        <div class="post-header-block">
+            <div class="post-main-title">
+                视角拉高，系统性地梳理下Gradle
+            </div>
+            <div class="post-meta-bar">
+                <span class="post-date">2024.01.26</span>
+                
+                    <a class="post-category-link" href="/categories/%E5%9F%BA%E5%BB%BA/">基建</a>
+                
+            </div>
+        </div>
+        
+        
+        <div class="post-md">
+            <h2 id="1-gradle-的一些概念"><a class="markdownIt-Anchor" href="#1-gradle-的一些概念"></a> 1 Gradle 的一些概念</h2>
+<p>Android Studio 默认的构建工具为 Gradle。在使用 Gradle 的过程中会碰到一些概念，理清他们的含义关系对我们使用和深入理解 Gradle 至关重要。</p>
+<h3 id="11-gradle-agpandroid-gradle-plugin-buildtools-分别是什么他们之间什么关系"><a class="markdownIt-Anchor" href="#11-gradle-agpandroid-gradle-plugin-buildtools-分别是什么他们之间什么关系"></a> 1.1 Gradle 、AGP(Android Gradle Plugin)、 buildTools 分别是什么，他们之间什么关系？</h3>
+<p><img src="/images/gradle_system_1706238770763.png" alt="image.png" /></p>
+<h4 id="111-gradle"><a class="markdownIt-Anchor" href="#111-gradle"></a> 1.1.1 Gradle</h4>
+<p>Gradle 是基于 JVM 的构建工具。他本身使用 jave 写的，gradle 的脚本也就是 build.gradle 通常是用 groovy 语言。</p>
+<h4 id="112-android-buildtools"><a class="markdownIt-Anchor" href="#112-android-buildtools"></a> 1.1.2 Android BuildTools</h4>
+<p>Android SDK Build-Tools 是构建 Android apk、AAR 文件等 Android 平台产物所需的一个 Android SDK 组件，安装在 <code>&lt;sdk&gt;/build-tools/</code> 目录下。</p>
+<pre class="highlight"><code class="">//build-tools/
+├── ⋮
+├── aapt2
+├── d8
+├── apksigner
+├── zipalign
+├── ⋮
+​
+</code></pre>
+<ul>
+<li>AAPT2:Android 资源打包工具）是一种构建工具，Android Studio 和 Android Gradle 插件使用它来编译和打包应用的。AAPT2 会解析资源、为资源编制索引，并将资源编译为针对 Android 平台进行过优化的二进制格式</li>
+<li>apksigner:工具为 APK 签名，并确保 APK 的签名将在该 APK 支持的所有版本 Android 平台上成功通过验证</li>
+<li>d8:Android Gradle 插件使用该工具来将项目的 Java 字节码编译为在 Android 设备上运行的 DEX 字节码</li>
+<li>Zipalign:在将 APK 文件分发给最终用户之前，先使用 <code>zipalign</code> 进行优化</li>
+</ul>
+<h4 id="113-android-gradle-plugin"><a class="markdownIt-Anchor" href="#113-android-gradle-plugin"></a> 1.1.3 Android Gradle Plugin</h4>
+<p>是基于 Gradle 的插件，Android Gradle 主要就是调用[Android BuildTools]这个包里的工具实现编译打包 Apk 等功能。</p>
+<p>注:AGP3.0.0 或更高版本，插件会使用默认版本的 build Tools 无需指定。</p>
+<pre class="highlight"><code class="">android { buildToolsVersion &quot;33.0.1&quot;}
+</code></pre>
+<h3 id="12-gradlewrapper-gradle-user-home-gradlehome"><a class="markdownIt-Anchor" href="#12-gradlewrapper-gradle-user-home-gradlehome"></a> 1.2 gradleWrapper、gradle-user-home、GradleHome</h3>
+<h4 id="121-gradlewrapper"><a class="markdownIt-Anchor" href="#121-gradlewrapper"></a> 1.2.1 GradleWrapper</h4>
+<p>项目的根目录的 gradle/wrapper 下</p>
+<pre class="highlight"><code class="">    /gradle/wrapper/
+    ├── gradle-wrapper.jar
+    └── gradle-wrapper.properties
+</code></pre>
+<p>负责下载管理特定版本的 gradle，确保不同环境中项目运行在相同个 gradle 版本里，还能达到复用效果。</p>
+<ul>
+<li>gradlewraper 目录下的 gradle.jar 负载下载 gradle</li>
+<li>gradle-wrapper.properties 内指定 gradle 的版本，下载地址，本地位置等配置信息。</li>
+</ul>
+<h4 id="121-gradle-user-home"><a class="markdownIt-Anchor" href="#121-gradle-user-home"></a> 1.2.1 GRADLE-USER-HOME</h4>
+<pre class="highlight"><code class="">    gradle-user-home
+    ├── caches  // modules-2和jars-3缓存依赖和产物，且各个版本各个项目中共用
+    │   ├── jars-3
+    |   ├── transforms-3
+    │   └── modules-2
+    ├── wrapper //存放不同版本的gradle
+    │   └── dists
+    │       ├── ⋮
+    │       └── gradle-7.4-bin
+    |           └── xxxxxxxx
+    |                └──gradle-7.3.3 //其实这是gradle home路径
+    └── gradle.properties
+</code></pre>
+<p>默认在位置位于<user>/.gradle。这个目录下包含用户自定义的设置、maven 本地仓库、gradle wrapper 版本、gradle 插件和一些缓存。其中该路径下 caches 文件夹有 repo 缓存也就是项目的依赖缓存，这个缓存各个项目是公用的，提升编译速度。</p>
+<h4 id="123-gradle-home"><a class="markdownIt-Anchor" href="#123-gradle-home"></a> 1.2.3 Gradle Home</h4>
+<pre class="highlight"><code class="">gradle-home
+├── bin
+│   ├── gradle.bat
+│   └── gradle
+├── init.d
+│    ├──..
+│    └── xx.gradle
+└── lib
+    ├──...
+    ├── gradle-wrapper-7.3.3.jar
+    ├── gradle-tooling-api-7.3.3.jar
+    ├──...
+    └── plugins
+        ├── ...
+        ├── gradle-publish-7.3.3.jar
+        ├── commons-codec-1.15.jar
+        └──...
+</code></pre>
+<p>其实就是 gradle 的安装目录，里面主要包括 Gradle 的可执行文件、库文件、插件等，gradle 执行时会自动加载使用安装目录内的文件插件。</p>
+<h2 id="2-gradle-生命周期"><a class="markdownIt-Anchor" href="#2-gradle-生命周期"></a> 2 Gradle 生命周期</h2>
+<p>Gradle 执行构建是有生命周期的，分三个阶段初始化阶段（Initialization Phases），配置阶段(Configuration Phases)和执行阶段(Execution Phases)。</p>
+<h4 id="21-初始化阶段"><a class="markdownIt-Anchor" href="#21-初始化阶段"></a> 2.1 初始化阶段</h4>
+<ul>
+<li>执行 init.gradle 脚本:init.gradel 脚本可以放置在 gradle-user-home 目录下、gradle-user-home/init.d/和 gradle-home/init.d/目录下，其中后两者下的脚本名称只要一.gralde 结尾即可。他们的执行顺序为依次执行。在脚本里我们可以设置一些个性化的配置，如配置 repo 源、鉴权等。</li>
+<li>执行 setting 脚本:gradle 会嗅探项目里的 settings 文件，settings 文件中定义哪些项目参与到构建中。在 settings.gradle 文件中可以设置一些对所有参与的构建的项目做配置，也可以有针对性的做配置。</li>
+<li>创建 project 实例：为参与到构建中的项目创建 project 实例。我们在项目的 build.gradle 脚本里使用的 project 对象就是在这个时机创建的。</li>
+</ul>
+<h4 id="22-配置阶段"><a class="markdownIt-Anchor" href="#22-配置阶段"></a> 2.2 配置阶段</h4>
+<ul>
+<li>应用插件：下载应用声明的插件，脚本里有两种写法一种是 apply plugin 和 plugins{}。他们的区别暂不作展开。</li>
+<li>配置属性：给插件做参数配置，我们最熟悉的 android{}闭包其实就是对 AGP 里的 com.android.application 插件做参数配置。</li>
+<li>应用依赖：gradle 脚本中声明使用的依赖也会在配置阶段下载应用。</li>
+<li>构建有向无环 task 任务图。</li>
+</ul>
+<p>*<em>注意</em>：*执行任何 task 都会走初始化阶段和配置阶段</p>
+<h4 id="23-执行阶段"><a class="markdownIt-Anchor" href="#23-执行阶段"></a> 2.3 执行阶段</h4>
+<p>执行上一个阶段也就是配置阶段构造好的有向无环图任务。</p>
+<pre class="highlight"><code class="">tasks.register('test') {
+  println '该语句会在配置阶段执行'
+    doLast {
+        println '该语句会在执行阶段运行'
+    }
+}
+</code></pre>
+<h2 id="3-监听-gradle-生命周期回调"><a class="markdownIt-Anchor" href="#3-监听-gradle-生命周期回调"></a> 3 监听 Gradle 生命周期回调</h2>
+<p><img src="/images/gradle_system_1706238771032.png" alt="image.png" /></p>
+<h4 id="31-监听初始化阶段回调"><a class="markdownIt-Anchor" href="#31-监听初始化阶段回调"></a> 3.1 监听初始化阶段回调</h4>
+<p>初始化阶段主要有两个能接收回调的地方 settingEvaluated{}和 gradle.projectsLoaded {}</p>
+<pre class="highlight"><code class=""> //settings.gradle配置执行完成
+    gradle.settingsEvaluated {
+        ...
+    }
+</code></pre>
+<p>settingEvaluated{}setting 创建加载成功。在此之前有几项 gradle 有几项重要的工作已经完成。</p>
+<ul>
+<li>gradle.properties 加载完成</li>
+<li>init 脚本执行完成</li>
+<li>Settings 对象创建成功，并且从 gradle.properties 加载的值也注入到了 settings 中</li>
+</ul>
+<pre class="highlight"><code class="">   // 所有 Project 对象创建（注意：此时 build.gradle 中的配置代码还未执行）
+   gradle.projectsLoaded {
+       ...
+   }
+</code></pre>
+<p>初始化阶段还有扫描项目下的所有包含位于根 project 和子 project 中的 build.gradle 并对应生成 Project 对象，对象创建完成之后就会调用 gradle.projectsLoaded{}，<strong>但注意此时 build.gradle 中的配置代码还未执行。</strong></p>
+<h4 id="32-配置阶段的回调"><a class="markdownIt-Anchor" href="#32-配置阶段的回调"></a> 3.2 配置阶段的回调</h4>
+<p>配置阶段会对项目下的每个 build.gradle 进行配置，如上图，beforeProject{}/project.beforeEvaluated{}和 afterProject{}/after.beforeEvaluate 会执行多次，这取决于构建项目下有几个 project。</p>
+<ul>
+<li>beforeProject{}/project.beforeEvaluated{}：会在每个 project 配置之前调用.</li>
+<li>afterProject{}/after.beforeEvaluate：会在 build.gradle 脚本&quot;从头跑到尾&quot;之后调用。</li>
+<li>当所有的 gradle.build 都执行完毕后，会调用 projectEvaluted{}</li>
+<li>最后，task 图构建完成后，回调 gradle.taskGraph.whenReady {}和 gradle.taskGraph.taskExecutionGraphListener.graphPopulated()</li>
+</ul>
+<h4 id="33-hook-执行阶段"><a class="markdownIt-Anchor" href="#33-hook-执行阶段"></a> 3.3 hook 执行阶段</h4>
+<p>每个 task 执行前后，我们也有方式去监听：主要是使用 gradle.taskGraph.beforeTask{} 和 gradle.taskGraph.afterTask {}，如下：</p>
+<pre class="highlight"><code class="">gradle.taskGraph.beforeTask { Task task -&gt;
+    println &quot;executing $task ...&quot;
+}
+​
+gradle.taskGraph.afterTask { Task task, TaskState state -&gt;
+    if (state.failure) {
+        println &quot;FAILED&quot;
+    }
+    else {
+        println &quot;done&quot;
+    }
+}
+</code></pre>
+<ul>
+<li><strong>!!!注意:</strong> 这些方法在 gradle8.0 已经直接被移除掉了统统不能用，原因简单的说就是影响 cofigurationCache 具体看这里: <a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/upgrading_version_7.html#task_execution_events">task_execution_events</a></li>
+<li>替代的方式：使用<a target="_blank" rel="noopener" href="https://docs.gradle.org/current/userguide/build_services.html#concurrent_access_to_the_service">build_service</a></li>
+</ul>
+<h2 id="4-gradle-项目结构"><a class="markdownIt-Anchor" href="#4-gradle-项目结构"></a> 4 Gradle 项目结构</h2>
+<pre class="highlight"><code class="">root-project
+├── buildSrc
+|   ├── ...
+│   └── build.gradle
+├── sub-project
+│   └── build.gradle
+├── build.gradle
+├── settings.gradle
+├── gradle.properties
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradlew(Unix Shell script)
+└── gradlew.bat(Windows batch file)
+</code></pre>
+<h3 id="41-buildsrc"><a class="markdownIt-Anchor" href="#41-buildsrc"></a> 4.1 buildSrc</h3>
+<ul>
+<li>buildSrc 是位于 gradle 项目根目录的特殊目录，我们可以在这编写 Gradle 的插件和任务。</li>
+<li>这里面的代码会在 gardle 的配置阶段执行。</li>
+</ul>
+<h3 id="42-gradleproperties"><a class="markdownIt-Anchor" href="#42-gradleproperties"></a> 4.2 gradle.Properties</h3>
+<ul>
+<li>在 gradle-user-home 目录下，项目根目录下和子项目目录下（和 build.gradle 同级）下都可以存在。</li>
+<li>gradle.properties 定义的值有些时配置 gradle 环境属性，也可以添加自己自定义的属性，在我们的构建脚本中可以直接访问这些值。</li>
+</ul>
+<pre class="highlight"><code class="">//gradle.properties中
+mVersionName=1.12.1
+​
+//build.gradle
+println(&quot;mVersion name in gradle.properties ${mVersionName}&quot;)
+</code></pre>
+<h3 id="43-buildgradle-和-settingsgradle-文件"><a class="markdownIt-Anchor" href="#43-buildgradle-和-settingsgradle-文件"></a> 4.3 build.gradle 和 settings.gradle 文件</h3>
+<p>Gradle 世界里经过初始化阶段后，build.gradle 文件会对应生成 Poject 对象，settings.gradle 文件会生成 Settings 对象，其实还有 Gradle 对象，每次构建启动时就会创建。</p>
+<h2 id="5-plugin-与-task"><a class="markdownIt-Anchor" href="#5-plugin-与-task"></a> 5 plugin 与 task</h2>
+<h3 id="51-gradle-plugin"><a class="markdownIt-Anchor" href="#51-gradle-plugin"></a> 5.1 Gradle Plugin</h3>
+<p>Gradle 是一个构建框架，本身不具备特别强的构建能力，具体构建能力依托于 Gradle Plugin ，比如要打包 APK 就要依托 AGP。AGP 内部通过调用 Android Build Tool 去具体执行诸如编译 class，打包资源等任务。</p>
+<h4 id="511-apply-plugin-方式引入"><a class="markdownIt-Anchor" href="#511-apply-plugin-方式引入"></a> 5.1.1 Apply plugin 方式引入</h4>
+<p>Gradle Plugin 的是使用首先是引入，就跟我们在项目里需要某个第三方库需要引入一样。在跟目录的 build.gradle 中就可声明这些依赖，然后在构建脚本里声明应用，然后做配置。</p>
+<pre class="highlight"><code class="">//in rootproject/build.gradle
+buildscript {
+  ...
+   dependencies {
+     classpath:'com.android.tools.build:gradle:x.x.x'
+   }
+}
+​
+//in subProject/build.gradle
+apply plugin: 'com.android.application'//用于打包生成Apk
+android {//构建Apk的配置
+}
+​
+//in subProject2/build.gradle
+apply plugin: 'com.android.library'//用于打包产出AAR
+android{ //构建产生aar配置
+}
+</code></pre>
+<p>如果在脚本 gradle 脚本中想使用一个第三方库，也需要通过 classpath 引入，然后就可以在脚本中使用了，示例如下。</p>
+<pre class="highlight"><code class="">//in root project build.gradle
+buildscript {
+   dependencies {
+     classpath: 'com.squareup.okhttp3:okhttp:3.14.9'
+   }
+}
+import okhttp3.OkHttpClient
+task(&quot;checkClasspath&quot;).doFirst {
+   //在脚本中使用引入了的okhttp
+    def client = new OkHttpClient()
+  ..,
+}
+</code></pre>
+<h4 id="512-plugin脚本块引入"><a class="markdownIt-Anchor" href="#512-plugin脚本块引入"></a> 5.1.2 plugin{}脚本块引入</h4>
+<p>以上这种使用 plugin 的方式是分两步【引入+应用】，gradle 还有引入和应用一步搞定的方式。</p>
+<pre class="highlight"><code class="">plugin{ id 'com.android.library' version 'x.x.x' }
+</code></pre>
+<p>默认的这种不需要引入就能应用插件的方式，插件来源只能是 gradle 插件官网<a target="_blank" rel="noopener" href="https://plugins.gradle.org/">https://plugins.gradle.org/</a>，如果想使用自己的插件需要在 pluginManagement 中配置源如下</p>
+<pre class="highlight"><code class="">//settings.gradle
+pluginManagement {
+    repositories {
+        maven {
+            url './maven-repo'
+        }
+    }
+ }
+</code></pre>
+<h4 id="513-其他"><a class="markdownIt-Anchor" href="#513-其他"></a> 5.1.3 其他</h4>
+<p>Gradel 插件分两种：二进制插件和脚本插件;二进制插件就是被打包成了 jar 包的插件。脚本插件.gradle 文件可以被作为插件使用。这种插件的使用只能通过 apply plugin 方式不能使用 plugin{}的方式。</p>
+<p><a target="_blank" rel="noopener" href="//config.gradle">//config.gradle</a> 中</p>
+<pre class="highlight"><code class="">ext {
+    mVersion = '1.1.0'
+}
+</code></pre>
+<p><a target="_blank" rel="noopener" href="//build.gradle">//build.gradle</a></p>
+<pre class="highlight"><code class="">apply from: &quot;../config.gradle&quot;
+println(&quot;mVersion${ext.mVersion}&quot;)
+</code></pre>
+<h3 id="52-task"><a class="markdownIt-Anchor" href="#52-task"></a> 5.2 Task</h3>
+<h4 id="521-执行动作"><a class="markdownIt-Anchor" href="#521-执行动作"></a> 5.2.1 执行动作</h4>
+<p><img src="/images/gradle_system_1706238771643.png" alt="image.png" /></p>
+<ul>
+<li>上文也提到过，gradle 的一次构建，就是一系列 task 的执行，task 就是 gradle 的一个执行单元。</li>
+<li>一个 gradle 项目中包含若干个 project，每个 project 中包含若干个 task。</li>
+<li>一个 gradle task 里面会包含若干个 action。</li>
+</ul>
+<h4 id="522-创建-task"><a class="markdownIt-Anchor" href="#522-创建-task"></a> 5.2.2 创建 task</h4>
+<p>task 一般都定义在 plugin 中，我们也可以自己定义 task，给其配置名字，描述，分组，action，依赖关系等。</p>
+<pre class="highlight"><code class="">//build.gradle
+project.tasks.register(&quot;aTask&quot;) {
+    println 'in configuration phase'
+    it.description(&quot;this is a sample task&quot;)
+    it.dependsOn(&quot;hello&quot;)
+    group(&quot;build&quot;)//IDE右边的Gradle快捷工具栏中，会看到该task被归类到build分组内，方便查找
+    description &quot;this is a gradle hello sample&quot; //描述
+    it.doLast {
+        println(&quot;do action &gt;&gt;1&quot;) //向当前task的action链路后追加action
+    }
+    it.doFirst {
+        println(&quot;do aciton &gt;&gt;2&quot;)//向当前task的action链路前查action
+    }
+}
+​
+project.tasks.register(&quot;hello&quot;) {
+    it.doLast {
+        println(&quot;hello task is excuted-&quot;)
+    }
+}
+​
+</code></pre>
+<p>以上只是一个简单的例子，task 的创建使用可以单开一个章节。</p>
+<h2 id="6-结"><a class="markdownIt-Anchor" href="#6-结"></a> 6 结</h2>
+<p>本文主要是在一个可能比较高的视角，谈了谈 gradle 相关的概念，生命周期特性，插件 task 等。掌握了这些之后，还有一些更深入更细致的话题值得探索。比如</p>
+<ul>
+<li>自定义插件，细致的 Task 详解</li>
+<li>gradle tansformer</li>
+<li>构建性能如何提升</li>
+<li>AGP 常见的配置</li>
+<li>Gradle 项目实战</li>
+</ul>
+
+        </div>
+    
+<!-- tags -->
+
+    <div class="post-tags">
+        
+            <a class="post-tag" href="/tags/Gradle/">#Gradle</a>
+        
+    </div>
+
+</div>
+ <div class="footer">
+    <span>Copyright © 2025 1024</span>
+</div>
+
+<link rel="stylesheet" href="/css/a11y-dark.min.css">
+
+
+<script src="/js/highlight.min.js"></script>
+
+
+<script src="/js/highlightjs-line-numbers.js"></script>
+
+<script>
+    hljs.initHighlightingOnLoad();
+    hljs.initLineNumbersOnLoad();
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3MJGTXEBJT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3MJGTXEBJT');
+</script>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const toggleButton = document.getElementById('toggle-theme')
+  const themeIcon = document.getElementById('theme-icon')
+  const sunIcon = document.getElementById('sun-icon')
+  const moonIcon = document.getElementById('moon-icon')
+  const themeText = document.getElementById('theme-text')
+  const root = document.documentElement
+
+  // 检测系统主题
+  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
+  // 初始化主题
+  if (localStorage.getItem('theme')) {
+    root.setAttribute('data-theme', localStorage.getItem('theme'))
+  } else {
+    root.setAttribute('data-theme', systemTheme)
+  }
+
+  // 初始化图标和文字
+  const updateButton = () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      sunIcon.style.display = 'none'
+      moonIcon.style.display = 'block'
+      themeText.textContent = '暗黑'
+    } else {
+      sunIcon.style.display = 'block'
+      moonIcon.style.display = 'none'
+      themeText.textContent = '亮色'
+    }
+  }
+
+  updateButton()
+
+  // 切换主题
+  toggleButton.addEventListener('click', () => {
+    if (root.getAttribute('data-theme') === 'dark') {
+      root.removeAttribute('data-theme')
+      localStorage.setItem('theme', 'light')
+    } else {
+      root.setAttribute('data-theme', 'dark')
+      localStorage.setItem('theme', 'dark')
+    }
+    updateButton()
+  })
+</script>
