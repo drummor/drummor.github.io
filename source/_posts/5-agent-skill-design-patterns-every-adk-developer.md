@@ -31,6 +31,10 @@ original_url: https://x.com/GoogleCloudTech/status/2033953579824758855
 
 ---
 
+![5种模式概览](https://pbs.twimg.com/media/HDoDJqGXAAg3-F-?format=jpg&name=large)
+
+---
+
 ## 模式一：Tool Wrapper（工具包装器）
 
 **核心理念**：让 agent 成为任意库的即时专家。
@@ -68,6 +72,8 @@ Load 'references/conventions.md' for the complete list of FastAPI best practices
 4. Use Annotated style for dependency injection
 ```
 
+![Tool Wrapper 模式图](https://pbs.twimg.com/media/HDoDgs6XAAYtw04?format=jpg&name=large)
+
 ---
 
 ## 模式二：Generator（生成器）
@@ -101,6 +107,8 @@ Step 3: Ask the user for any missing information needed to fill the template:
 Step 4: Fill the template following the style guide rules. Every section in the template must be present in the output.
 Step 5: Return the completed report as a single Markdown document.
 ```
+
+![Generator 模式图](https://pbs.twimg.com/media/HDoDoIeXAAUmQoy?format=jpg&name=large)
 
 ---
 
@@ -140,6 +148,8 @@ Step 4: Produce a structured review with these sections:
 - **Score**: Rate 1-10 with brief justification
 - **Top 3 Recommendations**: The most impactful improvements
 ```
+
+![Reviewer 模式图](https://pbs.twimg.com/media/HDoEJdZbEAEdYMo?format=jpg&name=large)
 
 ---
 
@@ -183,6 +193,8 @@ Ask these questions in order. Do not skip any.
 4. 询问："这个计划是否准确捕捉到你的需求？有什么想改变的？"
 5. 迭代反馈，直到用户确认
 ```
+
+![Inversion 模式图](https://pbs.twimg.com/media/HDoEa51XEAIKSnO?format=jpg&name=large)
 
 ---
 
@@ -231,11 +243,15 @@ Load 'assets/api-doc-template.md' 获取输出结构。将所有类、函数和 
 报告结果。在呈现最终文档之前修复问题。
 ```
 
+![Pipeline 模式图](https://pbs.twimg.com/media/HDoEo5XbEAUaaFG?format=jpg&name=large)
+
 ---
 
 ## 如何选择正确的模式
 
 每个模式回答不同的问题。用这个决策树找到适合你的用例：
+
+![选择正确模式的决策树](https://pbs.twimg.com/media/HDoFWovXAAsbb8C?format=jpg&name=large)
 
 | 你的需求 | 对应模式 |
 |---------|---------|
