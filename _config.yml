@@ -4,11 +4,16 @@
 
 # Site
 title: '滑动窗口'
-subtitle: ''
-description: ''
+subtitle: 'AI · 程序猿 · 技术随笔'
+description: '滑动窗口 - 关注 AI Agent、大模型、程序开发的技术博客。记录程序猿的技术思考与实践。'
 keywords:
-author: John Doe
-language: en
+  - AI
+  - Agent
+  - LLM
+  - 大模型
+  - 程序开发
+  - 技术博客
+author: 滑动窗口
 timezone: ''
 
 # URL
