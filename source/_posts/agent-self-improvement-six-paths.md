@@ -3,6 +3,7 @@ title: Agent 自我改进的六条路
 date: '2026-04-06 13:09:00'
 author: J0hn
 original_url: https://mp.weixin.qq.com/s/CH4wIRZVcDDZOmRvPFu43Q
+seo_description: 深入分析 Agent 自我改进的六条技术路径：SFT、CoT、ReAct、RLHF、DPO 与 GRPO，解析各路径原理、优劣与适用场景。
 tags:
   - AI
   - Agent

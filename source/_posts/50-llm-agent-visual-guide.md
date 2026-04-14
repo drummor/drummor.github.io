@@ -8,6 +8,7 @@ tags:
   - Agent
   - LLM
 category: Agent
+seo_description: 50张图解 LLM Agent 核心概念：记忆（短/长期记忆、工作/程序/语义/情景记忆）、工具（MCP协议）、规划（思维链/ReAct）与多智能体协同框架全解析。
 description: 60+图解LLM Agent核心概念：记忆、工具、规划三大组件，多智能体协同框架，以及设计模式全解析。
 ---
 

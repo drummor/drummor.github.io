@@ -5,6 +5,7 @@ author: rickyshou
 categories:
   - Agent
   - AI工程
+seo_description: Agentic Engineering 代表 AI 应用新范式：AI 独立完成端到端任务，大模型从工具进化为协作者，编码开发进入「代理时代」。
 tags:
   - AI Coding
   - Agent

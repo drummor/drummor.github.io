@@ -3,6 +3,7 @@ title: 你的 Harness，你的记忆
 date: '2026-04-12'
 author: Harrison Chase
 audio: /audio/your-harness-your-memory/audio.m4a
+seo_description: 深度解析 LangChain Agents 的记忆模块机制：Harness 如何管理 ConversationSummaryMemory、BufferMemory 和 VectorStoreMemory，附手写实现。
 categories:
   - Agent
   - Harness

@@ -5,6 +5,7 @@ author: Google Cloud Tech
 categories:
   - Agent
   - AI工程
+seo_description: 深入解析 Google Agent Development Kit（ADK）中的 5 个核心 Skill 设计模式：Generative UI、Tool Call、Context Variable 等，帮助开发者构建更强大的 Agent 应用。
 tags:
   - ADK
   - Agent Skills
