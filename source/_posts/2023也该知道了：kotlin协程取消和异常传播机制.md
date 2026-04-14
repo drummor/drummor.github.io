@@ -31,7 +31,7 @@ kotlin 的 Coroutine 是【结构化并发】，与结构化并发对应的方�
 
 ### 1.2 kotlin 协程的的结构化并发
 
-![image.png](/images/kotlin_coroutine_exc_1706238534065.png)
+![Kotlin 协程取消传播流程图：结构化并发中子协程取消对父任务的影响链](/images/kotlin_coroutine_exc_1706238534065.png)
 
 kotlin的协程天然的具备父协程管理取消子协程、子协程的异常失败影响父协程或者父协程感知子协程错误和失败的能力。如下示例
 

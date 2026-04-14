@@ -26,19 +26,19 @@ LLM Agent正在广泛普及，似乎正在取代我们熟悉的"常规"对话式
 
 要理解什么是LLM Agent，首先需要了解LLM的基本能力。传统上，LLM的核心不过是**下一个 token 的预测**。
 
-![next-token prediction](/images/articles/50-llm-agent-visual-guide/img-0001.png)
+![LLM下一个token预测示意图：输入文本经过神经网络计算输出概率分布最高的下一个token](/images/articles/50-llm-agent-visual-guide/img-0001.png)
 
 通过依次采样大量token，我们可以模拟对话，并利用LLM对我们的查询给出更详尽的回答。
 
-![token采样模拟对话](/images/articles/50-llm-agent-visual-guide/img-0002.png)
+![Token序列采样生成对话示意图：依次采样token生成完整对话响应](/images/articles/50-llm-agent-visual-guide/img-0002.png)
 
 然而，当我们继续"对话"时，任何LLM都会暴露出一个主要缺陷：**它不记得对话内容！**
 
-![LLM不记得对话](/images/articles/50-llm-agent-visual-guide/img-0003.png)
+![LLM无状态缺陷示意图：连续对话中模型无法记忆前文每次请求独立处理](/images/articles/50-llm-agent-visual-guide/img-0003.png)
 
 LLM经常失败的任务还有很多，包括像乘法和除法这样的基础数学运算。
 
-![LLM做不好数学](/images/articles/50-llm-agent-visual-guide/img-0004.png)
+![LLM数学运算能力缺陷图：乘法除法等基础计算容易出错需要外部工具辅助](/images/articles/50-llm-agent-visual-guide/img-0004.png)
 
 这是否意味着LLM很糟糕？绝对不是！LLM无需具备所有能力，我们可以通过外部工具、记忆和检索系统来弥补它们的缺陷。
 
@@ -46,7 +46,7 @@ LLM经常失败的任务还有很多，包括像乘法和除法这样的基础�
 
 例如，当遇到数学问题时，LLM可能会决定使用适当的工具（计算器）。
 
-![增强型LLM](/images/articles/50-llm-agent-visual-guide/img-0005.png)
+![增强型LLM架构图：通过外部工具（计算器/搜索/代码执行器）弥补原生能力缺陷](/images/articles/50-llm-agent-visual-guide/img-0005.png)
 
 那么，这种"增强型 LLM"就是Agent了吗？不一定……
 
@@ -62,7 +62,7 @@ Agent与环境交互，通常包括以下几个重要组件：
 - **执行器（Actuators）** — 用于与环境交互的工具
 - **效应器（Effectors）** — 决定如何将观察转化为行动的"大脑"或规则
 
-![Agent与环境](/images/articles/50-llm-agent-visual-guide/img-0006.png)
+![Agent与环境交互模型图：传感器感知环境、执行器作用于环境、效应器决策](/images/articles/50-llm-agent-visual-guide/img-0006.png)
 
 这个框架适用于所有与各种环境交互的Agent类型，比如与物理环境交互的机器人，或与软件交互的AI Agent。
 
@@ -72,19 +72,19 @@ Agent与环境交互，通常包括以下几个重要组件：
 
 为了选择要采取的行动，LLM Agent拥有一个关键组件：**规划能力**。这意味着LLM需要能够通过思维链等方法进行"推理"和"思考"。
 
-![LLM Agent架构](/images/articles/50-llm-agent-visual-guide/img-0007.png)
+![LLM Agent核心架构图：理解环境（LLM）+规划行动（Planning）+执行动作（Tools）+记录历史（Memory）](/images/articles/50-llm-agent-visual-guide/img-0007.png)
 
 利用这种推理行为，LLM Agent会规划出必要的行动步骤。
 
 这种规划行为使Agent能够理解情况（LLM）、规划下一步（规划）、采取行动（工具），并跟踪所采取的行动（记忆）。
 
-![Agent行动循环](/images/articles/50-llm-agent-visual-guide/img-0008.png)
+![Agent行动循环图：感知→规划→决策→执行的完整闭环反复执行直到任务完成](/images/articles/50-llm-agent-visual-guide/img-0008.png)
 
 根据系统的不同，可以构建具有不同自主程度LLM Agent。
 
 取决于你问谁，系统的"Agent性"越强，就意味着LLM对系统行为的决定权越大。
 
-![自主程度光谱](/images/articles/50-llm-agent-visual-guide/img-0009.png)
+![Agent自主程度光谱图：从完全人工控制到完全自主的光谱分布不同层级的Agent能力](/images/articles/50-llm-agent-visual-guide/img-0009.png)
 
 在接下来的部分中，我们将通过LLM Agent的三个主要组件——**记忆**、**工具**和**规划**——来探讨自主行为的各种方法。
 
@@ -100,7 +100,7 @@ LLM是"健忘"的系统，或者更准确地说，在与其交互时根本不执
 
 这被称为**长期记忆**，因为LLM Agent理论上可能需要执行数十甚至数百个需要记忆的步骤。
 
-![短期vs长期记忆](/images/articles/50-llm-agent-visual-guide/img-0010.png)
+![短期记忆与长期记忆对比图：短期记忆处理即时上下文长期记忆存储历史交互信息](/images/articles/50-llm-agent-visual-guide/img-0010.png)
 
 让我们探索几种为这些模型赋予记忆的技巧。
 
@@ -110,7 +110,7 @@ LLM是"健忘"的系统，或者更准确地说，在与其交互时根本不执
 
 上下文窗口通常至少为8192个token，有时甚至可以扩展到数十万个token！
 
-![上下文窗口](/images/articles/50-llm-agent-visual-guide/img-0011.png)
+![LLM上下文窗口示意图：可处理的token数量限制决定短期记忆容量](/images/articles/50-llm-agent-visual-guide/img-0011.png)
 
 大型上下文窗口可用于将完整对话历史作为输入prompt的一部分进行跟踪。
 
@@ -118,7 +118,7 @@ LLM是"健忘"的系统，或者更准确地说，在与其交互时根本不执
 
 对于上下文窗口较小的模型，或者当对话历史较大时，我们可以使用另一个LLM来总结迄今为止发生的对话。
 
-![对话总结](/images/articles/50-llm-agent-visual-guide/img-0012.png)
+![对话历史总结示意图：用LLM将长对话压缩为简短摘要减少token消耗](/images/articles/50-llm-agent-visual-guide/img-0012.png)
 
 通过持续总结对话，我们可以保持较小的对话规模。这将减少token数量，同时只跟踪最重要的信息。
 
@@ -128,7 +128,7 @@ LLM Agent的长期记忆包括需要长期保留的Agent过去的行动空间。
 
 实现长期记忆的常见技术是将所有先前的交互、行动和对话存储在外部向量数据库中。
 
-![向量数据库存储](/images/articles/50-llm-agent-visual-guide/img-0013.png)
+![长期记忆向量数据库存储图：将对话嵌入为向量存储到外部数据库支持语义检索](/images/articles/50-llm-agent-visual-guide/img-0013.png)
 
 要构建这样的数据库，首先将对话嵌入到能够捕捉其含义的数值表示中。
 
@@ -148,7 +148,7 @@ LLM Agent的长期记忆包括需要长期保留的Agent过去的行动空间。
 
 Agent示例：Context（上下文）。在LLM Agent中，工作记忆可以理解为模型在一次对话或推理过程中，需要临时"装载"的上下文信息，用于实时生成回复或执行操作。
 
-![工作记忆](/images/articles/50-llm-agent-visual-guide/img-0014.png)
+![工作记忆示意图：临时存放当前需要使用的信息如购物清单一样操作时保持活跃](/images/articles/50-llm-agent-visual-guide/img-0014.png)
 
 **程序性记忆（Procedural Memory）**
 
@@ -156,7 +156,7 @@ Agent示例：Context（上下文）。在LLM Agent中，工作记忆可以理�
 
 Agent示例：System Prompt（系统提示）。对于LLM Agent而言，"程序性记忆"可以视作模型在执行任务时所依据的固定指令或规则。
 
-![程序性记忆](/images/articles/50-llm-agent-visual-guide/img-0015.png)
+![程序性记忆示意图：对技能和步骤的记忆如骑自行车一旦学会自动执行](/images/articles/50-llm-agent-visual-guide/img-0015.png)
 
 **语义记忆（Semantic Memory）**
 
@@ -164,7 +164,7 @@ Agent示例：System Prompt（系统提示）。对于LLM Agent而言，"程序�
 
 Agent示例：User Information（用户信息）。对于LLM Agent来说，语义记忆中可以包括用户的偏好、历史对话中的关键信息、外部知识库中的事实等。
 
-![语义记忆](/images/articles/50-llm-agent-visual-guide/img-0016.png)
+![语义记忆示意图：关于世界事实和通用知识的记忆如巴黎是法国首都](/images/articles/50-llm-agent-visual-guide/img-0016.png)
 
 **情景记忆（Episodic Memory）**
 
@@ -172,7 +172,7 @@ Agent示例：User Information（用户信息）。对于LLM Agent来说，语�
 
 Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应Agent在与用户或环境交互中所做出的具体操作或决策的历史记录。
 
-![情景记忆](/images/articles/50-llm-agent-visual-guide/img-0017.png)
+![情景记忆示意图：对个人经历的记忆包含时间地点人物等具体情境如7岁生日](/images/articles/50-llm-agent-visual-guide/img-0017.png)
 
 ## 02 工具 — Tools
 
@@ -180,13 +180,13 @@ Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应
 
 工具通常有两种用途：**获取数据**以检索最新信息，以及**采取行动**如设定会议或订购食物。
 
-![工具类型](/images/articles/50-llm-agent-visual-guide/img-0018.png)
+![Agent工具类型分类图：数据获取工具（搜索/数据库）和行动执行工具（发消息/订餐）](/images/articles/50-llm-agent-visual-guide/img-0018.png)
 
 ### 1. 工具的使用方法
 
 要实际使用工具，LLM必须生成符合给定工具API的文本。我们通常期望生成可以格式化为JSON的字符串，以便它能够轻松地被输入到代码解释器中。
 
-![JSON格式化工具调用](/images/articles/50-llm-agent-visual-guide/img-0019.png)
+![JSON格式化工具调用示意图：LLM生成符合工具API的JSON格式请求](/images/articles/50-llm-agent-visual-guide/img-0019.png)
 
 注意，不仅限于JSON，我们也可以直接在代码中调用工具！
 
@@ -216,17 +216,17 @@ Agent示例：Past Actions（过去行为）。在LLM Agent中，这部分对应
 
 `]` 符号表示LLM现在可以继续生成（如有必要）。
 
-![Toolformer token格式](/images/articles/50-llm-agent-visual-guide/img-0020.png)
+![Toolformer特殊token格式图：使用[和]标识工具调用开始结束→标识停止生成位置](/images/articles/50-llm-agent-visual-guide/img-0020.png)
 
 Toolformer通过精心生成一个包含许多工具使用示例的数据集来创建这种行为。对于每个工具，手动创建一个少样本提示，并用它来采样使用这些工具的输出。
 
 输出根据工具使用的正确性、输出和质量损失下降进行过滤。生成的数据集用于训练LLM遵循这种工具使用格式。
 
-![Toolformer训练流程](/images/articles/50-llm-agent-visual-guide/img-0021.png)
+![Toolformer训练流程图：少样本提示生成→工具调用采样→质量过滤→微调LLM遵循格式](/images/articles/50-llm-agent-visual-guide/img-0021.png)
 
 自Toolformer发布以来，还有许多令人兴奋的技术，如能使用数千种工具的LLM（ToolLLM），或能轻松检索最相关工具的LLM（Gorilla）。
 
-![Toolformer后续发展](/images/articles/50-llm-agent-visual-guide/img-0022.png)
+![Toolformer后续发展图：ToolLLM支持数千种工具Gopher等模型持续演进](/images/articles/50-llm-agent-visual-guide/img-0022.png)
 
 无论如何，大多数当前LLM（2025年初）都已训练成能够通过JSON生成轻松调用工具。
 
@@ -248,11 +248,11 @@ MCP为天气应用和GitHub等服务标准化了API访问。
 - **MCP Client（客户端）** — 维护与MCP服务器的1:1连接
 - **MCP Server（服务器）** — 向LLM提供上下文、工具和功能
 
-![MCP架构](/images/articles/50-llm-agent-visual-guide/img-0023.png)
+![MCP架构组件图：MCP Host管理连接+MCP Client维护1:1连接+MCP Server提供上下文工具功能](/images/articles/50-llm-agent-visual-guide/img-0023.png)
 
 例如，假设你希望某个LLM应用程序总结你的代码仓库中最新的5个提交，MCP Host（与MCP Client一起）会首先调用MCP Server询问哪些工具可用。
 
-![MCP工作流程](/images/articles/50-llm-agent-visual-guide/img-0024.png)
+![MCP工作流程图：Host调用Server查询可用工具→LLM选择工具→Host转发请求→返回结果](/images/articles/50-llm-agent-visual-guide/img-0024.png)
 
 LLM接收这些信息后，可能会选择使用某个工具。它通过Host向MCP Server发送请求，然后接收结果，包括所使用的工具。
 
@@ -270,7 +270,7 @@ LLM接收这些信息后，可能会选择使用某个工具。它通过Host向M
 
 这种规划使模型能够迭代地反思过去的行为，并在必要时更新当前计划。
 
-![规划能力](/images/articles/50-llm-agent-visual-guide/img-0025.png)
+![LLM Agent规划能力示意图：将复杂任务分解为可执行步骤迭代反思调整计划](/images/articles/50-llm-agent-visual-guide/img-0025.png)
 
 ### 1. 推理（Reasoning）
 
@@ -284,19 +284,19 @@ LLM接收这些信息后，可能会选择使用某个工具。它通过Host向M
 
 通过提示工程，我们可以创建LLM应遵循的推理过程示例。提供示例（也称为少样本提示，few-shot prompting）是引导LLM行为的一种优秀方法。
 
-![少样本提示示例](/images/articles/50-llm-agent-visual-guide/img-0026.png)
+![少样本提示工程示例图：通过提供思考过程示例引导LLM展示推理行为](/images/articles/50-llm-agent-visual-guide/img-0026.png)
 
 这种提供思考过程示例的方法被称为**思维链（Chain-of-Thought）**，它能够实现更复杂的推理行为。
 
 思维链也可以在没有任何示例（零样本提示，zero-shot prompting）的情况下实现，只需简单地说明"让我们一步步思考"。
 
-![思维链示意](/images/articles/50-llm-agent-visual-guide/img-0027.png)
+![思维链Chain-of-Thought示意图：展示逐步推理过程而非直接给出答案](/images/articles/50-llm-agent-visual-guide/img-0027.png)
 
 在训练LLM时，我们可以给它提供足够数量包含思考类示例的数据集，或者LLM可以发现自己的思考过程，比如使用强化学习。
 
 DeepSeek-R1是一个很好的例子，它使用奖励机制来引导思考过程的使用。
 
-![DeepSeek-R1](/images/articles/50-llm-agent-visual-guide/img-0028.png)
+![DeepSeek-R1推理模型训练图：使用强化学习奖励机制引导模型自主发现思考过程](/images/articles/50-llm-agent-visual-guide/img-0028.png)
 
 ### 2. ReAct（Reason and Act）
 
@@ -314,7 +314,7 @@ ReAct通过精心设计的提示工程来实现这一点。ReAct提示描述了�
 - **行动（Action）** — 要执行的一系列行动（例如，使用工具）
 - **观察（Observation）** — 关于行动结果的推理步骤
 
-![ReAct提示工程](/images/articles/50-llm-agent-visual-guide/img-0029.png)
+![ReAct提示工程结构图：Thought思考+Action行动+Observation观察三步骤循环引导Agent行为](/images/articles/50-llm-agent-visual-guide/img-0029.png)
 
 LLM使用这个提示（可作为系统提示使用）来引导其行为，在思考、行动和观察的循环中工作。
 
@@ -322,7 +322,7 @@ LLM使用这个提示（可作为系统提示使用）来引导其行为，在�
 
 因此，与那些预定义固定步骤的Agent相比，这个框架使LLM能够展示更加自主的Agent行为。
 
-![ReAct循环](/images/articles/50-llm-agent-visual-guide/img-0030.png)
+![ReAct循环执行图：思考→行动→观察→反思的反复迭代直到任务完成](/images/articles/50-llm-agent-visual-guide/img-0030.png)
 
 ### 3. 反思（Reflecting）
 
@@ -336,7 +336,7 @@ ReAct缺少这个过程，这就是**Reflexion**的用武之地。Reflexion是�
 - **评估者（Evaluator）** — 对执行者产生的输出进行评分。
 - **自我反思（Self-reflection）** — 反思执行者采取的行动和评估者生成的评分。
 
-![Reflexion架构](/images/articles/50-llm-agent-visual-guide/img-0031.png)
+![Reflexion反思架构图：执行者Actor选择行动+评估者Evaluator评分+自我反思Agent从失败中学习](/images/articles/50-llm-agent-visual-guide/img-0031.png)
 
 添加了内存模块来跟踪行动（短期）和自我反思（长期），帮助Agent从错误中学习并识别改进的行动。
 
@@ -356,7 +356,7 @@ ReAct缺少这个过程，这就是**Reflexion**的用武之地。Reflexion是�
 
 每个Agent可能配备不同类型的工具，并可能拥有不同的记忆系统。
 
-![多智能体系统](/images/articles/50-llm-agent-visual-guide/img-0032.png)
+![多智能体系统架构图：多个专业Agent各持工具和记忆由Supervisor主管协调通信](/images/articles/50-llm-agent-visual-guide/img-0032.png)
 
 实际上，已有数十种多智能体架构，它们的核心通常包括以下两个组件：
 
@@ -373,13 +373,13 @@ ReAct缺少这个过程，这就是**Reflexion**的用武之地。Reflexion是�
 
 每个Agent都初始化了三个模块（记忆、规划和反思），与我们在ReAct和Reflexion中看到的核心组件非常相似。
 
-![Generative Agents架构](/images/articles/50-llm-agent-visual-guide/img-0033.png)
+![Generative Agents架构图：生成式Agent模拟人类行为配备画像+记忆模块+规划+反思](/images/articles/50-llm-agent-visual-guide/img-0033.png)
 
 记忆模块是这个框架中最关键的组件之一。它存储规划和反思行为，以及迄今为止的所有事件。
 
 对于任何给定的下一步或问题，记忆会被检索并根据时效性、重要性和相关性进行评分。得分最高的记忆会被共享给Agent。
 
-![记忆评分机制](/images/articles/50-llm-agent-visual-guide/img-0034.png)
+![Generative Agents记忆评分机制图：根据时效性+重要性+相关性评分检索最相关记忆共享给Agent](/images/articles/50-llm-agent-visual-guide/img-0034.png)
 
 它们共同使Agent能够自由地进行行为并相互互动。因此，几乎不需要Agent编排，因为它们没有特定的目标要去实现。
 
@@ -397,7 +397,7 @@ ReAct缺少这个过程，这就是**Reflexion**的用武之地。Reflexion是�
 
 随后，AI用户与AI助理相互协作，通过交互来解决问题。
 
-![CAMEL协作](/images/articles/50-llm-agent-visual-guide/img-0035.png)
+![CAMEL双Agent协作模式图：AI User角色引导+AI Assistant执行通过对话协作解决问题](/images/articles/50-llm-agent-visual-guide/img-0035.png)
 
 这种角色扮演的方法实现了智能体之间的协作交流。
 
@@ -405,7 +405,7 @@ AutoGen和MetaGPT的通信方法虽然有所不同，但本质上都是基于这
 
 过去一年，这些框架呈现出爆发式的增长。
 
-![多智能体框架对比](/images/articles/50-llm-agent-visual-guide/img-0036.png)
+![多智能体框架对比图：AutoGen+MetaGPT+CAMEL等框架的通信协作方式差异](/images/articles/50-llm-agent-visual-guide/img-0036.png)
 
 2025年将是令人兴奋的一年，因为这些框架将继续成熟和发展！
 
@@ -419,7 +419,7 @@ Agent 的执行循环主要有两种类型：**主动循环（Proactive Loop）*
 
 主动循环是指 Agent 主动规划并执行一系列步骤，直到达成目标。反应循环则是 Agent 根据外部输入或事件触发相应的行动。
 
-![Agent循环类型](/images/articles/50-llm-agent-visual-guide/img-0037.png)
+![Agent执行循环类型对比图：主动循环Proactive Loop主动规划执行vs反应循环Reactive Loop外部事件触发](/images/articles/50-llm-agent-visual-guide/img-0037.png)
 
 ### 2. 状态管理
 
@@ -431,7 +431,7 @@ Agent 的执行循环主要有两种类型：**主动循环（Proactive Loop）*
 
 良好的状态管理可以避免 Agent 重复工作或忘记关键信息。
 
-![状态管理](/images/articles/50-llm-agent-visual-guide/img-0038.png)
+![Agent状态管理示意图：任务状态+上下文状态+执行状态的管理避免重复工作](/images/articles/50-llm-agent-visual-guide/img-0038.png)
 
 ### 3. 错误处理与恢复
 
@@ -443,7 +443,7 @@ Agent 的执行循环主要有两种类型：**主动循环（Proactive Loop）*
 - **降级策略** — 主方案失败时使用备用方案
 - **错误传播** — 及时向用户报告无法处理的错误
 
-![错误处理](/images/articles/50-llm-agent-visual-guide/img-0039.png)
+![Agent错误处理与恢复机制图：重试机制+降级策略+错误传播三层次容错](/images/articles/50-llm-agent-visual-guide/img-0039.png)
 
 ### 4. 提示工程与 Agent 优化
 
@@ -453,7 +453,7 @@ Agent 的执行循环主要有两种类型：**主动循环（Proactive Loop）*
 - **结构化输出** — 使用 JSON 或其他格式确保响应可解析
 - **示例引导** — 通过少样本提示展示期望的行为
 
-![提示优化](/images/articles/50-llm-agent-visual-guide/img-0040.png)
+![Agent提示工程优化策略图：清晰指令+结构化输出+少样本示例引导](/images/articles/50-llm-agent-visual-guide/img-0040.png)
 
 ### 5. 评估与监控
 
@@ -463,7 +463,7 @@ Agent 的执行循环主要有两种类型：**主动循环（Proactive Loop）*
 - **响应时间** — 从接收请求到返回结果的时间
 - **工具使用效率** — 是否高效地使用工具达成目标
 
-![Agent评估](/images/articles/50-llm-agent-visual-guide/img-0041.png)
+![Agent性能评估指标图：任务完成率+响应时间+工具使用效率三维评估体系](/images/articles/50-llm-agent-visual-guide/img-0041.png)
 
 ### 6. 安全与隐私
 
@@ -473,11 +473,11 @@ Agent 系统需要考虑的安全问题：
 - **权限控制** — 对工具调用进行权限验证
 - **审计日志** — 记录所有关键操作便于追溯
 
-![安全与隐私](/images/articles/50-llm-agent-visual-guide/img-0042.png)
+![Agent安全与隐私保护图：数据隔离+权限控制+审计日志三道防线](/images/articles/50-llm-agent-visual-guide/img-0042.png)
 
 这些核心概念构成了现代 LLM Agent 的基础。随着技术的快速发展，Agent 正在成为 AI 应用的新范式。掌握这些核心概念，将帮助你更好地理解和应用这一前沿技术。
 
-![技术演进](/images/articles/50-llm-agent-visual-guide/img-0044.png)
+![LLM Agent技术演进路线图：从增强型LLM到Agent的演进过程](/images/articles/50-llm-agent-visual-guide/img-0044.png)
 
 - **Agent 的定义** — 通过传感器感知环境、通过执行器作用于环境
 - **三大核心组件** — 记忆（短/长期）、工具（MCP 协议）、规划（思维链/ReAct）
@@ -485,11 +485,11 @@ Agent 系统需要考虑的安全问题：
 
 随着技术的快速发展，Agent 正在成为 AI 应用的新范式。掌握这些核心概念，将帮助你更好地理解和应用这一前沿技术。
 
-![总结](/images/articles/50-llm-agent-visual-guide/img-0043.png)
+![LLM Agent核心知识总结图：Agent定义+三大核心组件+多智能体协同框架](/images/articles/50-llm-agent-visual-guide/img-0043.png)
 
 ---
 
-![Hands-On Large Language Models](/images/articles/50-llm-agent-visual-guide/img-0000.png)
+![Hands-On Large Language Models书籍封面图：Maarten Grootendorst著LLM可视化指南](/images/articles/50-llm-agent-visual-guide/img-0000.png)
 
 > 本书由本文作者 Maarten Grootendorst 所著，欲了解更多LLM可视化内容，可阅读《Hands-On Large Language Models》！
 

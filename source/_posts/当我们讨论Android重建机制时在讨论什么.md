@@ -38,7 +38,7 @@ Android应用有一个常常被忽略的问题，但问题出现时你又不得�
 
 ### 2）Save-Restore InstanceState机制
 
-![1635401794(1).jpg](/images/android_recreate1706192281232.png)
+![Android Save-Restore InstanceState机制流程图：onSaveInstanceState到onRestoreInstanceState数据保存恢复链路](/images/android_recreate1706192281232.png)
 
 - Save-Restore InstanceState机制的初衷是保存界面的一些瞬时状态，比如ListView滑动的位置、ViewPager的position一些TextView的文本内容。保证用户进入新建Activity的时候能尽快的看到界面状态的恢复。
 - Save-Restore InstanceState是一些比较轻量级的数据，因为保存过程需要经历数据的序列化和反序列化。
@@ -95,7 +95,7 @@ protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 
 ### 3) 配置改变发生的重建
 
-![image.png](/images/android_recreate1706192281499.png)
+![配置改变时双机制触发流程图：Save-Restore InstanceState与RetainNonConfigurationInstance并行执行](/images/android_recreate1706192281499.png)
 
 当如横竖屏的切换、语言切换等配置发生改变时也会触发Activity的重建。这种由配置发生改变而导致的Activity重建除了会触发Save-Restore InstanceState机制之外也会触发**RetainNonConfigurationInstance机制**
 

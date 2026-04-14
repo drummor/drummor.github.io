@@ -57,7 +57,7 @@ dp(density-independent pixels)
 
 举个例子：
 
-![](/images/001_03.png)
+![Android 屏幕分辨率与像素密度关系图：dp、pt、px 单位换算示意](/images/001_03.png)
 
 有如上两种显示规格的屏幕，使用 dp 单位，显示的真实物理的宽度是一样的。
 

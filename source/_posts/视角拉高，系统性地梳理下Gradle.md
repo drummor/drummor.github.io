@@ -11,7 +11,7 @@ Android Studio 默认的构建工具为 Gradle。在使用 Gradle 的过程中�
 
 ### 1.1 Gradle 、AGP(Android Gradle Plugin)、 buildTools 分别是什么，他们之间什么关系？
 
-![image.png](/images/gradle_system_1706238770763.png)
+![Gradle 构建生命周期全流程图：初始化 → 配置 → 执行三阶段与各阶段核心任务](/images/gradle_system_1706238770763.png)
 
 #### 1.1.1 Gradle
 
@@ -141,7 +141,7 @@ tasks.register('test') {
 
 ## 3 监听 Gradle 生命周期回调
 
-![image.png](/images/gradle_system_1706238771032.png)
+![Gradle 生命周期监听点示意图：settingEvaluated → projectsLoaded → afterProject → taskExecution 四阶段回调](/images/gradle_system_1706238771032.png)
 
 #### 3.1 监听初始化阶段回调
 
@@ -333,7 +333,7 @@ println("mVersion${ext.mVersion}")
 
 #### 5.2.1 执行动作
 
-![image.png](/images/gradle_system_1706238771643.png)
+![Gradle Task 执行单元结构图：Action 在 doLast/doFirst 中的执行顺序与 Task 依赖链](/images/gradle_system_1706238771643.png)
 
 - 上文也提到过，gradle 的一次构建，就是一系列 task 的执行，task 就是 gradle 的一个执行单元。
 - 一个 gradle 项目中包含若干个 project，每个 project 中包含若干个 task。

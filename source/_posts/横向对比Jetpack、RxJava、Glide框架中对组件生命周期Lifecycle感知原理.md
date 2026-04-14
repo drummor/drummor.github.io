@@ -222,7 +222,7 @@ public class RequestManager implements LifecycleListener
 - RequestManager通过Lifecycle感知组件生命周期变化，在相应的生命周期状态下实现的LifecyleListener对应的回调函数会被执行，然后通过RequestTracker管理自己所关联的Request对象们。
 
 ## Glide中Lifecycle小结
-![](/images/android_lifecycle_1706254319128.png)
+![Jetpack Lifecycle 与 Glide 生命周期联动流程图：ImageView 绑定 → 生命周期回调 → Glide 请求管理](/images/android_lifecycle_1706254319128.png)
 为一个Request拥有所在组件的感知能力需要以下步骤：  
 1.从给定的组件（Fragment/FragmentActivity/Activity...）获取出FragmentManager。
 
@@ -399,7 +399,7 @@ public class SupportActivity extends Activity implements LifecycleOwner {
 ## 3.3、处理生命周期事件LifecycleRegistry
 先来一张官方的图
 
-![image](/images/android_lifecycle_1706254319475.png)
+![LifecycleRegistry 状态机流转图：INITIALIZED → CREATED → STARTED → RESUMED → DESTROYED 各状态转移条件](/images/android_lifecycle_1706254319475.png)
 
 Jetpack对组件生命周期的管理有两个核心的概念事件（Event）和状态（State）。
 他们直接的关系是**事件驱动状态的转换**。

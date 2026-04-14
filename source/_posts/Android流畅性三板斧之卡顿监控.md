@@ -71,7 +71,7 @@ final Runnable _ticker = new Runnable() {
 
 上面这个问题还好，更严重的问题是**漏报**。如下图所示。
 
-![image.png](/images/apm_block_1706190538776.png)
+![WatchDog方案漏报分析图：500ms检测周期内600ms耗时任务漏报概率示意图](/images/apm_block_1706190538776.png)
 
 - 500ms 检测一次有一个耗时 600ms 的任务，执行执行的开始是在检测第一个检测周期的第 150ms 处结束。在第一个周期的 0-50m 和第二个周期的 150-500ms 都有一段不卡顿的时间，这段时间检测消息能够被处理掉。那么该耗时任务能被检测到的概率会只有有 20%。
 
@@ -196,7 +196,7 @@ class IdleHandlerWrapper(
 
 先看一个张图
 
-![image-20230309102514703.png](/images/apm_block_1706190538870.png)
+![Native层发起的主线程任务执行栈图：nativePollOnce到ViewRootImpl的TouchEvent调用链](/images/apm_block_1706190538870.png)
 
 如上图是一个`Activity onTouchEvent（）`方法的执行栈，由此可以看出，本次的执行时从`MesssageQueue`的`nativePollOnce`处开始执行；并不是我们惯常的 Handler 的`dispatchMessage(msg)`处执行而来。
 

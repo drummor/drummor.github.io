@@ -11,7 +11,7 @@ category: basic
 
 通过本文能了解一下内容
 
-![Alt text](/images/1681706186368_.pic.jpg)
+![ActivityThread核心职责概览图：应用进程启动、Application创建、组件生命周期管理](/images/1681706186368_.pic.jpg)
 
   
 
@@ -79,7 +79,7 @@ public static void main(String[] args) {
     }
 ```
 
-![Alt text](/images/k3u1fbpfcp-zoom-1.png)
+![ActivityThread双Binder通信架构图：IActivityManager与应用进程、ApplicationThread与SystemServer进程](/images/k3u1fbpfcp-zoom-1.png)
 
 -   IActivityManager(binder)：应用进程和SystemServer进程打交道的时候。
 -   AppliactionThread(binder)：SystemServer进程与应用进程通信。

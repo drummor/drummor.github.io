@@ -40,7 +40,7 @@ Android 流畅性监控的三板斧，这里所指是【帧率的监控】，【
 
 利用 Choreographer 的 postcallback 方法接口轮询方式，能够对帧率进行统计。
 
-![image.png](/images/apm_frame_rate_1706191161099.png)
+![Choreographer postCallback帧率监控原理图：帧回调与垂直同步时序](/images/apm_frame_rate_1706191161099.png)
 
 `choreographer.postCallback()`内部是挂载了一个`CALLBACK_ANIMATION`类型的 callback。轮训方式往`choreographer`内添加 callback，相邻两个 callback 执行时间间隔即能粗略统计单帧的耗时。严谨的讲这不是单帧的耗时而是两个【半帧】拼凑的耗时。
 
@@ -121,7 +121,7 @@ class PoorFrameTracker {
 private final CallbackQueue[] mCallbackQueues;
 ```
 
-![image.png](/images/apm_frame_rate_1706191161453.png)
+![Hook Choreographer帧率监控架构图：CallbackQueue与doFrame调用链](/images/apm_frame_rate_1706191161453.png)
 
 - 【过滤出每帧的执行动作】我们知道主线程中不单单执行每帧的动作，还会执行其他动作。如何过滤出执行的是每帧的动作。反射往 Choreographer 往里添加 callback 不触发垂直同步，同时在同步信号回调时，会调用我们传入的 callback，如果执行了传入的 callbacl 就可以标识该次执行动作是帧的执行动作。
 - 【采集真实的垂直同步到达时间】反射拿到`mTimestampNanos`
@@ -144,7 +144,7 @@ private final CallbackQueue[] mCallbackQueues;
 
 **补充**
 
-![image.png](/images/apm_frame_rate_1706191161989.png)
+![帧率统计范围说明图：doFrame耗时与UI线程实际渲染耗时关系](/images/apm_frame_rate_1706191161989.png)
 
 - 严格意义上，该方案统计的也不是真实的帧率，而是一帧所有耗时中在 UI Thread 执行部分的耗时，上图`doFrame`部分。其他线程和进程还会执行其他动作最终才能完成一帧的绘制。但对于我们应用层来说更关注监控`doFrame`，我们在应用开发层面大部分能够干预的也在`doFrame`这部分。
 
@@ -182,7 +182,7 @@ private final CallbackQueue[] mCallbackQueues;
 
 - 如上代码 ViewRootImpl 的 draw 方法会如果 check 到`mAttachInfo.mViewScrollChanged`值为 true 就会就会调用`ViewTreeObserver`的`dispatchOnScrollChanged()`方法，只要我们在`viewTreeObserver`设置监听，就能获取到界面是否正在滑动这一重要事件。
 
-![image.png](/images/apm_frame_rate_1706191162204.png)
+![滑动帧率监控流程图：onScrollChanged到Choreographer帧率采集完整链路](/images/apm_frame_rate_1706191162204.png)
 
 - 整个过程的如上图所示，我们收到滑动回调这一事件的时候，其实是 choreographer 的 doFrame()调用而来。
 

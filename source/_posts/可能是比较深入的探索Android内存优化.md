@@ -28,7 +28,7 @@ category: APM
 ### 2.1 JVM内存管理机制
 
 #### 2.1.1、分区
-![image](/images/android_memory_1706253961028.png)
+![JVM内存管理机制分区图：方法区、运行时常量、堆区、栈区内存分布](/images/android_memory_1706253961028.png)
 
 - **方法区**: 在java的虚拟机中有一块专门用来存放已经加载的类信息、常量、静态变量以及方法代码的内存区域，叫做方法区;所有线程共享
 
@@ -57,7 +57,7 @@ category: APM
 #### 2.1.3 内存回收算法
 
 #####  **标记-清除算法**：
-![image](/images/android_memory_1706253961167.png)
+![标记-清除算法原理图：第一阶段标记存活对象，第二阶段清除未标记对象](/images/android_memory_1706253961167.png)
 - 原理：如上图，对于“活”的对象，一定可以追溯到其存活在堆栈、静态存储区之中的引用。这个引用链条可能会穿过数个对象层次。
     - 第一阶段：从GC roots开始遍历所有的引用，对有活的对象进行标记标记为粉色。
     - 第二阶段：对堆进行遍历，把未标记的对象(绿色)进行清除。
@@ -66,7 +66,7 @@ category: APM
     - 2、会产生内存碎片，如绿色被清楚变为灰色可使用空间，还是内存区域比较小产生内存碎片，不易被重新使用。
 
 ##### 复制算法：
-![image](/images/android_memory_1706253961195.png)
+![复制算法原理图：内存空间划分为两片区域，每次只使用一片区域](/images/android_memory_1706253961195.png)
 - 原理：为了提升效率，把内存空间划分为2个相等A和B两片区域，每次只使用一个区域。垃圾回收时，遍历当前使用区域，把正在使用的对象复制到另外一个区域
 - 特点
     - 效率高一些（只会对1/2进行标记）
@@ -82,7 +82,7 @@ category: APM
 ##### 分代标记算法：
 
 
-![](/images/android_memory_1706253961356.png)
+![分代垃圾回收算法图：新生代使用复制算法，老年代使用标记整理算法](/images/android_memory_1706253961356.png)
 - 如上图新生代朝生夕亡存活率低的情况采用复制算法。
   具体逻辑：
     - 年轻代分为了三部分：1个Eden区和2个Survivor区(分别叫From和To)
@@ -188,11 +188,11 @@ public class LeakActivity extends Activity implements ContainerManager.DummyList
 - 这时候会看到MemoryProfiler的内存会有一个升高，且降不下来的情况。于是有个初步的判断，内存泄露。
 - 在MemoryProfiler中具体查找分析原因，可以看到LeakActivity这个对象在内存中还存在着10,口怕 -_—!!
 
-![image](/images/android_memory_1706253961379.png)
+![MemoryProfiler内存分析图：LeakActivity对象在内存中留存数量显示](/images/android_memory_1706253961379.png)
 
 - 使用MemoryProflier工具能查看具体的内存回收和分配情况如下图，然后查看调用栈能找到相应的对象。能看到使我们在dummyListenerList中持有引用着 。
 
-![image](/images/android_memory_1706253961551.png)
+![MemoryProfiler内存分配查看图：调用栈显示dummyListenerList持有Activity引用](/images/android_memory_1706253961551.png)
 
 #### 3.2.3、 解决内存泄露
 上面我们已经比较清楚的知道，什么情况下对象不会被回收，就是通过可达性计数算法，得出这个对象还被引用着的时候。我们看到这个LeakActivity对象被dummyListenerList中引用着呢。解决方案比较明显其中之一就是可以再onStop()方法中把对象从dummyListenerList中移除。
@@ -252,7 +252,7 @@ public class LeakActivity extends Activity implements ContainerManager.DummyList
 ### 方案3.
 **思路**
 定制LeakCanay
-![image](/images/android_memory_1706253961695.png)
+![Android 内存优化分层策略图：运行时层→虚拟机层→Native层→系统层逐级分析](/images/android_memory_1706253961695.png)
 LeakCanary分为监控组件和分析组件。
 - 使用LeakCanary的监控组件，自动寻找怀疑点，寻找大对象。
 - 针对分析组件的分析行为占用内存大的问题，只对大对象进行分析，大对象往往是内存泄漏的元凶，从而解决分析性能低的问题。

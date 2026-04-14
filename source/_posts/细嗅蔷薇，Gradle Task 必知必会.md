@@ -10,7 +10,7 @@ category: 基建
 
 ## 1 前言
 
-![](/images/gradle-task-summary.png)
+![Gradle Task 分类总览图：任务类型划分与依赖关系概览](/images/gradle-task-summary.png)
 
 本文是之前文章（ [视角拉高，系统性地梳理下 Gradle](https://drummor.github.io/2024/01/26/%E8%A7%86%E8%A7%92%E6%8B%89%E9%AB%98%EF%BC%8C%E7%B3%BB%E7%BB%9F%E6%80%A7%E5%9C%B0%E6%A2%B3%E7%90%86%E4%B8%8BGradle/) ）的一个填坑，本文将详细的介绍拆解如何自定义 task 以及围绕 Gradle Task 的一些核心重要概念，相信通过这篇文，大家能够对 Gradle Task 有一个更新的理解。
 

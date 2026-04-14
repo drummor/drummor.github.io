@@ -209,7 +209,7 @@ private static boolean checkErrorState() {
 
 #### 2.2.3 ANR 监控小结
 
-![image.png](/images/apm_anr_1706190257265.png)
+![ANR 监控方案对比图：Watchdog 主线程检测 + 权限监控 + trace 文件分析三种策略](/images/apm_anr_1706190257265.png)
 
 通过监听系统`SIGQUIT`信号结合 check 当前进程的 `NOT_RESPONDING`标识和主线程的卡顿状态，综合判定为该进程发生了 ANR。
 
@@ -221,7 +221,7 @@ private static boolean checkErrorState() {
 
 观察 ANR 信息采集的难点在于往往信息采集不准确、不全面，当 ANR 发生的当下采集的信息并不是 ANR 的真正诱因，因而采集的信息对排查问题的参考价值大折扣。
 
-![image.png](/images/apm_anr_1706190257469.png)
+![ANR 问题分析流程图：trace 文件抓取 → 主线程堆栈分析 → 卡顿根因定位](/images/apm_anr_1706190257469.png)
 
 如上图所示，在主线程耗时的任务已经执行完毕，service 启动任务在超过了规定的阈值产生了 ANR，此时采集的信息是一个正常的任务调用信息。
 

@@ -11,7 +11,7 @@ category: basic
 
 简单看下Choreographer的原理，具体的可以看之前写的一篇文章<https://juejin.cn/post/6844903818044375053>
 
-![image.png](/images/gh_choreographer_1706238159839.png)
+![Choreographer 源码流程图：200行理解 View 刷新调度核心逻辑](/images/gh_choreographer_1706238159839.png)
 
 基本的原理其实简单的讲就是两点：
 

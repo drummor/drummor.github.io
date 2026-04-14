@@ -93,7 +93,7 @@ Chase 的核心观点是：**一个系统越"Agentic"，就越需要新的工具
 
 两个维度的交汇构成了一张完整的演进地图：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img001.png) 
+![Agentic Engineering五阶段演进矩阵：横轴工具能力（LLM API→团队定制化Agent）×纵轴任务复杂度（简单对话→Agentic工程）](/images/2026-cognitive-rebuild-agentic-engineering/img001.png) 
 每一层解决的是上一层的核心痛点：AGENTS.md 解决重复解释问题，但它会膨胀；context/ 分层解决膨胀问题，但跨会话会失忆；结构化记忆解决失忆问题，但知识不复利；复合工程让知识复利，最终形成完整的 Agentic 工程体系。**工具能力的提升使更复杂的任务成为可能，而任务复杂度的增加又倒逼工具能力的进化——这两个维度相互推动，最终指向一个完整的工程体系。**
 
 这不是看了谁的文章之后的"学习笔记"，而是在实际构建过程中被一个个具体问题逼出来的认知：上下文膨胀了怎么办？跨会话丢失状态怎么办？同样的坑反复踩怎么办？每个问题的解法叠加起来，自然指向了一个工程化的方向。Chase 早在 2024 年 6 月就提出了"agentic"这个光谱概念，Karpathy 在 2026 年 2 月给了它一个更广为人知的名字——概念和命名各有先后，但对于实践者来说，这条路是被真实问题推着走出来的。
@@ -114,7 +114,7 @@ Chase 的核心观点是：**一个系统越"Agentic"，就越需要新的工具
 
 看到他们的实践时，我的第一反应不是"学到了新东西"，而是"**原来有人在同一条路上走了十个月，而且到了类似的地方** "。他们的体系覆盖了几个关键维度，和我独立演化出的方向高度吻合：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img002.png)
+![everything-claude-code体系对照图：13 Agent + 43 Skill + 31命令的多维度配置集合](/images/2026-cognitive-rebuild-agentic-engineering/img002.png)
 
 他们的原话精准地描述了共同的痛点：*"你的皮质醇飙升，愤怒地对 Claude 大喊不要做某件事——而你已经在上一个会话中告诉过它了。"* 这正是我在体系中用规范文档和经验沉淀机制要终结的循环——而他们用会话结束时的自动经验提取来解决同样的问题，路径不同，目标相同。
 
@@ -384,7 +384,7 @@ Cursor 的做法也印证了同一方向。他们的动态上下文发现策略�
 
 五个独立的实践——Anthropic 的理论框架、OpenAI 的百万行代码实践、everything-claude-code 的社区演化、Cursor 的动态上下文策略、我的全生命周期工程体系——从不同规模、不同工具链，收敛到了同一组设计原则：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img003.png)
+![五大独立实践收敛原则图：Anthropic理论框架、OpenAI百万行代码实践、everything-claude-code社区演化、Cursor动态上下文策略、全生命周期工程体系](/images/2026-cognitive-rebuild-agentic-engineering/img003.png)
 
 **上下文稀缺性是底层物理约束，渐进式披露是应对它的最优解，机械化强制执行是让方案长期可持续的必要条件。** 这种多方收敛本身说明：这些不是个人偏好，而是 Agent 协作的底层规律。
 
@@ -399,7 +399,7 @@ Cursor 的做法也印证了同一方向。他们的动态上下文发现策略�
 
 推翻场景路由不等于推翻场景本身。场景体系建设过程中积累的结构化分析——每个场景的识别信号、规则集合、关联知识、预期产出——恰好成了工具设计的蓝图：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img004.png) 
+![场景分析到工具设计的蓝图转化图：识别信号+规则集合+关联知识+预期产出沉淀为Skill/Subagent设计规范](/images/2026-cognitive-rebuild-agentic-engineering/img004.png)
 
 
 场景路由作为运行时机制被推翻了，但场景分析作为设计方法论沉淀了下来。这个过程的生命周期不是"建设→推翻→浪费"，而是 "建设→积累结构化认知→固化为可重复的设计输入"。
@@ -434,7 +434,7 @@ Cursor 的做法也印证了同一方向。他们的动态上下文发现策略�
 
 **第一个决策点：发生了什么事？** SOP 把所有迭代需求归类为六种触发场景，每种场景有明确的操作路径：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img005.png) 
+![迭代需求六种触发场景分类图：新能力需求/Agent行为出错/业务场景变更/用户反馈问题/规范腐化/体系升级](/images/2026-cognitive-rebuild-agentic-engineering/img005.png)
 
 
 其中"Agent 行为出错"是最高频的触发场景。它的关键操作是**定位问题层级** ——同一个现象（比如"Agent 在代码审查时遗漏了安全检查"）可能是三个不同层级的问题：是能力缺失（根本没定义安全检查这个功能）？是越界行为（有功能定义但没有约束 Agent 必须执行）？还是工具问题（约束存在但 checker Agent 的实现有 bug）？**定位对了，一改就好；定位错了，改完还会出问题。**
@@ -454,7 +454,7 @@ Cursor 的做法也印证了同一方向。他们的动态上下文发现策略�
 
 **第三个决策点：是否应该工具化？** 不是所有问题都需要做成工具。SOP 沉淀出了六条"应该工具化"的判定标准：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img006.png) 
+![工具化判定标准六条规则图：强制约束+易错环节+高频使用+多步骤流程+跨场景复用+知识依赖](/images/2026-cognitive-rebuild-agentic-engineering/img006.png)
 
 
 反过来，一次性约束、高度灵活的任务、需要人类判断的决策——这些**不应该工具化** ，写在规范里就够了。
@@ -528,7 +528,7 @@ Command 几乎不消耗上下文，Skill 消耗可控的上下文，Agent 完全
 
 ### 4.6 关键决策点回顾
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img007.png) 
+![关键决策点回顾图：推翻场景路由核心机制但三层架构沉淀，工具设计规范沉淀，SOP迭代节奏确立](/images/2026-cognitive-rebuild-agentic-engineering/img007.png)
 
 
 回头看，最重要的决策不是"引入了什么"，而是"**推翻了什么** "。场景驱动架构从设计到推翻经历了大约两周，中间穿插着消息推送、反馈命令、help 命令等旁路功能的接入，以及测试框架的搭建——这些后来都被复用了下来，并没有浪费。真正被推翻的只是场景路由这个核心机制，三层架构不变，转向了基于平台扩展能力的工具设计。但即便如此，推翻它依然需要克服沉没成本的心理。**建设→推翻→沉淀为方法论，这个生命周期本身就是 Agentic Engineering 的迭代方式。**
@@ -569,7 +569,7 @@ Command 几乎不消耗上下文，Skill 消耗可控的上下文，Agent 完全
 
 **8 个阶段各有专属 Agent** ：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img008.png) 
+![需求生命周期管理八阶段专属Agent表格：S1需求解析→S2方案设计→S3编码→S4自测→S5联调→S6提测→S7验收→S8发布](/images/2026-cognitive-rebuild-agentic-engineering/img008.png)
 
 
 这张表背后的关键设计是**阶段门禁** 。不是每个阶段都需要人工介入——很多门禁是自动化的。比如追溯链检查会自动验证"需求→设计→代码→测试"的链路是否完整，缺了哪一环就会阻止阶段切换并给出具体的修复建议。
@@ -636,7 +636,7 @@ AI 生成文档的速度远快于人阅读的速度。如果 Agent 一口气输�
 
 `requirement-quality-reviewer` Agent 对需求文档执行六维评审：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img009.png) 
+![需求质量评审六维模型图：完整性+一致性+可追溯性+项目维度+需求维度+上下文维度](/images/2026-cognitive-rebuild-agentic-engineering/img009.png)
 
 
 但固定维度只是基线。真正让评审有效的是**上下文驱动的动态评审维度** 。
@@ -676,7 +676,7 @@ AI 生成文档的速度远快于人阅读的速度。如果 Agent 一口气输�
 
 **7 个专项 checker 各司其职** ：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img010.png) 
+![代码审查七专项checker并行架构图：code/logic+error-handling+security+performance+testing+readability+consistency](/images/2026-cognitive-rebuild-agentic-engineering/img010.png)
 
 
 这些 checker 使用轻量模型（lite）运行，成本低、速度快。code-quality-reviewer 使用更强的模型做综合判断。这个分层策略让一次完整的代码审查既全面又经济。
@@ -829,7 +829,7 @@ S1 需求解析 → S2 商品创建 → S3 活动创建 → S4 配置生成 → 
       └──────── 任何步骤失败时跨轮重试 ────────┘
 ```
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img011.png)
+![活动配置生成引擎十步流程图：S1需求解析→S2商品创建→S3活动创建→S4配置生成→S5 Go校验→S6 DB写入→S7 API验证→S8前端验证→S9玩法引擎测试→S10经验沉淀](/images/2026-cognitive-rebuild-agentic-engineering/img011.png)
 
 S1 不是凭空新增的步骤——人工流程中同样需要做需求分析：翻看现有的玩法模板（抽奖、任务、签到）、查找类似的历史活动、拆解哪些原子能力可以复用。AI 做的是**同样的事，但用结构化的方式** ：查阅知识库中的模板索引和字段规范，输出标准化的需求 JSON。
 
@@ -880,7 +880,7 @@ config-gen-engine/
 
 我们不信任"生成即正确"。config-gen-engine 设计了三层递进验证：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img012.png) 
+![活动配置三层验证架构图：L1反序列化校验→L2 10项自检清单→L3端到端API验证](/images/2026-cognitive-rebuild-agentic-engineering/img012.png)
 
 
 **L1 能检测到的** ：JSON 语法错误、字段类型不匹配（string vs number）、字段遗漏（roundtrip diff 对比）。**L1 检测不到的** ：When 条件前缀错误、日期格式错误、task_id 不一致——因为这些字段都是 string 类型，任何值都能通过反序列化。
@@ -990,7 +990,7 @@ Playwright 启动浏览器时通过 `launchOptions.proxy` 将所有流量指向�
 
 我们专门构建了一套从零开始的学习体系，分 8 个阶段渐进式覆盖：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img013.png) 
+![体系化学习路径八阶段图：环境安装→核心概念→需求发布流程→命令与对话→自定义命令→自定义Skill→体系架构→团队协作](/images/2026-cognitive-rebuild-agentic-engineering/img013.png)
 
 
 每个阶段都有明确的学习材料链接和完成目标——不是"看完就行"，而是"装好 CLI 并跑通一次读→改→跑命令闭环"、"写 1 个自定义命令"、"创建 1 个最小 SKILL.md"这样的**可验证动作** 。
@@ -1420,7 +1420,7 @@ CodeBuddy Code 和 Open Code（Claude Code 的开源实现）对比：核心交�
 
 把 Carlini 的编译器实验和 BMAD-METHOD 放在一起看，一个拼图浮现出来：
 
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img014.png) 
+![Carlini编译器实验与BMAD-METHOD多角色Agent对比分析图：串行vs并行执行、角色化覆盖广度vs单Agent深度](/images/2026-cognitive-rebuild-agentic-engineering/img014.png)
 
 
 "多 Agent + 软件工程团队角色"是不是研发的全能解？
@@ -1462,6 +1462,6 @@ CodeBuddy Code 和 Open Code（Claude Code 的开源实现）对比：核心交�
  * BMAD-METHOD: [多角色 Agent 驱动的全生命周期开发框架](https://github.com/bmad-code-org/BMAD-METHOD)
 
  
-![图片](/images/2026-cognitive-rebuild-agentic-engineering/img015.webp) 
+![Agentic Engineering未来展望图：AI从工具进化为协作者，编码开发进入代理时代](/images/2026-cognitive-rebuild-agentic-engineering/img015.webp) 
  
 
